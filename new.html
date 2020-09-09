@@ -1,0 +1,37 @@
+<html>
+<script>
+function metodoRaro ()
+{
+     var letras = [ "W", "A", "E", "F", "L", "H", "C", "J", "O", "O", "M", "T", "E" ];
+     var n = letras.length;
+     var izq = 0, der=0, aux = 0;
+     var salida = "";
+
+     for (i = 0; i < n; i++)  {
+          if (aux > n)
+               break;
+          der = aux + 1;
+          while (der >= izq){
+                if (der == izq) {
+                     salida += letras[aux];
+                     aux = aux + izq;
+                }
+              	 der--;
+           }
+	   izq++;
+     }
+     return salida;
+}
+
+function Misterio (a, b) {
+    if (a <=0 && b <= 0) 
+     		return 1;
+    if (a%2 == 0) {
+		return a + Misterio (b, b-1) ;
+    }
+	else {
+		return b + Misterio (a + 1, b );
+    }
+}
+</script>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+		// Note: This example requires that you consent to location sharing when
+		// prompted by your browser. If you see the error "The Geolocation service
+		// failed.", it means you probably did not give permission for the browser to
+		// locate you.
+		var map, infoWindow, marker, geocoder;
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: {
+					lat: -34.397, 
+					lng: 150.644
+				},
+				zoom: 20
+			});
+			infoWindow = new google.maps.InfoWindow;
+
+			// Try HTML5 geolocation.
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var pos = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
+					};
+
+					infoWindow.setPosition(pos);
+					infoWindow.setContent('Ubicación encontrada');
+					infoWindow.open(map);
+					map.setCenter(pos);
+					/*
+					marker = new google.maps.Marker({
+						position: pos,
+						map: map,
+						title: 'Click para acercar'
+					});
+					marker.addListener('click', function() {
+						map.setZoom(20);
+						map.setCenter(marker.getPosition());
+					});
+					*/
+					map.addListener('center_changed', function() {
+						window.setTimeout(function() {
+							map.panTo(marker.getPosition());
+						}, 3000);
+					});	
+				}, function() {
+					handleLocationError(true, infoWindow, map.getCenter());
+				});
+			} 
+			else {
+				// Browser doesn't support Geolocation
+				handleLocationError(false, infoWindow, map.getCenter());
+			}
+
+			// Create new marker on double click event on the map
+			google.maps.event.addListener(map,'click',function(event) {
+				marker = new google.maps.Marker({
+					position: event.latLng, 
+					map: map, 
+					title: event.latLng.lat()+', '+event.latLng.lng()
+				});
+				geocoder = new google.maps.Geocoder();
+				// Update lat/long value of div when the marker is clicked
+				marker.addListener('click', function() {
+					console.log(event.latLng.lat());
+					console.log(event.latLng.lng());
+					geocoder.geocode({
+						latLng: event.latLng
+					}, function(responses) {
+						if (responses && responses.length > 0) {
+							marker.formatted_address = responses[0].formatted_address;
+							console.log(marker.formatted_address);
+						} 
+						else {
+							marker.formatted_address = 'Cannot determine address at this location.';
+						}
+						infowindow.setContent(marker.formatted_address + "<br>coordinates: " + marker.getPosition().toUrlValue(6));
+						infowindow.open(map, marker);
+					});					
+				});            
+			});
+			
+			var clickHandler = new ClickEventHandler(map, origin);
+		}
+
+		var ClickEventHandler = function(map, origin) {
+			this.origin = origin;
+			this.map = map;
+			this.directionsService = new google.maps.DirectionsService;
+			this.directionsDisplay = new google.maps.DirectionsRenderer;
+			this.directionsDisplay.setMap(map);
+			this.placesService = new google.maps.places.PlacesService(map);
+			this.infowindow = new google.maps.InfoWindow;
+			this.infowindowContent = document.getElementById('infowindow-content');
+			this.infowindow.setContent(this.infowindowContent);
+			// Listen for clicks on the map.
+			this.map.addListener('click', this.handleClick.bind(this));
+		};
+
+		ClickEventHandler.prototype.handleClick = function(event) {
+			console.log('Ha hecho click en: ' + event.latLng);
+			// If the event has a placeId, use it.
+			if (event.placeId) {
+				console.log('Selecciono el lugar:' + event.placeId);
+				// Calling e.stop() on the event prevents the default info window from
+				// showing.
+				// If you call stop here when there is no placeId you will prevent some
+				// other map click event handlers from receiving the event.
+				event.stop();
+				this.getPlaceInformation(event.placeId);
+			}
+		};
+
+		ClickEventHandler.prototype.getPlaceInformation = function(placeId) {
+			var me = this;
+			this.placesService.getDetails({placeId: placeId}, function(place, status) {
+				if (status === 'OK') {
+					me.infowindow.close();
+					me.infowindow.setPosition(place.geometry.location);
+					me.infowindowContent.children['place-icon'].src = place.icon;
+					me.infowindowContent.children['place-name'].textContent = place.name;
+					me.infowindowContent.children['place-id'].textContent = place.place_id;
+					me.infowindowContent.children['place-address'].textContent = place.formatted_address;
+					me.infowindow.open(me.map);
+				}
+			});
+		};
+
+		function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+			infoWindow.setPosition(pos);
+			infoWindow.setContent(browserHasGeolocation ?
+							  'Error: Servicio de GeoLocalización falló.' :
+							  'Error: Su navegador no soporta GeoLocalización.');
+			infoWindow.open(map);
+		}
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBHfQy42xsMNXsRqUZUF7yCiUFsmzX71w&callback=initMap">
+    </script>
+  </body>
+</html>

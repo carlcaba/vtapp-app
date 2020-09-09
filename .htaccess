@@ -1,0 +1,15 @@
+#Uncomment the following lines as you create the pages.
+
+RewriteEngine on
+#if requested resource isn't a file
+# and isn't a directory
+# then serve local error script 
+RewriteCond %{REQUEST_FILENAME} !-f  
+RewriteCond %{REQUEST_FILENAME} !-d  
+RewriteRule .* 404.php [L] 
+
+#ErrorDocument 404 /404.php
+#Not Found
+
+#ErrorDocument 500 /500.php
+#Internal Server Error
