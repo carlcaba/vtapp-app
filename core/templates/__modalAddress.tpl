@@ -111,6 +111,7 @@
 						<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i> <?= $_SESSION["CANCEL"] ?></button>
 						<button type="button" class="btn btn-primary" id="btnSelect" name="btnSelect"><i class="fa fa-plus-circle"></i> <?= $_SESSION["SAVE_AND_SELECT"] ?></button>
 						<input type="hidden" id="hfDestinyField" name="hfDestinyField" value="" />
+						<input type="hidden" id="hfLinkNewAddress" name="hfLinkNewAddress" value="<?= $dfUsrAdd->link ?>" />
 					</div>
 				</div>
 			</div>
@@ -130,6 +131,23 @@
 					}
 				});
 				$("#cbCity").trigger("change");
+				$("#btnSelect").click(function () {
+					var address = $("#cbTypeAddress option:selected").text() + " " + $("#txtAddress01").val() + " # " + $("#txtAddress02").val() + " - " + $("#txtAddress03").val() + ", " + $("#cbCity option:selected").text();
+					var field = $("#hfDestinyField").val();
+					var hfField = field.replace("txt","_");
+					var reference = field.split("_")[2];
+					$("#" + field).val(address);
+					$("#hfLATITUDE" + hfField).val(datas.latitude);
+					$("#hfLONGITUDE" + hfField).val(datas.longitude);
+					if(datas.parent_zone != "") {
+						$("#cbZone" + reference).val(datas.parent_zone);
+						$("#cbZone" + reference + "Sub").val(datas.zone_id);
+					}
+					else {
+						$("#cbZone" + reference).val(datas.zone_id);
+					}
+					$("#mdlAddress").modal("hide");
+				});
 			});
 			function makeTableAddress() {
 				if($.fn.DataTable.isDataTable('#tableAddresses')) {
