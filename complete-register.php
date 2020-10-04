@@ -77,15 +77,16 @@
 	<!-- Ionicons -->
 	<link rel="stylesheet" href="css/ionicons.min.css">
 	<!-- Theme style -->
-	<link rel="stylesheet" href="css/adminlte.min.css">
+	<link rel="stylesheet" href="css/register/adminlte.min.css">
 	<!-- Google Font: Source Sans Pro -->
-	<link href="css/fonts.css" rel="stylesheet">
+	<link href="css/register/fonts.css" rel="stylesheet">
 	<!-- iCheck -->
 	<link rel="stylesheet" href="plugins/iCheck/square/blue.css">
 	<!-- bootstrap toogle -->
 	<link rel="stylesheet" href="plugins/bootstrap-toggle/css/bootstrap-toggle.min.css"></link>	
 	<!-- form step -->
 	<link rel="stylesheet" href="plugins/step-wizard/css/step-wizard.css"></link>	
+	
 	
 </head>
 

@@ -177,249 +177,285 @@
 											<a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
 											<p><small><?= $_SESSION["SERVICE_STEP_3"] ?></small></p>
 										</div>
+										<div class="stepwizard-step col-xs-3" id="anchorStep4"> 
+											<a href="#step-4" type="button" class="btn btn-default btn-circle" disabled="disabled">4</a>
+											<p><small><?= $_SESSION["SERVICE_STEP_4"] ?></small></p>
+										</div>
+										
 									</div>
 								</div>
 							</div>
-							</div>
-							<!-- /.card-header -->
-							<div class="card-body">
-								<form id="frmService" name="frmService">
-									<div class="panel panel-primary setup-content" id="step-1">
-										<div class="panel-heading">
-											<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_1"] ?></h3>
-											<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_1"] ?></p>
+						</div>
+						<!-- /.card-header -->
+						<div class="card-body">
+							<form id="frmService" name="frmService">
+								<div class="panel panel-primary setup-content" id="step-1">
+									<div class="panel-heading">
+										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_1"] ?></h3>
+										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_1"] ?></p>
+									</div>
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-6">
+												<?= $service->showField("REQUESTED_BY", $dataForm["tabs"], "fa fa-user", "", false, $uscli->getFullName(), false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+											<div class="col-md-6">
+												<?= $service->showField("REQUESTED_EMAIL", $dataForm["tabs"], "fa fa-envelope", "", false, $uscli->EMAIL, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
 										</div>
-										<div class="panel-body">
-											<div class="row">
-												<div class="col-md-6">
-													<?= $service->showField("REQUESTED_BY", $dataForm["tabs"], "fa fa-user", "", false, $uscli->getFullName(), false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-6">
-													<?= $service->showField("REQUESTED_EMAIL", $dataForm["tabs"], "fa fa-envelope", "", false, $uscli->EMAIL, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
+										<div class="row">
+											<div class="col-md-6">
+												<?= $service->showField("REQUESTED_PHONE", $dataForm["tabs"], "fa fa-phone", "", false, $uscli->PHONE, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 											</div>
-											<div class="row">
-												<div class="col-md-6">
-													<?= $service->showField("REQUESTED_PHONE", $dataForm["tabs"], "fa fa-phone", "", false, $uscli->PHONE, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-6">
-													<?= $service->showField("REQUESTED_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", false, $uscli->CELLPHONE, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
-												</div>
+											<div class="col-md-6">
+												<?= $service->showField("REQUESTED_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", false, $uscli->CELLPHONE, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
 											</div>
-											<div class="row">
-												<div class="col-md-10">
-													<?= $service->showField("REQUESTED_ADDRESS", $dataForm["tabs"], "", "", false, $uscli->ADDRESS, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
-												</div>
-												<div class="col-md-2">
-													<div class="form-group">
-														<label>&nbsp;</label>
-														<div class="input-group">
-															<a href="#" class="anc-another-way" data-type="true" data-text="<?= $_SESSION["ORIGIN"] ?>" data-field="txtREQUESTED_ADDRESS"><small><?= $_SESSION["SELECT_ADD"] ?></small></a> 
-														</div>
+										</div>
+										<div class="row">
+											<div class="col-md-10">
+												<?= $service->showField("REQUESTED_ADDRESS", $dataForm["tabs"], "", "", false, $uscli->ADDRESS, false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
+											</div>
+											<div class="col-md-2">
+												<div class="form-group">
+													<label>&nbsp;</label>
+													<div class="input-group">
+														<a href="#" class="anc-another-way" data-type="true" data-text="<?= $_SESSION["ORIGIN"] ?>" data-field="txtREQUESTED_ADDRESS"><small><?= $_SESSION["SELECT_ADD"] ?></small></a> 
 													</div>
 												</div>
 											</div>
-											<div class="row" id="ZoneREQUESTED">
-												<div class="col-md-6">
-													<label><?= $service->arrColComments["REQUESTED_ZONE"] ?></label>
-													<select class="form-control" id="cbZoneRequest" name="cbZoneRequest" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->request_zone->showOptionList(9,$service->request_zone->ID) ?>
-													</select>
-												</div>
-												<div class="col-md-6">
+										</div>
+										<div class="row" id="ZoneREQUESTED">
+											<div class="col-md-6">
+												<label><?= $service->arrColComments["REQUESTED_ZONE"] ?></label>
+												<select class="form-control" id="cbZoneRequest" name="cbZoneRequest" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->request_zone->showOptionList(9,$service->request_zone->ID) ?>
+												</select>
+											</div>
+											<div class="col-md-6">
 <?
 	$arr = explode(" ",$service->arrColComments["REQUESTED_ZONE"]);
 	$arr2 = array_shift($arr);
 	$ctrltitle = $_SESSION["SUB_ZONE_NAME"] . " " . implode(" ", $arr);
 ?>												
-													<label><?= $ctrltitle ?></label>												
-													<select class="form-control" id="cbZoneRequestSub" name="cbZoneRequestSub" disabled>
-														<?= $service->request_zone->showOptionList(9,"",0,false) ?>
-													</select>
-												</div>
+												<label><?= $ctrltitle ?></label>												
+												<select class="form-control" id="cbZoneRequestSub" name="cbZoneRequestSub" disabled>
+													<?= $service->request_zone->showOptionList(9,"",0,false) ?>
+												</select>
 											</div>
-										</div>
-										<div class="panel-footer">
-											<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
-												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
-												<i class="fa fa-arrow-circle-right"></i>
-											</button>
 										</div>
 									</div>
-									<div class="panel panel-primary setup-content" id="step-2">
-										<div class="panel-heading">
-											<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_2"] ?></h3>
-											<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_2"] ?></p>
+									<div class="panel-footer">
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
+											<i class="fa fa-arrow-circle-right"></i>
+										</button>
+									</div>
+								</div>
+								<div class="panel panel-primary setup-content" id="step-2">
+									<div class="panel-heading">
+										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_2"] ?></h3>
+										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_2"] ?></p>
+									</div>
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_TO", $dataForm["tabs"], "fa fa-user", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_EMAIL", $dataForm["tabs"], "fa fa-envelope", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
 										</div>
-										<div class="panel-body">
-											<div class="row">
-												<div class="col-md-6">
-													<?= $service->showField("DELIVER_TO", $dataForm["tabs"], "fa fa-user", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-6">
-													<?= $service->showField("DELIVER_EMAIL", $dataForm["tabs"], "fa fa-envelope", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
+										<div class="row">
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_PHONE", $dataForm["tabs"], "fa fa-phone", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 											</div>
-											<div class="row">
-												<div class="col-md-6">
-													<?= $service->showField("DELIVER_PHONE", $dataForm["tabs"], "fa fa-phone", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-6">
-													<?= $service->showField("DELIVER_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
-												</div>
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
 											</div>
-											<div class="row">
-												<div class="col-md-10">
-													<?= $service->showField("DELIVER_ADDRESS", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
-												</div>
-												<div class="col-md-2">
-													<div class="form-group">
-														<label>&nbsp;</label>
-														<div class="input-group">
-															<a href="#" class="anc-another-way" data-type="false" data-text="<?= $_SESSION["DESTINY"] ?>" data-field="txtDELIVER_ADDRESS"><small><?= $_SESSION["SELECT_ADD"] ?></small></a> 
-														</div>
+										</div>
+										<div class="row">
+											<div class="col-md-10">
+												<?= $service->showField("DELIVER_ADDRESS", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
+											</div>
+											<div class="col-md-2">
+												<div class="form-group">
+													<label>&nbsp;</label>
+													<div class="input-group">
+														<a href="#" class="anc-another-way" data-type="false" data-text="<?= $_SESSION["DESTINY"] ?>" data-field="txtDELIVER_ADDRESS"><small><?= $_SESSION["SELECT_ADD"] ?></small></a> 
 													</div>
 												</div>
 											</div>
-											<div class="row" id="ZoneDELIVER">
-												<div class="col-md-6">
-													<label><?= $service->arrColComments["DELIVER_ZONE"] ?></label>
-													<select class="form-control" id="cbZoneDeliver" name="cbZoneDeliver" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->deliver_zone->showOptionList(9,$service->deliver_zone->ID) ?>
-													</select>
-												</div>
-												<div class="col-md-6">
+										</div>
+										<div class="row" id="ZoneDELIVER">
+											<div class="col-md-6">
+												<label><?= $service->arrColComments["DELIVER_ZONE"] ?></label>
+												<select class="form-control" id="cbZoneDeliver" name="cbZoneDeliver" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->deliver_zone->showOptionList(9,$service->deliver_zone->ID) ?>
+												</select>
+											</div>
+											<div class="col-md-6">
 <?
 	$arr = explode(" ",$service->arrColComments["DELIVER_ZONE"]);
 	$arr2 = array_shift($arr);
 	$ctrltitle = $_SESSION["SUB_ZONE_NAME"] . " " . implode(" ", $arr);
 ?>												
-													<label><?= $ctrltitle ?></label>
-													<select class="form-control" id="cbZoneDeliverSub" name="cbZoneDeliverSub" disabled>
-														<?= $service->deliver_zone->showOptionList(9,"",0,false) ?>
-													</select>
-												</div>
+												<label><?= $ctrltitle ?></label>
+												<select class="form-control" id="cbZoneDeliverSub" name="cbZoneDeliverSub" disabled>
+													<?= $service->deliver_zone->showOptionList(9,"",0,false) ?>
+												</select>
 											</div>
-										</div>
-										<div class="panel-footer">
-											<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
-												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
-												<i class="fa fa-arrow-circle-right"></i>
-											</button>
 										</div>
 									</div>
-									<div class="panel panel-primary setup-content" id="step-3">
-										<div class="panel-heading">
-											<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_3"] ?></h3>
-											<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_3"] ?></p>
-										</div>
-										<div class="panel-body">
-											<div class="row">
-												<div class="col-md-5">
-													<label><?= $service->arrColComments["CLIENT_ID"] ?> *</label>
-													<select class="form-control" id="cbClient" name="cbClient" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->client->showOptionList(9,$service->client->ID, true) ?>
-													</select>
-												</div>
-												<div class="col-md-3">
-													<label><?= $service->arrColComments["DELIVERY_TYPE"] ?> *</label>
-													<select class="form-control" id="cbDeliverType" name="cbDeliverType" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->type->showOptionList(9,$service->type->ID) ?>
-													</select>
-												</div>
-												<div class="col-md-2">
-													<?= $service->showField("QUANTITY", $dataForm["tabs"], "", "", false, "1", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-2">
-													<div class="form-group">
-														<label><?= $service->arrColComments["FRAGILE"] ?> *</label>
-														<div class="input-group">
-															<input id="cbFragile" name="cbFragile" type="checkbox" class="form-control" <?= ($service->FRAGILE ? "checked" : " ") ?> data-toggle="toggle" data-on="<?= $_SESSION["MSG_YES"] ?>" data-off="<?= $_SESSION["MSG_NO"] ?>" data-onstyle="danger" data-offstyle="primary" <?= $dataForm["readonly"][$cont++] ?> />
-														</div>
-													</div>
-												</div>
+									<div class="panel-footer">
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
+											<i class="fa fa-arrow-circle-right"></i>
+										</button>
+									</div>
+								</div>
+								<div class="panel panel-primary setup-content" id="step-3">
+									<div class="panel-heading">
+										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_3"] ?></h3>
+										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_3"] ?></p>
+									</div>
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-5">
+												<label><?= $service->arrColComments["CLIENT_ID"] ?> *</label>
+												<select class="form-control" id="cbClient" name="cbClient" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->client->showOptionList(9,$service->client->ID, true) ?>
+												</select>
 											</div>
-											<div class="row">
-												<div class="col-md-3">
-													<label><?= $service->arrColComments["VEHICLE_TYPE_ID"] ?> *</label>
-													<select class="form-control" id="cbVehicleType" name="cbVehicleType" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->vehicle->showOptionList(9,6) ?>
-													</select>
-												</div>
-												<div class="col-md-3">
-													<label><?= $service->arrColComments["TIME_START_TO_DELIVER"] ?> *</label>
-													<select class="form-control" id="cbDeliverTime" name="cbDeliverTime" <?= $dataForm["readonly"][$cont++] ?>>
-														<?= $service->showTimeOptionList(9) ?>
-													</select>
-												</div>
-												<div class="col-md-6">
-													<?= $service->showField("DELIVER_DESCRIPTION", $dataForm["tabs"], "fa fa-question-circle-o", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
+											<div class="col-md-3">
+												<label><?= $service->arrColComments["DELIVERY_TYPE"] ?> *</label>
+												<select class="form-control" id="cbDeliverType" name="cbDeliverType" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->type->showOptionList(9,$service->type->ID) ?>
+												</select>
 											</div>
-											<div class="row">
-												<div class="col-md-7">
-													<?= $service->showField("OBSERVATION", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-												</div>
-												<div class="col-md-3">
-													<?= $service->showField("PRICE", $dataForm["tabs"], "fa fa-usd", "", $dataForm["showvalue"], "0", false, "9,9,12", "disabled") ?>
-													<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
-													<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
-													<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
-													<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
-													<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
-													<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
-													<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
-													<input type="hidden" name="hfState" id="hfState" value="SERVICE_STATE_1" />
-													<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
-													<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
-													<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
-												</div>
-												<div class="col-md-2">
-													<div class="form-group">
-														<label><?= $service->arrColComments["ROUND_TRIP"] ?> *</label>
-														<div class="input-group">
-															<input id="cbRoundTrip" name="cbRoundTrip" type="checkbox" class="form-control" <?= ($service->ROUND_TRIP ? "checked" : " ") ?> data-toggle="toggle" data-on="<?= $_SESSION["MSG_YES"] ?>" data-off="<?= $_SESSION["MSG_NO"] ?>" data-onstyle="success" data-offstyle="primary" <?= $dataForm["readonly"][$cont++] ?> />
-														</div>
+											<div class="col-md-2">
+												<?= $service->showField("QUANTITY", $dataForm["tabs"], "", "", false, "1", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+											<div class="col-md-2">
+												<div class="form-group">
+													<label><?= $service->arrColComments["FRAGILE"] ?> *</label>
+													<div class="input-group">
+														<input id="cbFragile" name="cbFragile" type="checkbox" class="form-control" <?= ($service->FRAGILE ? "checked" : " ") ?> data-toggle="toggle" data-on="<?= $_SESSION["MSG_YES"] ?>" data-off="<?= $_SESSION["MSG_NO"] ?>" data-onstyle="danger" data-offstyle="primary" <?= $dataForm["readonly"][$cont++] ?> />
 													</div>
 												</div>
 											</div>
 										</div>
-										<div class="panel-footer">
-											<div class="float-left">
-												<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
+										<div class="row">
+											<div class="col-md-3">
+												<label><?= $service->arrColComments["VEHICLE_TYPE_ID"] ?> *</label>
+												<select class="form-control" id="cbVehicleType" name="cbVehicleType" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->vehicle->showOptionList(9,6) ?>
+												</select>
 											</div>
-											<div class="btn-group float-right">
+											<div class="col-md-3">
+												<label><?= $service->arrColComments["TIME_START_TO_DELIVER"] ?> *</label>
+												<select class="form-control" id="cbDeliverTime" name="cbDeliverTime" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->showTimeOptionList(9) ?>
+												</select>
+											</div>
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_DESCRIPTION", $dataForm["tabs"], "fa fa-question-circle-o", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-7">
+												<?= $service->showField("OBSERVATION", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+											<div class="col-md-3">
+												<?= $service->showField("PRICE", $dataForm["tabs"], "fa fa-usd", "", $dataForm["showvalue"], "0", false, "9,9,12", "disabled") ?>
+												<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
+												<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
+												<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
+												<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
+												<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
+												<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
+												<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
+												<input type="hidden" name="hfState" id="hfState" value="SERVICE_STATE_1" />
+												<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
+												<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
+												<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
+											</div>
+											<div class="col-md-2">
+												<div class="form-group">
+													<label><?= $service->arrColComments["ROUND_TRIP"] ?> *</label>
+													<div class="input-group">
+														<input id="cbRoundTrip" name="cbRoundTrip" type="checkbox" class="form-control" <?= ($service->ROUND_TRIP ? "checked" : " ") ?> data-toggle="toggle" data-on="<?= $_SESSION["MSG_YES"] ?>" data-off="<?= $_SESSION["MSG_NO"] ?>" data-onstyle="success" data-offstyle="primary" <?= $dataForm["readonly"][$cont++] ?> />
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer">
+										<div class="float-left">
+											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
+										</div>
+										<div class="btn-group float-right">
 <?
 	if($service->client->CLIENT_PAYMENT_TYPE_ID != 1) {
 ?>
-												<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();">
-													<i class="fa fa-money"></i>
-													<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
-												</button>
+											<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();">
+												<i class="fa fa-money"></i>
+												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
+											</button>
 <?
 	}
 ?>
-												<button type="button" title="<?= $_SESSION["SAVE"] ?>" id="btnSave" name="btnSave" class="btn btn-success pull-right" >
-													<i class="fa fa-floppy-o"></i>
-													<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"> <?= $_SESSION["SAVE"] ?></span>
-												</button>
+											<button type="button" title="<?= $_SESSION["SAVE"] ?>" id="btnSave" name="btnSave" class="btn btn-success pull-right" >
+												<i class="fa fa-floppy-o"></i>
+												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"> <?= $_SESSION["SAVE"] ?></span>
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="panel panel-primary setup-content" id="step-4">
+									<div class="panel-heading">
+										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_4"] ?></h3>
+										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_4"] ?></p>
+									</div>
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-12">
+												<div class="info-box mb-3">
+													<span class="info-box-icon"><i class="fas fa-tag"></i></span>
+													<div class="info-box-content">
+														<span class="info-box-text">Centauros</span>
+														<span class="info-box-number">$ 5,200</span>
+													</div>
+													<!-- /.info-box-content -->
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<div class="info-box mb-3">
+													<span class="info-box-icon"><i class="fas fa-tag"></i></span>
+													<div class="info-box-content">
+														<span class="info-box-text">Centauros</span>
+														<span class="info-box-number">$ 5,200</span>
+													</div>
+													<!-- /.info-box-content -->
+												</div>
 											</div>
 										</div>
 									</div>
-									
-								</form>
-							</div>
-							<!-- /.card-body -->
+								</div>
+							</form>
 						</div>
-						<!-- /.card -->
+						<!-- /.card-body -->
 					</div>
-					<!-- /.col -->
+					<!-- /.card -->
 				</div>
-				<!-- /.row -->
-			</section>
-			<!-- /.content -->
-		</div>
-		<!-- /.content-wrapper -->
+				<!-- /.col -->
+			</div>
+			<!-- /.row -->
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
 	
 <?
 	$titlepage = $_SESSION["SERVICE"];
@@ -508,6 +544,10 @@
 				success:function(data){
 					noty.close();
 					if (data.success) {
+						if($.fn.DataTable.isDataTable('#tableAddresses')) {
+							$('#tableAddresses').DataTable().clear().draw();
+							$('#tableAddresses').DataTable().destroy();
+						}
 						$("#tableAddressesBody").empty();
 						$.each(data.data, function(key, value) {
 							$('#tableAddressesBody').append('<tr><td>' + value.name + '</td><td>' + value.address + '</td><td>' + value.zone + '</td><td>' + value.button + '</td></tr>');
@@ -532,6 +572,16 @@
 			$('#btnPayment').attr("disabled", opt == "off");
 			$('#btnSave').attr("disabled", opt != "off");
 			$("#hfIsMarco").val(opt);
+			/*
+			if(opt != "off") {
+				$("#anchorStep4").fadeIn();
+				$("#step-4").fadeIn();
+			}
+			else {
+				$("#anchorStep4").fadeOut();
+				$("#step-4").fadeOut();
+			}
+			*/
 		});
 		$("#cbDeliverType").on("change", function(e) {
 			var selected = $("option:selected", this);
@@ -572,6 +622,8 @@
 			var val = $(this).val().toUpperCase();
 			var id = $(this).attr('id');
 			var ref = id.split("_")[0];
+			console.log(val);
+			console.log(ref);
 			if(val.indexOf("BOGOTÁ") > -1)
 				$("#" + ref.replace("txt","Zone")).fadeIn();
 			else 

@@ -4,41 +4,38 @@
 
 //Incluye las clases dependientes
 require_once("table.php");
-require_once("users.php");
+require_once("partner.php");
 require_once("zone.php");
 require_once("city.php");
-require_once("address_type.php");
 
-class user_address extends table {
-	var $zone;
+class partner_rate extends table {
+	var $partner;
+	var $zoneO;
+	var $zoneD;
 	var $city;
-	var $usua;
-	var $type;
 	var $view;
 
 	//Constructor de la clase
 	function __constructor() {
-		$this->user_address();
+		$this->partner_rate();
 	}
 	
 	//Constructor anterior
-	function user_address() {
+	function partner_rate() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_USER_ADDRESSES");
+		parent::tabla("TBL_PARTNER_RATE");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		//Clases relacionadas
-		$this->zone = new zone();
+		$this->zoneO = new zone();
+		$this->zoneD = new zone();
 		$this->city = new city();
-		$this->city->setCountry(53);
-		$this->usua = new users();
-		$this->type = new address_type();
+		$this->partner = new partner();
 		//Vista relacionada
-		$this->view = "VIE_USER_ADDRESSES_SUMMARY";
-		$this->setUser($_SESSION['vtappcorp_userid']);
+		$this->view = "VIE_PARTNER_RATE_SUMMARY";
 	}
 
     //Funcion para Set la ciudad
@@ -77,67 +74,106 @@ class user_address extends table {
 		}
     }	
 
-    //Funcion para Set el usuario
-    function setUser($value) {
+    //Funcion para Set el aliado
+    function setPartner($value) {
 		//Asigna la informacion
-		$this->usua->ID = $value;
+		$this->partner->ID = $value;
 		//Verifica la informacion
-		$this->usua->__getInformation();
+		$this->partner->__getInformation();
 		//Si no hubo error
-		if($this->usua->nerror == 0) {
+		if($this->partner->nerror == 0) {
 			//Asigna el valor
-			$this->USER_ID = $value;
+			$this->PARTNER_ID = $value;
 			//Genera error
 			$this->nerror = 0;
 			$this->error = "";
 		}
 		else {
 			//Asigna valor por defecto
-			$this->USER_ID = "NULL";
+			$this->PARTNER_ID = "NULL";
 			//Genera error
 			$this->nerror = 20;
-			$this->error = "User " . $_SESSION["NOT_REGISTERED"];
+			$this->error = "Partner " . $_SESSION["NOT_REGISTERED"];
 		}
     }
 	
-    //Funcion para Get el usuario
+    //Funcion para Get el aliado
     function getUser() {
-		//Asigna el valor del usuario
-		$this->USER_ID = $this->usua->ID;
+		//Asigna el valor del aliado
+		$this->PARTNER_ID = $this->partner->ID;
 		//Busca la informacion
-		$this->usua->__getInformation();
+		$this->partner->__getInformation();
     }	
 
-    //Funcion para Set la zona
-    function setZone($value) {
+    //Funcion para Set la zona origen
+    function setZoneOrigin($value) {
 		//Asigna la informacion
-		$this->zone->ID = $value;
+		$this->zoneO->ID = $value;
 		//Verifica la informacion
-		$this->zone->__getInformation();
+		$this->zoneO->__getInformation();
 		//Si no hubo error
-		if($this->zone->nerror == 0) {
+		if($this->zoneO->nerror == 0) {
 			//Asigna el valor
-			$this->ZONE_ID = $value;
+			$this->ZONE_ORIGIN_ID = $value;
 			//Genera error
 			$this->nerror = 0;
 			$this->error = "";
 		}
 		else {
 			//Asigna valor por defecto
-			$this->ZONE_ID = "NULL";
+			$this->ZONE_ORIGIN_ID = "NULL";
 			//Genera error
 			$this->nerror = 20;
-			$this->error = "Zone " . $_SESSION["NOT_REGISTERED"];
+			$this->error = "Zone Origin " . $_SESSION["NOT_REGISTERED"];
 		}
     }
 	
-    //Funcion para Get la zona
-    function getZone() {
+    //Funcion para Get la zona origen
+    function getZoneOrigin() {
 		//Asigna el valor de la zona
-		$this->ZONE_ID = $this->zone->ID;
+		$this->ZONE_ORIGIN_ID = $this->zoneO->ID;
 		//Busca la informacion
-		$this->zone->__getInformation();
+		$this->zoneO->__getInformation();
     }	
+
+    //Funcion para Set la zona destino
+    function setZoneDestination($value) {
+		//Asigna la informacion
+		$this->zoneD->ID = $value;
+		//Verifica la informacion
+		$this->zoneD->__getInformation();
+		//Si no hubo error
+		if($this->zoneD->nerror == 0) {
+			//Asigna el valor
+			$this->ZONE_DESTINATION_ID = $value;
+			//Genera error
+			$this->nerror = 0;
+			$this->error = "";
+		}
+		else {
+			//Asigna valor por defecto
+			$this->ZONE_DESTINATION_ID = "NULL";
+			//Genera error
+			$this->nerror = 20;
+			$this->error = "Zone destination " . $_SESSION["NOT_REGISTERED"];
+		}
+    }
+	
+    //Funcion para Get la zona destino
+    function getZoneDestination() {
+		//Asigna el valor de la zona
+		$this->ZONE_DESTINATION_ID = $this->zoneD->ID;
+		//Busca la informacion
+		$this->zoneD->__getInformation();
+    }	
+
+
+	//Funcion para seleccionar operador
+	function selectPartner() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT ";
+		
+	}
 
 	function dataForm($action, $tabs = 5) {
 		$resources = new resources();
@@ -239,7 +275,7 @@ class user_address extends table {
 	//Funcion para mostrar los registros en una tabla
 	function showTableData() {
 		//Arma la sentencia SQL
-        $this->sql = "SELECT USER_ADDRESS_ID, ADDRESS_NAME, ADDRESS, ZONE_NAME, PARENT_ZONE_NAME, CITY_NAME, COUNTRY, LATITUDE, LONGITUDE " .
+        $this->sql = "SELECT partner_rate_ID, ADDRESS_NAME, ADDRESS, ZONE_NAME, PARENT_ZONE_NAME, CITY_NAME, COUNTRY, LATITUDE, LONGITUDE " .
 					"FROM " . $this->view . " WHERE USER_ID = '" . $_SESSION['vtappcorp_userid'] . "' ORDER BY ADDRESS_NAME";
 		$count = 0;
 		//Recorre los valores
@@ -262,7 +298,7 @@ class user_address extends table {
 	//Funcion para mostrar los registros en una tabla
 	function showTableDataJSON($type) {
 		//Arma la sentencia SQL
-        $this->sql = "SELECT USER_ADDRESS_ID, ADDRESS_NAME, ADDRESS, ZONE_NAME, PARENT_ZONE_NAME, CITY_NAME, COUNTRY, LATITUDE, LONGITUDE, ZONE_ID, PARENT_ZONE " .
+        $this->sql = "SELECT partner_rate_ID, ADDRESS_NAME, ADDRESS, ZONE_NAME, PARENT_ZONE_NAME, CITY_NAME, COUNTRY, LATITUDE, LONGITUDE, ZONE_ID, PARENT_ZONE " .
 					"FROM " . $this->view . " WHERE USER_ID = '" . $_SESSION['vtappcorp_userid'] . "' AND IS_ORIGIN = " . strtoupper($type) . " ORDER BY ADDRESS_NAME";
 		//Variable a retornar
 		$return = array();

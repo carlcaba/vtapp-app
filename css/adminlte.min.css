@@ -210,3 +210,8 @@ button.dropdown-toggle-register {
 .timeline-inverse > li > .timeline-item > .timeline-header {
   border-bottom-color: #ddd;
 }
+
+option:disabled {
+	color: -internal-light-dark(graytext, rgb(170, 170, 170));
+	background-color: #ebedec;
+}

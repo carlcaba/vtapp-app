@@ -93,6 +93,10 @@ class zone extends table {
 		$this->sql = "SELECT DISTINCT ZONE_ID, ZONE_NAME, CONCAT(FULL_STREET,' => ',FULL_AVENUE), PARENT_ZONE, LATITUDE_FROM, LONGITUDE_FROM, PARENT_ZONE_NAME " .
 					"FROM $this->view WHERE IS_BLOCKED = FALSE AND ZONE_NAME LIKE '%" . $term . "%' " .
 					"ORDER BY 2";
+		$this->sql = "SELECT DISTINCT Z.ZONE_ID, Z.ZONE_NAME, CONCAT(Z.FULL_STREET,' => ',Z.FULL_AVENUE), Z.PARENT_ZONE, Z.LATITUDE_FROM, Z.LONGITUDE_FROM, " .
+				"(SELECT ZONE_NAME FROM $this->table WHERE ID = Z.PARENT_ZONE LIMIT 1) PARENT_ZONE_NAME " .
+				"FROM $this->view Z WHERE Z.IS_BLOCKED = FALSE AND Z.ZONE_NAME LIKE '%" . $term . "%' ORDER BY 2";
+					
 		//Variable a retornar
 		$return = array();
 		//Recorre los valores
@@ -132,6 +136,12 @@ class zone extends table {
 		//Arma la sentencia SQL
 		$this->sql = "SELECT DISTINCT ZONE_ID, ZONE_NAME, CONCAT(FULL_STREET,' => ',FULL_AVENUE), PARENT_ZONE, LATITUDE_FROM, LONGITUDE_FROM FROM $this->view WHERE IS_BLOCKED = FALSE AND " .
 			(!$parent ? "NOT " : "") . "PARENT_ZONE IS NULL ORDER BY 2";
+			
+		$this->sql = "SELECT DISTINCT Z.ZONE_ID, Z.ZONE_NAME, CONCAT(Z.FULL_STREET,' => ',Z.FULL_AVENUE), Z.PARENT_ZONE, Z.LATITUDE_FROM, Z.LONGITUDE_FROM, " .
+				"(SELECT ZONE_NAME FROM $this->table WHERE ID = Z.PARENT_ZONE LIMIT 1) PARENT_ZONE_NAME " .
+				"FROM $this->view Z WHERE Z.IS_BLOCKED = FALSE AND " .
+			(!$parent ? "NOT " : "") . "PARENT_ZONE IS NULL ORDER BY 2";
+			
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -144,7 +154,7 @@ class zone extends table {
 			$child = "";
 			$latlon = "";
 			if(!$parent) {
-				$text .= " (" . $row[2] . ")";
+				$text .= " (" . $row[6] . ")";
 				$child = "data-parent=\"" . $row[3] . "\"";
 				$latlon = "data-latitude=\"" . $row[4] . "\" data-longitude=\"" . $row[5] . "\"";
 			}
