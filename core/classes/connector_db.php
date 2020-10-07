@@ -14,11 +14,11 @@ class connector_db {
 										"port" => 3306,
 										"user" => "vtappcorp_user",
 										"pass" => "pSJaFhAYkFZqCPB5PTt"),
-						"test" => array("db" => "logicaad_vtapp",
-										"host" => "162.215.248.225",
+						"test" => array("db" => "vtapp_dev_db",
+										"host" => "vtapp-mysql-server.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "logicaad_vtapp_u",
-										"pass" => "Vt4ppC0rp0r1t3$"),
+										"user" => "vtappadmin@vtapp-mysql-server",
+										"pass" => "Vtapp-colo20."),
 						"deve" => array("db" => "vtappcorp",
 										"host" => "127.0.0.1",
 										"port" => 3306,
@@ -75,7 +75,7 @@ var $dataAlt = array(
 	var $conex_id = 0;
 	var $query_id = 0;
 	
-	var $env = "deve";
+	var $env = "test";
 	var $maxAlt = 0;
 	/* numero de error y texto error */
 	var $Errno = 0;
@@ -93,7 +93,7 @@ var $dataAlt = array(
 	
 	//Constructor anterior
     function connector_db() {
-		$this->env = "deve";
+		$this->env = "test";
 		$this->conex_id = 0;
 		$this->maxAlt = $this->getMaxAlternateConnections();
 		foreach($this->datas as $key => $value) {
