@@ -67,6 +67,11 @@
 		$service->TIME_START_TO_DELIVER = $datas->hfTimeStart;
 		$service->TIME_FINISH_TO_DELIVER = $datas->hfTimeEnd;
 		
+		$service->TOTAL_WIDTH = $datas->txtTOTAL_WIDTH;
+		$service->TOTAL_HEIGHT = $datas->txtTOTAL_HEIGHT;
+		$service->TOTAL_LENGTH = $datas->txtTOTAL_LENGTH;
+		$service->TOTAL_WEIGHT = $datas->txtTOTAL_WEIGHT;
+		
 		$service->FRAGILE = $datas->cbFragile ? "TRUE" : "FALSE";
 		$service->ROUND_TRIP = $datas->cbRoundTrip ? "TRUE" : "FALSE";
 		

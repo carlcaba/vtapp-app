@@ -170,7 +170,7 @@ class users extends table {
 			$this->REFERENCE = "";
 			$this->PHONE = "12184366";
 			$this->CELLPHONE = "3002764204";
-			$this->ADDRESS = "Carrera 98a #65-10, Bogota, Colombia";
+			$this->ADDRESS = "Carrera 98a #65-10, Bogotá, Colombia";
 			$this->REGISTERED_ON = "2016-10-01";
 			$this->CHANGE_PASSWORD = 0;
 			$this->IS_BLOCKED = 0;
@@ -238,7 +238,7 @@ class users extends table {
 			$this->LAST_NAME = "";
 			$this->PHONE = "12184366";
 			$this->CELLPHONE = "3002764204";
-			$this->ADDRESS = "Carrera 98a #65-10, Bogota, Colombia";
+			$this->ADDRESS = "Carrera 98a #65-10, Bogotá, Colombia";
 			$this->REFERENCE = "";
 			$this->EMAIL = $this->adminMail;
 			$this->REGISTERED_ON = "2016-10-01";
@@ -448,7 +448,7 @@ class users extends table {
 				$this->PHONE = "12184366";
 				$this->CELLPHONE = "3002764204";
 				$this->REFERENCE = "";
-				$this->ADDRESS = "Carrera 98a #65-10, Bogota, Colombia";
+				$this->ADDRESS = "Carrera 98a #65-10, Bogotá, Colombia";
 				$this->REGISTERED_ON = "2016-10-01";
 				$this->FIRST_TIME = 0;
 				$this->CHANGE_PASSWORD = 0;

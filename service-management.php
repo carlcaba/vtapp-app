@@ -6,7 +6,6 @@
     include("core/__load-resources.php");
 
 	require_once("core/classes/interfaces.php");
-	require_once("core/classes/interfaces.php");
 	
 	$inter = new interfaces();
 	$conf = new configuration("PAYMENT_MERCHANT_ID");
@@ -320,7 +319,7 @@
 									</div>
 									<div class="panel-body">
 										<div class="row">
-											<div class="col-md-5">
+											<div class="col-md-3">
 												<label><?= $service->arrColComments["CLIENT_ID"] ?> *</label>
 												<select class="form-control" id="cbClient" name="cbClient" <?= $dataForm["readonly"][$cont++] ?>>
 													<?= $service->client->showOptionList(9,$service->client->ID, true) ?>
@@ -343,42 +342,6 @@
 													</div>
 												</div>
 											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-3">
-												<label><?= $service->arrColComments["VEHICLE_TYPE_ID"] ?> *</label>
-												<select class="form-control" id="cbVehicleType" name="cbVehicleType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $service->vehicle->showOptionList(9,6) ?>
-												</select>
-											</div>
-											<div class="col-md-3">
-												<label><?= $service->arrColComments["TIME_START_TO_DELIVER"] ?> *</label>
-												<select class="form-control" id="cbDeliverTime" name="cbDeliverTime" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $service->showTimeOptionList(9) ?>
-												</select>
-											</div>
-											<div class="col-md-6">
-												<?= $service->showField("DELIVER_DESCRIPTION", $dataForm["tabs"], "fa fa-question-circle-o", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-7">
-												<?= $service->showField("OBSERVATION", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
-											</div>
-											<div class="col-md-3">
-												<?= $service->showField("PRICE", $dataForm["tabs"], "fa fa-usd", "", $dataForm["showvalue"], "0", false, "9,9,12", "disabled") ?>
-												<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
-												<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
-												<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
-												<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
-												<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
-												<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
-												<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
-												<input type="hidden" name="hfState" id="hfState" value="SERVICE_STATE_1" />
-												<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
-												<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
-												<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
-											</div>
 											<div class="col-md-2">
 												<div class="form-group">
 													<label><?= $service->arrColComments["ROUND_TRIP"] ?> *</label>
@@ -388,7 +351,54 @@
 												</div>
 											</div>
 										</div>
+										<div class="row">
+											<div class="col-md-2">
+												<label><?= $service->arrColComments["TIME_START_TO_DELIVER"] ?> *</label>
+												<select class="form-control" id="cbDeliverTime" name="cbDeliverTime" <?= $dataForm["readonly"][$cont++] ?>>
+													<?= $service->showTimeOptionList(9) ?>
+												</select>
+											</div>
+											<div class="col-md-2">
+												<?= $service->showField("TOTAL_WIDTH", $dataForm["tabs"], "fa fa-arrows-h", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+											</div>
+											<div class="col-md-2">
+												<?= $service->showField("TOTAL_HEIGHT", $dataForm["tabs"], "fa fa-arrows-v", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+											</div>
+											<div class="col-md-2">
+												<?= $service->showField("TOTAL_LENGTH", $dataForm["tabs"], "fa fa-expand", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+											</div>
+											<div class="col-md-2">
+												<?= $service->showField("TOTAL_WEIGHT", $dataForm["tabs"], "fa fa-balance-scale", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+											</div>
+											<div class="col-md-2">
+												<?= $service->showField("PRICE", $dataForm["tabs"], "fa fa-usd", "", $dataForm["showvalue"], "0", false, "9,9,12", "disabled") ?>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+												<?= $service->showField("DELIVER_DESCRIPTION", $dataForm["tabs"], "fa fa-question-circle-o", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+											<div class="col-md-6">
+												<?= $service->showField("OBSERVATION", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											</div>
+										</div>
 									</div>
+									<div class="panel-footer">
+										<div class="float-left">
+											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
+										</div>
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
+											<i class="fa fa-arrow-circle-right"></i>
+										</button>
+									</div>
+								</div>
+								<div class="panel panel-primary setup-content" id="step-4">
+									<div class="panel-heading">
+										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_4"] ?></h3>
+										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_4"] ?></p>
+									</div>
+									<div class="panel-body" id="panelBodyPartners"></div>
 									<div class="panel-footer">
 										<div class="float-left">
 											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
@@ -397,49 +407,32 @@
 <?
 	if($service->client->CLIENT_PAYMENT_TYPE_ID != 1) {
 ?>
-											<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();">
+											<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();" disabled>
 												<i class="fa fa-money"></i>
 												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
 											</button>
 <?
 	}
 ?>
-											<button type="button" title="<?= $_SESSION["SAVE"] ?>" id="btnSave" name="btnSave" class="btn btn-success pull-right" >
+											<button type="button" title="<?= $_SESSION["SAVE"] ?>" id="btnSave" name="btnSave" class="btn btn-success pull-right" disabled>
 												<i class="fa fa-floppy-o"></i>
 												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"> <?= $_SESSION["SAVE"] ?></span>
 											</button>
-										</div>
-									</div>
-								</div>
-								<div class="panel panel-primary setup-content" id="step-4">
-									<div class="panel-heading">
-										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_4"] ?></h3>
-										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_4"] ?></p>
-									</div>
-									<div class="panel-body">
-										<div class="row">
-											<div class="col-md-12">
-												<div class="info-box mb-3">
-													<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-													<div class="info-box-content">
-														<span class="info-box-text">Centauros</span>
-														<span class="info-box-number">$ 5,200</span>
-													</div>
-													<!-- /.info-box-content -->
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-12">
-												<div class="info-box mb-3">
-													<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-													<div class="info-box-content">
-														<span class="info-box-text">Centauros</span>
-														<span class="info-box-number">$ 5,200</span>
-													</div>
-													<!-- /.info-box-content -->
-												</div>
-											</div>
+											<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
+											<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
+											<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
+											<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
+											<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
+											<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
+											<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
+											<input type="hidden" name="hfState" id="hfState" value="SERVICE_STATE_1" />
+											<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
+											<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
+											<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
+											<input type="hidden" name="hfRateId" id="hfRateId" value="" />
+											<input type="hidden" name="hfPartnerName" id="hfPartnerName" value="" />
+											<input type="hidden" name="cbVehicleType" id="cbVehicleType" value="" />
+											<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="" />
 										</div>
 									</div>
 								</div>
@@ -450,12 +443,10 @@
 					<!-- /.card -->
 				</div>
 				<!-- /.col -->
-			</div>
 			<!-- /.row -->
-		</section>
-		<!-- /.content -->
-	</div>
-	<!-- /.content-wrapper -->
+			</section>
+			<!-- /.content -->
+		</div>
 	
 <?
 	$titlepage = $_SESSION["SERVICE"];
@@ -479,6 +470,7 @@
 	include("core/templates/__modalUpload.tpl");
 
 ?>
+	<!-- /.content-wrapper -->
 
 	<!-- SlimScroll -->
 	<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
@@ -572,16 +564,6 @@
 			$('#btnPayment').attr("disabled", opt == "off");
 			$('#btnSave').attr("disabled", opt != "off");
 			$("#hfIsMarco").val(opt);
-			/*
-			if(opt != "off") {
-				$("#anchorStep4").fadeIn();
-				$("#step-4").fadeIn();
-			}
-			else {
-				$("#anchorStep4").fadeOut();
-				$("#step-4").fadeOut();
-			}
-			*/
 		});
 		$("#cbDeliverType").on("change", function(e) {
 			var selected = $("option:selected", this);
@@ -601,9 +583,31 @@
 					},
 					success:function(data){
 						noty.close();
+						$("#hfPRICE").val("");
+						$("#txtPRICE").val("");
+						$("#hfRateId").val("");
+						$("#hfPartnerName").val("");
+						$("#hfPartnerId").val("");
+						$("#panelBodyPartners").html("");
+						$("#btnPayment").attr("disabled",true);
+						$("#btnSave").attr("disabled",true);
+						$("[id^='spanSelected_']" ).hide();
 						if(data.success) {
-							$("#txtPRICE").val(data.message);
-							$("#hfPRICE").val(data.message);
+							$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
+							$("#panelBodyPartners").html(data.message);
+							$(".optPartner").on("click", function() {
+								var datas = $(this).data();
+								$("#hfRateId").val($(this).val());
+								$("#hfPRICE").val(datas.rate);
+								$("#txtPRICE").val(FormatNumber(datas.rate,2));
+								$("#hfPartnerName").val(datas.partner);
+								$("#cbVehicleType").val(datas.vehicle);
+								$("#hfPartnerId").val(datas.partnerid);
+								$("[id^='spanSelected_']" ).hide();
+								$("#spanSelected_" + $(this).val()).show();
+								$("#btnPayment").attr("disabled",false);
+								$("#btnSave").attr("disabled",false);
+							});
 						}
 						else 
 							notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
@@ -615,20 +619,19 @@
 					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
 			}
 		});
-		$("[id*=_ADDRESS]").on('input', function() {
-			$('#cbDeliverType').trigger("change");
-		});
-		$("[id$=_ADDRESS]").on('change', function() {
-			var val = $(this).val().toUpperCase();
-			var id = $(this).attr('id');
+		var checkAddressChange = function(obj) {
+			var val = $(obj).val().toUpperCase();
+			var id = $(obj).attr('id');
 			var ref = id.split("_")[0];
-			console.log(val);
-			console.log(ref);
 			if(val.indexOf("BOGOTÁ") > -1)
 				$("#" + ref.replace("txt","Zone")).fadeIn();
 			else 
 				$("#" + ref.replace("txt","Zone")).fadeOut();
-		});
+			$('#cbDeliverType').trigger("change");
+		};
+		$("[id*=_ADDRESS]").on('input', function () { checkAddressChange(this) });
+		$("[id$=_ADDRESS]").on('change', function () { checkAddressChange(this) });
+		$("[id$=_ADDRESS]").focusout(function () { checkAddressChange(this) });
 		$("#btnSave").on("click", function(e) {
 			if($("#txtPRICE").val() == "0") {
 				$('#cbDeliverType').trigger("change");
@@ -835,6 +838,15 @@
 		}
 		if(!datasObj.hasOwnProperty("hfPayed")) {
 			datasObj["hfPayed"] = $("#hfPayed").val();
+		}
+		if(!datasObj.hasOwnProperty("hfRateId")) {
+			datasObj["hfRateId"] = $("#hfRateId").val();
+		}
+		if(!datasObj.hasOwnProperty("cbVehicleType")) {
+			datasObj["cbVehicleType"] = $("#cbVehicleType").val();
+		}
+		if(!datasObj.hasOwnProperty("hfPartnerId")) {
+			datasObj["hfPartnerId"] = $("#hfPartnerId").val();
 		}
 		return datasObj;	
 	}

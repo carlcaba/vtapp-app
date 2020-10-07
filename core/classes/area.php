@@ -161,12 +161,17 @@ class area extends table {
 	}
 	
 	//Funcion que despliega los valores en un area
-	function showOptionList($tabs = 8,$selected = "") {
+	function showOptionList($tabs = 8,$selected = "", $isPartner = false) {
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
-		//Arma la sentencia SQL
-		$this->sql = "SELECT A.AREA_ID, A.AREA_NAME, A.CLIENT_ID FROM $this->view A WHERE A.IS_BLOCKED = FALSE ORDER BY A.AREA_NAME";
+		if(!$isPartner) 
+			//Arma la sentencia SQL
+			$this->sql = "SELECT A.AREA_ID, A.AREA_NAME, A.CLIENT_ID FROM $this->view A WHERE A.IS_BLOCKED = FALSE ORDER BY A.AREA_NAME";
+		else 
+			//Arma la sentencia SQL
+			$this->sql = "SELECT A.ID, A.AREA_NAME, A.CLIENT_ID, P.PARTNER_NAME FROM $this->table A INNER JOIN TBL_PARTNER P ON (P.ID = A.CLIENT_ID) WHERE A.IS_BLOCKED = FALSE AND PARTNER = TRUE ORDER BY A.AREA_NAME";
+			
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -175,6 +180,8 @@ class area extends table {
                 //Guarda la informacion en GLOBALS
                 $row[1] = utf8_encode($row[1]);
             }
+			if($isPartner) 
+				$row[1] = $row[1] . " (" . $row[3] . ")";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al dise�o segun GUI

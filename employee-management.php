@@ -32,6 +32,7 @@
 	$uscli = new users($_SESSION["vtappcorp_userid"]);
 
 	$action = "";
+	$isPartner = $inter->getParentMenuId($filename) == 3;
 	$id = "";
 	if(!empty($_GET['id'])) {
 		$id = $_GET['id'];
@@ -42,7 +43,7 @@
 	
 	if($id == "" && $action != "new") {
 		//Verifica si es un aliado 
-		if(substr($uscli->access->PREFIX,0,2) == "AL")
+		if(substr($uscli->access->PREFIX,0,2) == "AL") 
 			$id = $uscli->REFERENCE;
 		//Si sigue siendo vacio
 		if($id == "")
@@ -65,22 +66,22 @@
 	
 	switch($action) {
 		case "new": {
-			$title = $_SESSION["MENU_NEW"];
+			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  $_SESSION["NEW_TEXT"];
 			break;
 		}
 		case "edit": {
-			$title = $_SESSION["MENU_EDIT"];
+			$titlepage = $_SESSION["MENU_EDIT"];
 			$text_title =  $_SESSION["EDIT_TEXT"];
 			break;
 		}
 		case "delete": {
-			$title = $_SESSION["MENU_DELETE"];
+			$titlepage = $_SESSION["MENU_DELETE"];
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			break;
 		}
 		case "view": {
-			$title = $_SESSION["VIEW"];
+			$titlepage = $_SESSION["VIEW"];
 			$text_title =  $_SESSION["INFORMATION"];
 			break;
 		}
@@ -130,7 +131,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $title ?> <?= $_SESSION["EMPLOYEE"] ?></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $_SESSION["EMPLOYEE"] ?></h1>
 						</div>
 						<!-- /.col -->
 <?
@@ -182,7 +183,7 @@
 											<div class="form-group">
 												<label><?= $employee->arrColComments["AREA_ID"] ?> *</label>
 												<select class="form-control" id="cbArea" name="cbArea" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $employee->area->showOptionList(9,$employee->area->ID) ?>
+													<?= $employee->area->showOptionList(9,$employee->area->ID,$isPartner) ?>
 												</select>
 											</div>
 										</div>
@@ -341,10 +342,13 @@
 		$('[data-toggle="tooltip"]').tooltip();
 		$("#cbPartner").on("change", function () {
 			var value = $(this).val();
+			var datas = $(this).children("option:selected").data();
 			$("#cbArea").removeAttr("disabled");
 			$("#cbArea").find("option[data-client-id='" + value + "']").removeAttr("disabled");
 			$("#cbArea").find("option[data-client-id!='" + value + "']").attr("disabled","disabled");
 			$('#cbArea option:not([disabled]):first').attr('selected', 'selected');
+			$("#txtADDRESS").val(datas.address);
+			
 		});
 		$("#cbUser").on("change", function () {
 			var value = $(this).val();

@@ -45,25 +45,25 @@
 	
 	switch($action) {
 		case "new": {
-			$title = $_SESSION["MENU_NEW"];
+			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  $_SESSION["NEW_TEXT"];
 			$user = new users();
 			break;
 		}
 		case "edit": {
-			$title = $_SESSION["MENU_EDIT"];
+			$titlepage = $_SESSION["MENU_EDIT"];
 			$text_title =  $_SESSION["EDIT_TEXT"];
 			$user = new users($id);
 		break;
 		}
 		case "delete": {
-			$title = $_SESSION["MENU_DELETE"];
+			$titlepage = $_SESSION["MENU_DELETE"];
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			$user = new users($id);
 			break;
 		}
 		case "view": {
-			$title = $_SESSION["VIEW"];
+			$titlepage = $_SESSION["VIEW"];
 			$text_title =  $_SESSION["INFORMATION"];
 			$user = new users($id);
 			break;
@@ -114,7 +114,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $title ?> <?= $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
 						</div>
 						<!-- /.col -->
 <?

@@ -96,15 +96,15 @@ class partner extends table {
 		//Verifica el acceso del usuario
 		if($_SESSION["vtappcorp_useraccessid"] == 100) {
 			//Arma la sentencia SQL
-			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY FROM $this->view WHERE IS_BLOCKED = FALSE ORDER BY 2"; 
+			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY, ADDRESS FROM $this->view WHERE IS_BLOCKED = FALSE ORDER BY 2"; 
 		}
 		else if(substr($_SESSION['vtappcorp_useraccess'],0,2) == "CL") {
 			//Arma la sentencia SQL
-			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, CITY FROM VIE_PARTNER_CLIENT_SUMMARY WHERE IS_BLOCKED = FALSE AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "' ORDER BY 2"; 
+			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, CITY, ADDRESS FROM VIE_PARTNER_CLIENT_SUMMARY WHERE IS_BLOCKED = FALSE AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "' ORDER BY 2"; 
 		}
 		else if(substr($_SESSION['vtappcorp_useraccess'],0,2) == "AL") {
 			//Arma la sentencia SQL
-			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY FROM $this->view WHERE IS_BLOCKED = FALSE AND PARTNER_ID = " . $this->_checkDataType("ID") . " ORDER BY 2"; 
+			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY, ADDRESS FROM $this->view WHERE IS_BLOCKED = FALSE AND PARTNER_ID = " . $this->_checkDataType("ID") . " ORDER BY 2"; 
 		}
 		//Variable a retornar
 		$return = "$stabs<option value=\"\">" . $_SESSION["SELECT_OPTION"] . "</option>\n";
@@ -117,10 +117,10 @@ class partner extends table {
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $row[1] . " (" . $row[2] . ")</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' selected data-address=\"$row[3]\">" . $row[1] . " (" . $row[2] . ")</option>\n";
 			else
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "'>" . $row[1] . " (" . $row[2] . ")</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' data-address=\"$row[3]\">" . $row[1] . " (" . $row[2] . ")</option>\n";
 		}
 		//Retorna
 		return $return;

@@ -49,9 +49,9 @@
 		else {
 			$address->setZone($zone->ID);
 		}
-		$address->LATITUDE = $datas->hfLATITUDE_USER_ADDRESS;
-		$address->LONGITUDE = $datas->hfLONGITUDE_USER_ADDRESS;
-		$address->IS_ORIGIN = strtoupper($datas->IsOrigin);
+		$address->LATITUDE = $datas->hfLATITUDE_USER_ADDRESS == "" ? 0 : $datas->hfLATITUDE_USER_ADDRESS;
+		$address->LONGITUDE = $datas->hfLONGITUDE_USER_ADDRESS == "" ? 0 : $datas->hfLONGITUDE_USER_ADDRESS;
+		$address->IS_ORIGIN = $datas->IsOrigin ? "TRUE" : "FALSE";
 		$address->IS_BLOCKED = "FALSE";
 		
 		$address->_add();

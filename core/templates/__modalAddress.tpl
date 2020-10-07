@@ -177,6 +177,10 @@
 					var datasObj = $frm.serializeObject();
 					datasObj = checkSerializedAddressObject(datasObj);
 					var datas = JSON.stringify(datasObj);
+					if(datasObj.ZoneVisible) {
+						$("#cbZone" + reference).val($("#cbZone").val());
+						$("#cbZone" + reference + "Sub").val($("#cbSubZone").val());
+					}
 					$("#spanTitle").html(title);
 					$("#spanTitleName").html("");
 					$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
@@ -195,10 +199,6 @@
 								noty.close();
 								notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 								if(data.success) {
-									if(datasObj.ZoneVisible) {
-										$("#cbZone" + reference).val($("#cbZone").val());
-										$("#cbZone" + reference + "Sub").val($("#cbSubZone").val());
-									}
 									eval(data.link);
 								}
 							}

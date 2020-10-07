@@ -226,6 +226,24 @@ class interfaces extends table {
         return $result;
     }
 	
+    //Funcion para devolver el parent id de un menu
+    public function getParentMenuId($link) {
+        $result = 0;
+		$link = str_replace("#","",$link);
+		if(strpos($link,";") !== false)
+			$link = substr($link,0,strpos($link,";"));
+        //Arma la sentencia SQL
+        $this->sql = "SELECT PARENT_ID FROM $this->table WHERE LINK = '$link' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Valida el resultado
+        if($row) {
+            $result = $row[0];
+        }
+        //Regresa
+        return $result;
+    }
+
     //Funcion para devolver el registro de un menu
     public function getMenuInformation($id) {
 		$result = null;

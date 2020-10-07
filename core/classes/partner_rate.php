@@ -5,14 +5,11 @@
 //Incluye las clases dependientes
 require_once("table.php");
 require_once("partner.php");
-require_once("zone.php");
-require_once("city.php");
+require_once("vehicle_type.php");
 
 class partner_rate extends table {
 	var $partner;
-	var $zoneO;
-	var $zoneD;
-	var $city;
+	var $vehicle;
 	var $view;
 
 	//Constructor de la clase
@@ -30,49 +27,11 @@ class partner_rate extends table {
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		//Clases relacionadas
-		$this->zoneO = new zone();
-		$this->zoneD = new zone();
-		$this->city = new city();
+		$this->vehicle = new vehicle_type();
 		$this->partner = new partner();
 		//Vista relacionada
 		$this->view = "VIE_PARTNER_RATE_SUMMARY";
 	}
-
-    //Funcion para Set la ciudad
-    function setCity($city) {
-		//Si esta establecida
-		if($city != "" && intval($city) > 0) {
-			//Asigna la informacion
-			$this->city->ID = $city;
-			//Verifica la informacion
-			$this->city->__getInformation();
-			//Si no hubo error
-			if($this->city->nerror == 0) {
-				//Asigna el valor
-				$this->CITY_ID = $city;
-				//Genera error
-				$this->nerror = 0;
-				$this->error = "";
-			}
-			else {
-				//Asigna valor por defecto
-				$this->CITY_ID = "NULL";
-				//Genera error
-				$this->nerror = 20;
-				$this->error = "City " . $_SESSION["NOT_REGISTERED"];
-			}
-		}
-    }
-	
-    //Funcion para Get la ciudad
-    function getCity() {
-		if($this->CITY_ID != "" && intval($this->CITY_ID) > 0) {
-			//Asigna el valor del escenario
-			$this->CITY_ID = $this->city->ID;
-			//Busca la informacion
-			$this->city->__getInformation();
-		}
-    }	
 
     //Funcion para Set el aliado
     function setPartner($value) {
@@ -98,81 +57,105 @@ class partner_rate extends table {
     }
 	
     //Funcion para Get el aliado
-    function getUser() {
+    function getPartner() {
 		//Asigna el valor del aliado
 		$this->PARTNER_ID = $this->partner->ID;
 		//Busca la informacion
 		$this->partner->__getInformation();
     }	
 
-    //Funcion para Set la zona origen
-    function setZoneOrigin($value) {
+    //Funcion para Set el vehiculo
+    function setVehicle($value) {
 		//Asigna la informacion
-		$this->zoneO->ID = $value;
+		$this->vehicle->ID = $value;
 		//Verifica la informacion
-		$this->zoneO->__getInformation();
+		$this->vehicle->__getInformation();
 		//Si no hubo error
-		if($this->zoneO->nerror == 0) {
+		if($this->vehicle->nerror == 0) {
 			//Asigna el valor
-			$this->ZONE_ORIGIN_ID = $value;
+			$this->VEHICLE_TYPE_ID = $value;
 			//Genera error
 			$this->nerror = 0;
 			$this->error = "";
 		}
 		else {
 			//Asigna valor por defecto
-			$this->ZONE_ORIGIN_ID = "NULL";
+			$this->VEHICLE_TYPE_ID = "NULL";
 			//Genera error
 			$this->nerror = 20;
-			$this->error = "Zone Origin " . $_SESSION["NOT_REGISTERED"];
+			$this->error = "Vehicle type" . $_SESSION["NOT_REGISTERED"];
 		}
     }
 	
-    //Funcion para Get la zona origen
-    function getZoneOrigin() {
-		//Asigna el valor de la zona
-		$this->ZONE_ORIGIN_ID = $this->zoneO->ID;
+    //Funcion para Get el vehiculo
+    function getVehicle() {
+		//Asigna el valor del vehiculo
+		$this->VEHICLE_TYPE_ID = $this->vehicle->ID;
 		//Busca la informacion
-		$this->zoneO->__getInformation();
+		$this->vehicle->__getInformation();
     }	
-
-    //Funcion para Set la zona destino
-    function setZoneDestination($value) {
-		//Asigna la informacion
-		$this->zoneD->ID = $value;
-		//Verifica la informacion
-		$this->zoneD->__getInformation();
-		//Si no hubo error
-		if($this->zoneD->nerror == 0) {
-			//Asigna el valor
-			$this->ZONE_DESTINATION_ID = $value;
-			//Genera error
-			$this->nerror = 0;
-			$this->error = "";
-		}
-		else {
-			//Asigna valor por defecto
-			$this->ZONE_DESTINATION_ID = "NULL";
-			//Genera error
-			$this->nerror = 20;
-			$this->error = "Zone destination " . $_SESSION["NOT_REGISTERED"];
-		}
-    }
-	
-    //Funcion para Get la zona destino
-    function getZoneDestination() {
-		//Asigna el valor de la zona
-		$this->ZONE_DESTINATION_ID = $this->zoneD->ID;
-		//Busca la informacion
-		$this->zoneD->__getInformation();
-    }	
-
 
 	//Funcion para seleccionar operador
-	function selectPartner() {
+	function selectPartner($distance, $round) {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT ";
-		
+		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME " .
+					"FROM $this->view " .
+					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX ORDER BY PRICE";
+		$count = 0;
+		$max = 0;
+		$min = 900000000;
+		//Valor a retornar
+		$return = "";
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			if($row[2] != "") {
+				$skins = explode(",",$row[2]);
+			}
+			else {
+				$skins = ["","","",""];
+			}
+			$price = !$round ? $row[5] : $row[8];
+			if($price < $min)
+				$min = $price;
+			if($price > $max)
+				$max = $price;
+			$timeText = sprintf($_SESSION["TIME_TO_DELIVER"],$row[9],$row[10]);
+			$return .=  "<label class=\"partner-selection btn btn-lg btn-block\">\n";
+			$return .=  "<input type=\"radio\" class=\"optPartner\" name=\"optPartner_$row[0]\" id=\"optPartner_$row[0]\" value=\"$row[0]\" data-rate=\"$price\" data-vehicle=\"$row[11]\" data-partner=\"$row[1]\" data-partnerid=\"$row[6]\">\n";
+			$return .=  "<div class=\"info-box mb-3 " . $skins[3] . "\">\n";
+			$return .=  "<span class=\"info-box-icon\"><img src=\"img/partners/" . $row[6] . ".png\" class=\"img-fluid\"></span>\n";
+			$return .=  "<div class=\"info-box-content\">\n";
+			$return .=  "<div class=\"row\">\n";
+			$return .=  "<div class=\"col-md-3\">\n";
+			$return .=  "<span class=\"info-box-number\">$row[1]</span>\n";
+			$return .=  "<span class=\"info-box-text\">" . $timeText . "</span>\n";
+			$return .=  "</div>\n";
+			$return .=  "<div class=\"col-md-3\">\n";
+			$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
+			$return .=  "<span class=\"info-box-text\">$ " . number_format($row[5],2,".",",") . "</span>\n";
+			$return .=  "</div>\n";
+			$return .=  "<div class=\"col-md-3\">\n";
+			$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
+			$return .=  "<span class=\"info-box-text\">$ " . number_format(800,2,".",",") . "</span>\n";
+			$return .=  "</div>\n";
+			$return .=  "<div class=\"col-md-3\">\n";
+			$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
+			$return .=  "<span class=\"info-box-text\">$ " . number_format($row[5]*0.75,2,".",",") . "</span>\n";
+			$return .=  "</div>\n";
+			$return .=  "</div>\n";
+			$return .=  "</div>\n";
+			$return .=  "<span class=\"info-box-icon\"><i class=\"" . $row[7] . "\" title=\"$row[12]\"></i></span>\n";
+			$return .=  "<span class=\"info-box-icon\" id=\"spanSelected_$row[0]\" style=\"display: none;\"><i class=\"fa fa-check\" title=\"" . $_SESSION["YOUR_SELECTION"] . "\"></i></span>\n";
+			$return .=  "</div>\n";
+			$return .=  "</label>\n";
+			$count++;
+		}
+		$result = array("html" => $return,
+						"cont" => $count,
+						"max" => $max,
+						"min" => $min,
+						"sql" => $this->sql);
+		return $result;
 	}
 
 	function dataForm($action, $tabs = 5) {

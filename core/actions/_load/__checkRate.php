@@ -6,7 +6,7 @@
 	//Inicializa la cabecera
 	header('Content-Type: text/plain; charset=utf-8');
 
-	require_once("../../classes/rate.php");
+	require_once("../../classes/partner_rate.php");
 	
 	//Variable del codigo
 	$result = array('success' => false,
@@ -34,9 +34,9 @@
 	//Si es un acceso autorizado
 	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
 		//Asigna la informacion
-		$rate = new rate();
+		$rate = new partner_rate();
 		
-		$rate->getValueByDistance($distance);
+		$datos = $rate->selectPartner($distance,$round == "true");
 		
 		if($rate->nerror > 0) {
 			$result["message"] = $_SESSION["NO_INFORMATION"];
@@ -44,8 +44,12 @@
 			exit(json_encode($result));
 		}
 
-		$result["message"] = $round == "true" ? $rate->ROUND_TRIP : $rate->RATE;
+		$result["message"] = $datos["html"];
+		$result["min"] = floatval($datos["min"]);
+		$result["max"] = floatval($datos["max"]);
+		$result["sql"] = $datos["sql"];
 		$result["success"] = true;
+		
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];

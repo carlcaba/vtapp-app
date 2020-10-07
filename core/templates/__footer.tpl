@@ -3,7 +3,7 @@
 			<!--
 			<a href="http://www.logicaestudio.com" target="_blank">Lógica Estudio</a>.</strong> All rights reserved.
 			-->
-			<div class="float-right d-none d-sm-inline-block"><b>AdmLTE Version</b> 3.0.5</div>
+			<div class="float-right d-none d-sm-inline-block"><b>AdmLTE Version</b> 3.0.8</div>
 		</footer>
 	</div>
 	<!-- ./wrapper -->

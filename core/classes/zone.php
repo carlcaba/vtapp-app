@@ -167,7 +167,7 @@ class zone extends table {
 				$return .= "$stabs<option value='" . $row[0] . "' $child $latlon>$text</option>\n";
 		}
 		//Retorna
-		return $return;
+		return $return == "" ? $this->sql : $return;
 	}
 	
 	//Funcion para buscar una zona por otra informacion
