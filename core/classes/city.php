@@ -12,16 +12,16 @@ class city extends table {
 	var $view;
 	
 	//Constructor de la clase
-	function __constructor() {
-		$this->city();
+	function __constructor($ciudad = "") {
+		$this->city($ciudad);
 	}
 	
 	//Constructor anterior
-	function city() {
+	function city($ciudad = "") {
 		//Llamado al constructor padre
 		parent::tabla("TBL_SYSTEM_CITY");
 		$this->REGISTERED_ON = "NOW()";
-		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
+		$this->REGISTERED_BY = $_SESSION["vtappcorp_userid"];
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		//Clases relacionadas

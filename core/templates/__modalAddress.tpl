@@ -179,6 +179,7 @@
 					var datas = JSON.stringify(datasObj);
 					if(datasObj.ZoneVisible) {
 						$("#cbZone" + reference).val($("#cbZone").val());
+						$("#cbZone" + reference).trigger("change");
 						$("#cbZone" + reference + "Sub").val($("#cbSubZone").val());
 					}
 					$("#spanTitle").html(title);

@@ -3,14 +3,20 @@
 // Version 4.0
 // LOGICA ESTUDIO 2019
 
+	define("LANGUAGE",2);
+	$_SESSION["LANGUAGE"] = 2;
     date_default_timezone_set('America/Bogota');
+	$log_file = "./my-errors.log"; 
 	ini_set('display_errors', '0');
-	error_reporting(E_ALL | E_STRICT);	
+	ini_set("log_errors", TRUE);  
+	ini_set('error_log', $log_file); 
 
-//Incluye las clases requeridas
+	error_reporting(E_ALL | E_STRICT);	
+	
+	//Incluye las clases requeridas
     require_once("connector_db.php");
 
-//Define la clase
+	//Define la clase
     abstract class table {
         //Define las variables a usar
         var $error;
@@ -162,7 +168,7 @@
             //Verifica el valor por default
             if($name == "REGISTERED_BY") {
                 //Asigna el usuario
-                $default = $_SESSION['vtappcorp_userid'];
+                $default = isset($_SESSION['vtappcorp_userid']) ? $_SESSION['vtappcorp_userid'] : "CURRENT_USER()";
             }
             else if($name == "REGISTERED_ON") {
                 //Asigna la fecha
@@ -244,7 +250,10 @@
 					case "text":
 					case "char":
 					case "varchar": {
-						if($this->arrColDatas[$idCol] == "UUID()") {
+						if ($this->arrColDatas[$idCol] == "CURRENT_USER()") {
+							$datas = $this->arrColDatas[$idCol];
+						}
+						else if($this->arrColDatas[$idCol] == "UUID()") {
 							$datas = $this->arrColDatas[$idCol];
 						}
 						else if(preg_match("/AES_(EN|DE)CRYPT/", $this->arrColDatas[$idCol])) {
@@ -640,14 +649,19 @@
 
         // Devuelve un array con la informacion de la consulta
         public function __getData($reconnect = true) {
+			$row = null;
 			//Verifica la sentencia SQL
 			if($this->sql != "") {
 				//Realiza la consulta
 				$this->doQuery($reconnect);
 				//Asigna el resultado
 				$row = mysqli_fetch_row($this->conx->query_id);
-				//Lo convierte
-				$row = utf8_converter($row);
+				if($row == null)
+					//Log error
+					error_log("SQL: " . $this->sql);
+				else 
+					//Lo convierte
+					$row = utf8_converter($row);
 			}
 			//Retorna el valor de la consulta
             return $row;
@@ -706,6 +720,10 @@
             $comments = explode(",",$this->arrColComments[$field]);
             //Nombre del control
             $fieldname = "txt" . $field;
+			//date class
+			$dateclass = "";
+			//Numeric 
+			$numeric = "";
             //Valor
             if($showValue) {
                 //Verifica el valor
@@ -795,7 +813,7 @@
 					foreach($reso as $row) {
 						$lId = substr($row["id"],-1);
 						//Busca la informacion del lenguaje
-						$this->sql = "SELECT L.ID, '' RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBRV " .
+						$this->sql = "SELECT L.ID, '' RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBREVATION " .
 								"FROM TBL_SYSTEM_LANGUAGE L INNER JOIN TBL_SYSTEM_RESOURCE RL ON (RL.RESOURCE_NAME = L.LANGUAGE_NAME AND RL.LANGUAGE_ID = L.ID) " .
 								"WHERE L.IS_BLOCKED = FALSE AND L.ID = $lId";
 						$lan = $this->__getData();
@@ -805,7 +823,7 @@
 				}
 				else {
 					//Busca los lenguaje
-					$this->sql = "SELECT L.ID, R.RESOURCE_TEXT RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBRV FROM $this->table T " .
+					$this->sql = "SELECT L.ID, R.RESOURCE_TEXT RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBREVATION FROM $this->table T " .
 								"INNER JOIN TBL_SYSTEM_RESOURCE R ON (R.RESOURCE_NAME = T.$field) " .
 								"INNER JOIN TBL_SYSTEM_LANGUAGE L ON (R.LANGUAGE_ID = L.ID) " .
 								"INNER JOIN TBL_SYSTEM_RESOURCE RL ON (RL.RESOURCE_NAME = L.LANGUAGE_NAME AND RL.LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . ") " .
@@ -814,7 +832,7 @@
 					$row = $this->__getData();
 					//Verifica el valor
 					if(!$row)
-						$this->sql = "SELECT L.ID, '' RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBRV " .
+						$this->sql = "SELECT L.ID, '' RESOURCE_TEXT, RL.RESOURCE_TEXT LANGUAGE_NAME, L.ABBREVATION " .
 								"FROM TBL_SYSTEM_LANGUAGE L INNER JOIN TBL_SYSTEM_RESOURCE RL ON (RL.RESOURCE_NAME = L.LANGUAGE_NAME AND RL.LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . ") " .
 								"WHERE L.IS_BLOCKED = FALSE";
 					foreach($this->__getAllData() as $row) {

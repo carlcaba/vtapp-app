@@ -7,12 +7,14 @@
 	header('Content-Type: text/plain; charset=utf-8');
 
 	require_once("../../classes/partner_rate.php");
+	require_once("../../classes/partner_client.php");
 	
 	//Variable del codigo
 	$result = array('success' => false,
                     'message' => $_SESSION["NO_DATA_FOR_VALIDATE_RATES"]);
 	
 	$distance = "0";
+	$client = "";
 	$round = "false";
 	//Captura las variables
 	if(empty($_POST['distance'])) {
@@ -23,12 +25,14 @@
 		}
 		else {
 			$distance = $_GET['distance'];
+			$client = $_GET['client'];
 			$round = $_GET['round'];
 		}
 	}
 	else {
 		$distance = $_POST['distance'];
 		$round = $_POST['round'];
+		$client = $_POST["client"];
 	}
 		
 	//Si es un acceso autorizado
@@ -36,7 +40,36 @@
 		//Asigna la informacion
 		$rate = new partner_rate();
 		
-		$datos = $rate->selectPartner($distance,$round == "true");
+		$filter = "";
+		$result["filtered"] = false;
+		$result["employee"] = false;		
+		$result["employee_id"] = "";
+		if($client != "") {
+			$ptcl = new partner_client();
+			$ptcl->setClient($client);
+			//Obtiene los aliados
+			$partners = $ptcl->getMyPartners();
+			//Crea el filtro
+			$arrFilter = array();
+			$emp = array(); 
+			//Verifica el resultado
+			foreach($partners as $part) {
+				array_push($arrFilter,$part["id"]);
+				array_push($emp,$part["employee"]);
+			}
+			//Genera la cadena de filtro
+			if(!empty($arrFilter)) {
+				$filter = implode(",",$partners);
+				$result["filtered"] = true;
+			}
+			//Genera la cadena de filtro
+			if(!empty($emp)) {
+				$result["employee"] = true;
+				$result["employee_id"] = true;
+			}
+		}
+		
+		$datos = $rate->selectPartner($distance,$round == "true",$filter);
 		
 		if($rate->nerror > 0) {
 			$result["message"] = $_SESSION["NO_INFORMATION"];

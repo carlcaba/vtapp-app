@@ -6,6 +6,11 @@
 	session_name('vtappcorp_session');
 	session_start();
 	
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+	header('Access-Control-Allow-Methods: GET, POST, PUT');	
+	header('Content-Type: application/json');	
+	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/users.php");

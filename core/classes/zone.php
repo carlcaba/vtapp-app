@@ -208,7 +208,7 @@ class zone extends table {
 		//Retorna 
 		return true;
 	}
-		
+	
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
 		//	var fields = ["EMPLOYEE_ID", "FULL_NAME", "IDNUMBER", "CODE", "EMAIL", "AREA_NAME", "ACCESS_NAME", "COSTCENTER", "IS_BLOCKED", "ACCESS_ID"];
@@ -413,6 +413,47 @@ class zone extends table {
 		$return .= "$stabs\t<input type=\"hidden\" id=\"hfLinkAction\" name=\"hfLinkAction\" value=\"$link\" >\n";
 
 		//Retorna
+		return $return;
+	}
+
+	//Funcion para obtener zonas aleatorias
+	function getRandomZone($limit = 3) {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT ZONE_ID, ZONE_NAME, PARENT_ZONE, (SELECT Z1.ZONE_NAME FROM $this->table Z1 WHERE Z1.ID = PARENT_ZONE LIMIT 1) PARENT_ZONE_NAME " .
+					"FROM $this->view WHERE IS_BLOCKED = FALSE AND NOT PARENT_ZONE IS NULL ORDER BY RAND() LIMIT $limit";
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$data = array("id" => $row[0],
+							"zone" => $row[1],
+							"parent" => $row[2],
+							"parent_name" => $row[3],
+							"valid" => false);
+			array_push($return, $data);
+		}
+		//Retorna
+		return $return;
+	}
+
+	//Funcion que busca el parent zone 
+	function getParentZone($id = 0) {
+		//Verifica si hay id
+		if($id == 0)
+			$id = $this->ID;
+		//Arma la sentencia SQL
+		$this->sql = "SELECT P.ID, P.ZONE_NAME FROM $this->table T INNER JOIN $this->table P ON (T.PARENT_ZONE = P.ID) WHERE T.ID = " . $this->_checkDataType("ID");
+		//Resultado a devolver
+		$return = array("id" => 0,
+						"name" => "");
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if($row) {
+            //Asigna el ID
+            $return["id"] = $row[0];
+			$return["name"] = $row[1];
+        }
 		return $return;
 	}
 

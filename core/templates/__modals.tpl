@@ -9,7 +9,10 @@
 	if($userModal) {
 		$modalId = "<span id=\"ModalItemId\"></span>";
 	}
-
+	else {
+		$modalId = "";
+	}
+	
 	//Si no requiere el edit
 	if(!$noEdit) {
 ?>
@@ -50,6 +53,8 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancelActivate" name="btnCancelActivate"><?= $_SESSION["CLOSE"] ?></button>
 					<button type="button" class="btn btn-primary" id="btnActivate" name="btnActivate" data-dismiss="modal"><?= $btnText ?></button>
+					<input type="hidden" name="hfDefaultTextButton" id="hfDefaultTextButton" value="<?= $btnText ?>" />
+					<input type="hidden" name="hfTextButton" id="hfTextButton" value="" />
 				</div>
 			</div>
 		</div>

@@ -31,10 +31,11 @@
 	//Inicializa la clase
 	$inter = new interfaces();
 	$resources = new resources();
-	$conf = new configuration("RETURN_HOME");
+	$conf = new configuration("WEB_SITE");
 
 	//Obtiene el site_root
 	$site_root = $conf->verifyValue();
+	$site_root .= $conf->verifyValue("SITE_ROOT");
 
 	//Verifica si el usuario esta loggeado	
 	if(isset($_SESSION['vtappcorp_userid'])) {
@@ -66,7 +67,7 @@
 
 	//Elimina las variables cargadas al iniciar
 	$conf->unloadValues();
-	
+
 	//Destruye la sesion e inicia una nueva
 	session_destroy();
 	session_unset();

@@ -1,0 +1,20 @@
+[17-Nov-2020 21:39:13 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\actions\_load\__checkDirectChat.php on line 17
+[17-Nov-2020 21:39:13 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 22
+[17-Nov-2020 21:39:13 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 25
+[17-Nov-2020 21:39:13 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 178
+[27-Jan-2021 08:20:13 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\partner_client.php on line 376
+[27-Jan-2021 08:22:32 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\area_type.php on line 196
+[30-Jan-2021 08:57:27 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 08:57:30 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 08:57:36 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 08:57:37 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 08:57:54 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 09:04:57 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\actions\_load\__checkDirectChat.php on line 17
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 22
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 25
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 178
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\actions\_load\__checkDirectChat.php on line 17
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 22
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 25
+[30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 178

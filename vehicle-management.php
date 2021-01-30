@@ -66,22 +66,22 @@
 	
 	switch($action) {
 		case "new": {
-			$title = $_SESSION["MENU_NEW"];
+			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  $_SESSION["NEW_TEXT"];
 			break;
 		}
 		case "edit": {
-			$title = $_SESSION["MENU_EDIT"];
+			$titlepage = $_SESSION["MENU_EDIT"];
 			$text_title =  $_SESSION["EDIT_TEXT"];
 			break;
 		}
 		case "delete": {
-			$title = $_SESSION["MENU_DELETE"];
+			$titlepage = $_SESSION["MENU_DELETE"];
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			break;
 		}
 		case "view": {
-			$title = $_SESSION["VIEW"];
+			$titlepage = $_SESSION["VIEW"];
 			$text_title =  $_SESSION["INFORMATION"];
 			break;
 		}
@@ -132,7 +132,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-car"></i> <?= $title ?> <?= $_SESSION["VEHICLE"] ?></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-car"></i> <?= $titlepage ?> <?= $_SESSION["VEHICLE"] ?></h1>
 						</div>
 						<!-- /.col -->
 <?

@@ -38,14 +38,22 @@ class notification extends table {
 
     //Funcion para Set el tipo
     function setType($type) {
-        //Asigna la informacion
-        $this->type->ID = $type;
-        //Verifica la informacion
-        $this->type->__getInformation();
+		if(is_numeric($type)) {
+			//Asigna la informacion
+			$this->type->ID = $type;
+			//Verifica la informacion
+			$this->type->__getInformation();
+		}
+		else {
+			//Asigna la informacion
+			$this->type->TEXT_TYPE = $type;
+			//Verifica la informacion
+			$this->type->getInformationByOtherInfo();
+		}
         //Si no hubo error
         if($this->type->nerror == 0) {
             //Asigna el valor
-            $this->TYPE_ID = $type;
+            $this->TYPE_ID = $this->type->ID;
             //Genera error
             $this->nerror = 0;
             $this->error = "";

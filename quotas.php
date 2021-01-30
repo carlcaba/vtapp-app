@@ -232,118 +232,123 @@
 				},
 				success:function(data){
 					noty.close();
-					if(data.success) {
-						var id = data.message.id;
-						var day = data.message.dex.split('/');
-						var amount = parseFloat(data.message.amount);
-						var diferred = parseInt(data.message.df)
-						var objCard = {
-							name: data.message.cn,
-							number: data.message.cc.split(' ').join(''),
-							expiryMonth: day[0],
-							expiryYear: day[1],
-							cvv: data.message.cv
-						};
-						var objData = {
-							card: objCard,
-							totalAmount: amount,
-							currency: "COP"
-						};
-						var settings = {
-							"async": true,
-							"crossDomain": true,
-							"url": "<?= $urlToken ?>",
-							"method": "POST",
-							"headers": {
-								"public-merchant-id": "<?= $merchId ?>",
-								"content-type": "application/json"
-							},
-							"processData": false,
-							"data": JSON.stringify(objData),
-							"dataType": "json",
-							"beforeSend": function (xhrObj) {
-								var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["PROCESSING_PAYMENT"] ?>";
-								noty = notify("", "dark", "", message, "", false);												
-							}
-						}
-
-						$.ajax(settings).done(function (response) {
-							if(response.token != "") {
-								var token = response.token;
-								var objAmount = {
-									subtotalIva: 0,
-									subtotalIva0: amount,
-									ice: 0,
-									iva: 0,
-									currency: "COP"
-								};
-								var objDeferred = {
-									graceMonths: "00",
-									creditType: "01",
-									months: diferred
-								};
-								var objMeta = {
-									contractID: id
-								};
-								var objData = {
-									token: token,
-									amount: objAmount,
-									deferred: objDeferred,
-									metadata: objMeta,
-									fullResponse: true
-								};
-							}
+					if(!data.success) {
+						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+					}
+					else {
+						if(data.continue) {
+							var id = data.message.id;
+							var day = data.message.dex.split('/');
+							var amount = parseFloat(data.message.amount);
+							var diferred = parseInt(data.message.df)
+							var objCard = {
+								name: data.message.cn,
+								number: data.message.cc.split(' ').join(''),
+								expiryMonth: day[0],
+								expiryYear: day[1],
+								cvv: data.message.cv
+							};
+							var objData = {
+								card: objCard,
+								totalAmount: amount,
+								currency: "COP"
+							};
 							var settings = {
 								"async": true,
 								"crossDomain": true,
-								"url": "<?= $urlCharge ?>",
+								"url": "<?= $urlToken ?>",
 								"method": "POST",
 								"headers": {
-									"private-merchant-id": "<?= $merchId ?>",
+									"public-merchant-id": "<?= $merchId ?>",
 									"content-type": "application/json"
 								},
 								"processData": false,
 								"data": JSON.stringify(objData),
 								"dataType": "json",
-								"error": function (jqXHR, textStatus) {
-									var response = jqXHR.responseJSON;
-									var msg = "<?= $_SESSION["ERROR_ON_PAYMENT"] ?><br />" + response.code + ": " + response.message;
-									notify("", "danger", "", msg, "");
-								},
-								"always": function() {
-									noty.close();
-								}				
+								"beforeSend": function (xhrObj) {
+									var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["PROCESSING_PAYMENT"] ?>";
+									noty = notify("", "dark", "", message, "", false);												
+								}
 							}
+
 							$.ajax(settings).done(function (response) {
-								if(response.ticketNumber != "") {
-									$.ajax({
-										url: "core/actions/_save/__newPayment.php",
-										data: { 
-											strModel: JSON.stringify(response),
-											payment: "true"
-										},
-										dataType: "json",
-										beforeSend: function (xhrObj) {
-											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-											noty = notify("", "dark", "", message, "", false);												
-										},
-										success:function(data){
-											noty.close();
-											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-											if(data.success)
-												location.href = data.link;
-										}
-									});
+								if(response.token != "") {
+									var token = response.token;
+									var objAmount = {
+										subtotalIva: 0,
+										subtotalIva0: amount,
+										ice: 0,
+										iva: 0,
+										currency: "COP"
+									};
+									var objDeferred = {
+										graceMonths: "00",
+										creditType: "01",
+										months: diferred
+									};
+									var objMeta = {
+										contractID: id
+									};
+									var objData = {
+										token: token,
+										amount: objAmount,
+										deferred: objDeferred,
+										metadata: objMeta,
+										fullResponse: true
+									};
 								}
-								else {
-									var msg = "<?= $_SESSION["ERROR_ON_PAYMENT"] ?><br />" + response.code + ": " + response.message;
-									notify("", "danger", "", msg, "");
+								var settings = {
+									"async": true,
+									"crossDomain": true,
+									"url": "<?= $urlCharge ?>",
+									"method": "POST",
+									"headers": {
+										"private-merchant-id": "<?= $merchId ?>",
+										"content-type": "application/json"
+									},
+									"processData": false,
+									"data": JSON.stringify(objData),
+									"dataType": "json",
+									"error": function (jqXHR, textStatus) {
+										var response = jqXHR.responseJSON;
+										var msg = "<?= $_SESSION["ERROR_ON_PAYMENT"] ?><br />" + response.code + ": " + response.message;
+										notify("", "danger", "", msg, "");
+									},
+									"always": function() {
+										noty.close();
+									}				
 								}
+								$.ajax(settings).done(function (response) {
+									if(response.ticketNumber != "") {
+										$.ajax({
+											url: "core/actions/_save/__newPayment.php",
+											data: { 
+												strModel: JSON.stringify(response),
+												payment: "true"
+											},
+											dataType: "json",
+											beforeSend: function (xhrObj) {
+												var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+												noty = notify("", "dark", "", message, "", false);												
+											},
+											success:function(data){
+												noty.close();
+												notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+												if(data.success)
+													location.href = data.link;
+											}
+										});
+									}
+									else {
+										var msg = "<?= $_SESSION["ERROR_ON_PAYMENT"] ?><br />" + response.code + ": " + response.message;
+										notify("", "danger", "", msg, "");
+									}
+								});
 							});
-						});
-					}
-					else {
-						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+						}
+						else {
+							notify("", 'info', "", data.message, "");
+						}
 					}
 				}
 			});

@@ -333,7 +333,10 @@ class service extends table {
 		}
 	}
 
-	function updateState($state) {
+	function updateState($state = "") {
+		//Verifica el estado
+		if($state == "") 
+			$state = $this->state->getNextState();
 		//Arma la sentencia sql
 		$this->sql = "UPDATE " . $this->table . " SET STATE_ID = '" . $state . "' WHERE ID = " . $this->_checkDataType("ID");
 		//Ejecuta la sentencia
@@ -544,7 +547,7 @@ class service extends table {
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
 		$fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "ID_STATE"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ID_STATE"];
 		//Agrega la clausula WHERE personalizada
 		if($sWhere != "")
 			$sWhere .= " AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"];
@@ -555,6 +558,9 @@ class service extends table {
 		}
 		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
 			$sWhere .= " AND ID_STATE = 2";
+		}
+		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "VI") {
+			$sWhere .= " AND USER_ID = '" . $_SESSION["vtappcorp_userid"] . "'";
 		}
 		//Cuenta el total de filas
 		$this->sql = "SELECT COUNT(DISTINCT " . $fields[0] . ") FROM $this->view $sWhere";
@@ -591,15 +597,26 @@ class service extends table {
 						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
 						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
 						$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+						$actBid = ($aRow[11] == "0" && $aRow[12] == "1") ? "" : "disabled";
+						$actPay = ($aRow[12] == "1") ? "disabled" : "";
+						$payed = "";
+						if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL")
+							$bid = "<button type=\"button\" class=\"btn btn-default\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
+						else if($_SESSION["vtappcorp_useraccess"] == "GOD") {
+							$bid = "<button type=\"button\" class=\"btn btn-default\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
+							$payed = "<button type=\"button\" class=\"btn btn-default\" name=\"payBtn" . $aRow[0] . "\" id=\"payBtn" . $aRow[0] . "\" title=\"" . $_SESSION["MARK_AS_PAYED"] . "\" onclick=\"markAsPayed('" . $aRow[$i] . "');\" $actPay><i class=\"fa fa-credit-card\"></i></button>";
+						}
+						else	
+							$bid = "";
 						if($aRow[11] == 1) {
-							$assign = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $aRow[$i] . "');\"><i class=\"fa fa-motorcycle\"></i></button>";
+							$assign = "<button type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-motorcycle\"></i></button>";
 						}
 						else {
-							$assign = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $aRow[$i] . "');\"><i class=\"fa fa-street-view\"></i></button>";
+							$assign = "<button type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
 						}
 						$history = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["TIMELINE"] . "\" onclick=\"location.href = 'service-log.php?id=" . $aRow[$i] . "';\"><i class=\"fa fa-history\"></i></button>";
 						
-						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $history . $activate . $assign . $view . $edit . $delete . "</div></div>";
+						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $history . $activate . $payed . $bid . $assign . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
 						$row[$aColumnsBD[count($aColumnsBD)-1]] = $action;
 					}
@@ -650,6 +667,200 @@ class service extends table {
 		}
 		return $return;
 	}
+	
+	//Funcion para mostrar el proceso de asignar servicio
+	function processAssign($step = 1) {
+		$datZone = $this->request_zone->getRandomZone();
+		$parZone = $this->request_zone->getParentZone();
+		array_push($datZone, array("id" => $this->request_zone->ID,
+							"zone" => $this->request_zone->ZONE_NAME,
+							"parent" => $parZone["id"],
+							"parent_name" => $parZone["name"],
+							"valid" => true));
+		array_push($datZone, array("id" => -1,
+							"zone" => $_SESSION["NO_ZONE_DEFINED"],
+							"parent" => -1,
+							"parent_name" => $_SESSION["NO_PARENT_ZONE_DEFINED"],
+							"valid" => true));
+		//Arma la sentencia SQL
+		$this->sql = "SELECT CLIENT_ID,CLIENT_IDENTIFICATION,CLIENT_NAME,DELIVER_ADDRESS,DELIVER_CELLPHONE,DELIVER_DESCRIPTION,DELIVER_EMAIL,DELIVER_PHONE,DELIVER_TO,DELIVER_ZONE,DELIVERY_CITY_ID," .
+							"DELIVERY_CITY_NAME,DELIVERY_COUNTRY,DELIVERY_TYPE_ID,DELIVERY_TYPE_NAME,FRAGILE,ICON,ID_STATE,LANGUAGE_ID,LAT_DELIVERY_END,LAT_DELIVERY_INI," .
+							"LAT_REQUEST_END,LAT_REQUEST_INI,LON_DELIVERY_END,LON_DELIVERY_INI,LON_REQUEST_END,LON_REQUEST_INI,OBSERVATION,PRICE,QUANTITY,REGISTERED_BY," .
+							"REGISTERED_ON,REQUEST_CITY_ID,REQUEST_CITY_NAME,REQUEST_COUNTRY,REQUESTED_ADDRESS,REQUESTED_BY,REQUESTED_CELLPHONE,REQUESTED_EMAIL,REQUESTED_PHONE,REQUESTED_ZONE," .
+							"ROUND_TRIP,SERVICE_ID,SERVICE_STATE_NAME,STATE_ID,TIME_FINISH_TO_DELIVER,TIME_START_TO_DELIVER,TOTAL_HEIGHT,TOTAL_LENGTH,TOTAL_WEIGHT,TOTAL_WIDTH," . 
+							"USER_ID,VEHICLE_TYPE_ID,VEHICLE_TYPE_NAME,ZONE_NAME_DELIVERY,ZONE_NAME_REQUEST,CLIENT_PAYMENT_TYPE_ID,CLIENT_PAYMENT_TYPE,IS_MARCO,QUOTA_AVAILABLE " .
+					"FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$validate = array();
+			//Si el servicio ya fue asignado
+			if($row[17] == 3) {
+				$data = array("id" => $row[42],
+								"status" => $_SESSION["SERVICE_ALREADY_ASSIGNED"]);
+				array_push($return,$data);
+				//Genera el error
+				$this->nerror = 187;
+				$this->error = $_SESSION["SERVICE_ALREADY_ASSIGNED"];
+				break;
+			}
+			$data = array("id" => $row[42],	//ServiceId
+					"client_id" => $row[0], //ClientId
+					"client_identification" => $row[1], //ClientIdentification
+					"client_name" => $row[2], //ClientName
+					"deliver_to" => $row[8], //DeliverName
+					"requested_by" => $row[36],
+					"requested_address" => $row[35],
+					"requested_cellphone" => $row[37],
+					"requested_email" => $row[38],
+					"requested_lat" => $row[22],
+					"requested_lon" => $row[26],
+					"requested_zone_id" => $row[40],
+					"requested_zone_name" => $row[55],
+					"requested_parent_zone_id" => $parZone["id"],
+					"requested_parent_zone_name" => $parZone["name"],
+					"requested_city_id" => $row[32],
+					"requested_city_name" => $row[33],
+					"delivery_type_id" => $row[13],
+					"delivery_type_name" => $row[14],
+					"quantity" => $row[29],
+					"height" => $row[47],
+					"width" => $row[50],
+					"length" => $row[48],
+					"weight" => $row[49],
+					"fragile" => $row[15],
+					"roundtrip" => $row[41],
+					"notes" => $row[27],
+					"time_start" => $row[45],
+					"time_finish" => $row[46],
+					"vehicle_type_id" => $row[52],
+					"vehicle_type_name" => $row[53],
+					"vehicle_icon" => $row[16]);
+			switch($step) {
+				//Paso 1
+				case 1: {
+					foreach($datZone as $value) {
+						array_push($validate, array("id" => $value["id"],
+													"text" => $value["zone"] . " (" . $value["parent_name"] . ")",
+													"valid" => $value["valid"]));
+					}
+					break;
+				}
+				case 2: {
+					$times = array(5,15,30,45,60);
+					foreach($times as $key => $value) {
+						if($key+1 < count($times)) {
+							array_push($validate, array("id" => ($key + 1) ,
+														"text" => sprintf($_SESSION["TIME_PICK_UP"],$value,$times[$key+1],$_SESSION["MINUTES"]),
+														"valid" => $value == 30));
+						}
+						else {
+							array_push($validate, array("id" => ($key + 1) ,
+														"text" => sprintf($_SESSION["TIME_PICK_UP_MORE"],1,$_SESSION["HOUR"]),
+														"valid" => false));
+						}
+					}
+					$parZoneD = $this->deliver_zone->getParentZone();
+
+					//Agrega los campos del paso
+					$data["deliver_address"] = $row[3];
+					$data["deliver_cellphone"] = $row[4];
+					$data["deliver_email"] = $row[6];
+					$data["deliver_lat"] = $row[20];
+					$data["deliver_lon"] = $row[24];
+					$data["deliver_zone_id"] = $row[9];
+					$data["deliver_zone_name"] = $row[54];
+					$data["deliver_parent_zone_id"] = $parZoneD["id"];
+					$data["deliver_parent_zone_name"] = $parZoneD["name"];
+					$data["deliver_city_id"] = $row[10];
+					$data["deliver_city_name"] = $row[11];
+					$data["deliver_description"] = $row[5];
+					break;
+				}
+				case 3: {
+					$maxtime = mktime($this->TIME_FINISH_TO_DELIVER,0,0,intval(date("m")),intval(date("d")),intval(date("Y")));
+					$now = mktime(intval(date("H")),0,0,intval(date("m")),intval(date("d")),intval(date("Y")));
+					$hourdiff = round(($maxtime - $now)/3600, 1);
+					$times = array(1,2,3);
+					foreach($times as $key => $value) {
+						if($key == 0) {
+							array_push($validate, array("id" => ($key + 1),				
+														"text" => $value . " " . $_SESSION["HOUR"],
+														"valid" => $hourdiff == $value));					
+						}
+						else {
+							array_push($validate, array("id" => ($key + 1) ,
+														"text" => sprintf($_SESSION["TIME_PICK_UP"],$times[$key - 1],$value,$_SESSION["HOURS"]),
+														"valid" => $hourdiff == $value));
+						}
+					}
+					$parZoneD = $this->deliver_zone->getParentZone();
+
+					//Agrega los campos del paso
+					$data["deliver_address"] = $row[3];
+					$data["deliver_cellphone"] = $row[4];
+					$data["deliver_email"] = $row[6];
+					$data["deliver_lat"] = $row[20];
+					$data["deliver_lon"] = $row[24];
+					$data["deliver_zone_id"] = $row[9];
+					$data["deliver_zone_name"] = $row[54];
+					$data["deliver_parent_zone_id"] = $parZoneD["id"];
+					$data["deliver_parent_zone_name"] = $parZoneD["name"];
+					$data["deliver_city_id"] = $row[10];
+					$data["deliver_city_name"] = $row[11];
+					$data["deliver_description"] = $row[5];
+					$data["pay_on_deliver"] = $row[58] == "0";	//Si es contrato marco
+					$data["price"] = ($row[58] == "0" ? $row[28] : 0); //Si NO es contrato marco, enviar precio
+					break;
+				}
+				//Asignar el servicio a este usuario
+				case 4: {
+					array_push($validate, array("id" => -1 ,
+												"text" => "TO_ASSIGN",
+												"valid" => true));
+					//Agrega los campos del paso
+					$data["deliver_address"] = $row[3];
+					$data["deliver_cellphone"] = $row[4];
+					$data["deliver_email"] = $row[6];
+					$data["deliver_lat"] = $row[20];
+					$data["deliver_lon"] = $row[24];
+					$data["deliver_zone_id"] = $row[9];
+					$data["deliver_zone_name"] = $row[54];
+					$data["deliver_parent_zone_id"] = $parZoneD["id"];
+					$data["deliver_parent_zone_name"] = $parZoneD["name"];
+					$data["deliver_city_id"] = $row[10];
+					$data["deliver_city_name"] = $row[11];
+					$data["deliver_description"] = $row[5];
+					$data["pay_on_deliver"] = $row[58] == "0";	//Si es contrato marco
+					$data["price"] = ($row[58] == "0" ? $row[28] : 0); //Si NO es contrato marco, enviar precio
+				}
+			}
+			$data["validation"] = $validate;
+			array_push($return,$data);
+		}
+		//Verifica si el array esta vacio
+		if(empty($return)) {
+			$this->nerror = 185;
+			$this->error = "Service " . $_SESSION["NOT_REGISTERED"];
+		}
+		return $return;
+	}
+	
+	function isPayed() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT PAYED FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID") . " LIMIT 1";
+		//Valor a retornar
+		$return = false;
+		//Obtiene los resultados
+        $row = $this->__getData();
+        //Registro existe
+        if($row)
+			$return = $row[0] == "1";
+		return $return;	
+		
+	}
+	
 }
 
 ?>

@@ -579,9 +579,12 @@ class service_log extends table {
 		}
 		//Si no hay actividad
 		if($return == "") {
-			$return = "<li class=\"time-label\"><span class=\"bg-warning\">" . date("d M Y") . "</span></li>\n";
-			$return .= "<li><i class=\"fa fa-calendar-times-o bg-danger\"></i><div class=\"timeline-item\"><h3 class=\"timeline-header no-border\">" . $_SESSION["NO_ACTIVITY"] . "</h3></div></li>\n";
+			$time = strtotime($this->service->REGISTERED_ON);
+			$return .= "<div class=\"time-label\"><span class=\"bg-warning\">" . date("d M Y", strtotime($this->service->REGISTERED_ON)) . "</span></div>\n";
+			$return .= "<div><i class=\"fa fa-plus bg-success\"></i><div class=\"timeline-item\"><span class=\"time\"><i class=\"fa fa-clock-o\"></i> " . $this->elapsedTime($time) . "</span>\n";
+			$return .= "<h3 class=\"timeline-header border-0\">" . sprintf($_SESSION["SERVICE_REGISTERED_BY"],$this->service->REGISTERED_BY) . "</h3></div></div>\n";
 		}
+
 		//Retorna
 		return $return;
 	}

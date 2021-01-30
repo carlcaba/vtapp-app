@@ -30,6 +30,8 @@
 		$link = "";
 	else
 		$link = $_GET['ref'];	
+	
+	$skin = explode(",",$_SESSION["vtappcorp_skin"]);	
 ?>	
 <!DOCTYPE html>
 <html>

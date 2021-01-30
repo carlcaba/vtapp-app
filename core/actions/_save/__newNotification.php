@@ -34,7 +34,7 @@
 		
         $datas = $strmodel;
 
-		$notification = new notification($datas["User"]);
+		$notification = new notification($datas["Type"]);
 
 		//Verifica el tipo
 		$notification->type->TEXT_TYPE = $datas["Type"];

@@ -102,14 +102,10 @@
 							<!-- Profile Image -->
 							<div class="card card-primary">
                                 <div class="card-header">
-                                    <h5 class="m-0"><i class="fa fa-motorcycle"></i> <?= $_SESSION["SERVICE"] ?></h5>
+                                    <h5 class="m-0"><i class="fa fa-motorcycle"></i> <?= $_SESSION["SERVICE"] ?> <small>Id: <?= $serv->service->ID ?></small></h5>
 								</div>
                                 <div class="card-body">
                                     <dl>
-										<!--
-                                        <dt><?= $serv->service->arrColComments["ID"] ?></dt>
-                                        <dd><?= $serv->service->ID ?></dd>
-										-->
                                         <dt><?= $serv->service->arrColComments["DELIVER_TO"] ?></dt>
                                         <dd><?= $serv->service->DELIVER_TO ?></dd>
                                         <dt><?= $serv->service->arrColComments["DELIVER_ADDRESS"] ?></dt>
@@ -142,11 +138,80 @@
 								<!-- /.card-header -->
 								<div class="card-body">
 									<!-- The timeline -->
+									<div class="timeline timeline-inverse">
+<!--
+										<div class="time-label">
+											<span class="bg-danger">
+												10 Feb. 2014
+											</span>
+										</div>
+										<div>
+											<i class="fa fa-envelope bg-primary"></i>
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 12:05</span>
+												<h3 class="timeline-header"><a href="#">Support Team</a> sent you an email</h3>
+												<div class="timeline-body">
+													Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles,
+													weebly ning heekya handango imeem plugg dopplr jibjab, movity
+													jajah plickers sifteo edmodo ifttt zimbra. Babblely odeo kaboodle
+													quora plaxo ideeli hulu weebly balihoo...
+												</div>
+												<div class="timeline-footer">
+													<a href="#" class="btn btn-primary btn-sm">Read more</a>
+													<a href="#" class="btn btn-danger btn-sm">Delete</a>
+												</div>
+											</div>
+										</div>
+										<div>
+											<i class="fa fa-user bg-info"></i>
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
+												<h3 class="timeline-header border-0"><a href="#">Sarah Young</a> accepted your friend request</h3>
+											</div>
+										</div>
+										<div>
+											<i class="fa fa-comments bg-warning"></i>
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
+												<h3 class="timeline-header"><a href="#">Jay White</a> commented on your post</h3>
+												<div class="timeline-body">
+													Take me to your leader!
+													Switzerland is small and neutral!
+													We are more like Germany, ambitious and misunderstood!
+												</div>
+												<div class="timeline-footer">
+													<a href="#" class="btn btn-warning btn-flat btn-sm">View comment</a>
+												</div>
+											</div>
+										</div>
+										<div class="time-label">
+											<span class="bg-success">
+												3 Jan. 2014
+											</span>
+										</div>
+										<div>
+											<i class="fa fa-camera bg-purple"></i>
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 2 days ago</span>
+												<h3 class="timeline-header"><a href="#">Mina Lee</a> uploaded new photos</h3>
+												<div class="timeline-body">
+													<img src="http://placehold.it/150x100" alt="...">
+													<img src="http://placehold.it/150x100" alt="...">
+													<img src="http://placehold.it/150x100" alt="...">
+													<img src="http://placehold.it/150x100" alt="...">
+												</div>
+											</div>
+										</div>
 									<ul class="timeline timeline-inverse">
+-->
 <?= $serv->showTimelineActivity() ?>
-									</ul>
+									<!-- </ul> -->
 									<!-- /.tab-content -->
-								</div>
+										<div>
+											<i class="fa fa-clock-o bg-gray"></i>
+										</div>
+									</div>
+								</div>									
 								<!-- /.card-body -->
 							</div>
 							<!-- /.nav-tabs-custom -->

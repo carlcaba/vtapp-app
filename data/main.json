@@ -1,0 +1,23 @@
+{
+	"prod": {
+		"db": "vtapcorp",
+		"host": "mysql.vtapp.com",
+		"port": 3306,
+		"user": "vtappcorp_user",
+		"pass": "pSJaFhAYkFZqCPB5PTt"
+	},
+	"test": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_u",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"deve": {
+		"db": "vtappcorp",
+		"host": "127.0.0.1",
+		"port": 3306,
+		"user": "root",
+		"pass": "C4s0ft17"
+	}
+}

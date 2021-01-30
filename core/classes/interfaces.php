@@ -19,12 +19,12 @@ class interfaces extends table {
 	var $color;
 	
 	//Constructor de la clase
-	function __constructor() {
-		$this->interfaces();
+	function __constructor($menu = "") {
+		$this->interfaces($menu);
 	}
 	
 	//Constructor anterior
-	function interfaces() {
+	function interfaces($menu = "") {
 		//Llamado al constructor padre
 		parent::tabla("TBL_SYSTEM_MENU");
 		//Especifica los valores unicos
@@ -354,9 +354,9 @@ class interfaces extends table {
 	//									M Nombre del mes completo Enero..Diciembre
 	//									Y Numero del a�o 4 digitos
 	//									y Numero del a�o 2 digitos
-	function cfecha($fecha,$format="d m Y",$separator=" ",$hour = true) {
+	function cfecha($fecha = "",$format="d m Y",$separator=" ",$hour = true) {
 		//Verifica si se envio una fecha
-		if (!$fecha)
+		if ($fecha == "")
 			//Toma por defecto la fecha del sistema
 			$fecha = date("Y-m-d");
 		//Verifica si la fecha viene con hora

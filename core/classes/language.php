@@ -23,9 +23,9 @@ class language extends table {
 	}
 
 	//Funcion que muestra el texto del resource
-	function getResource() {
-        //Lenguaje establecido
-        $lang = $_SESSION["LANGUAGE"];
+	function getResource($lang = 0) {
+		if($lang == 0) 
+			$lang = LANGUAGE;
 	    //Arma la sentencia SQL
         $this->sql = "SELECT R.RESOURCE_TEXT FROM $this->table A INNER JOIN TBL_SYSTEM_RESOURCE R " .
             "ON (R.RESOURCE_NAME = A.LANGUAGE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE AND A.ID = " . $this->_checkDataType("ID");
@@ -48,7 +48,7 @@ class language extends table {
 			$stabs .= "\t";
 		//Arma la sentencia SQL
 		$this->sql = "SELECT L.ID, R.RESOURCE_TEXT FROM $this->table L " .
-					"INNER JOIN TBL_SYSTEM_RESOURCE R ON (R.RESOURCE_NAME = L.LANGUAGE_NAME AND R.LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . ")" .
+					"INNER JOIN TBL_SYSTEM_RESOURCE R ON (R.RESOURCE_NAME = L.LANGUAGE_NAME AND R.LANGUAGE_ID = " . LANGUAGE . ")" .
                     ((!$showAll) ? " WHERE L.IS_BLOCKED = FALSE" : "") . " ORDER BY 2";
 		$result = "";
 		//Recorre los valores
@@ -163,7 +163,7 @@ class language extends table {
 	function getInformationByAbbr($lang) {
 		$result = -1;
 		//Arma la sentencia SQL
-		$this->sql = "SELECT L.ID FROM $this->table L WHERE L.ABBRV LIKE '$lang%' ORDER BY L.ID LIMIT 1";
+		$this->sql = "SELECT L.ID FROM $this->table L WHERE L.ABBREVATION LIKE '$lang%' ORDER BY L.ID LIMIT 1";
 		//Obtiene los resultados
 		$row = $this->__getData();
 		//Valida el resultado

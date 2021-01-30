@@ -143,6 +143,24 @@ class payment_state extends table {
 		return $return;
 	}
 
+	//Funcion que busca POR el nombre del tipo de pago
+	function getStateByName($name) {
+        //Lenguaje establecido
+        $lang = $_SESSION["LANGUAGE"];
+	    //Arma la sentencia SQL
+        $this->sql = "SELECT PAYMENT_STATE_ID FROM $this->view WHERE PAYMENT_STATE_NAME = '$name' AND LANGUAGE_ID = $lang";
+        //Variable a retornar
+        $result = 0;
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if($row) {
+            $result = $row[0];
+        }
+        //Retorna
+        return $result;
+	}
+
 
 }
 

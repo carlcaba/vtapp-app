@@ -9,33 +9,33 @@ class connector_db {
 	var $user;
 	var $password;
 	var $port;
-	var $datas = array("prod" => array("db" => "vtapcorp",
-										"host" => "mysql.vtapp.com",
+	var $datas = array("prod" => array("db" => "prd-vtapp-db",
+										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
 										"port" => 3306,
 										"user" => "vtappcorp_user",
-										"pass" => "pSJaFhAYkFZqCPB5PTt"),
-						"test" => array("db" => "vtapp_dev_db",
-										"host" => "vtapp-mysql-server.mysql.database.azure.com",
+										"pass" => "Vt4ppC0rp0r1t3$"),
+						"test" => array("db" => "logicaad_vtapp",
+										"host" => "162.215.248.225",
 										"port" => 3306,
-										"user" => "vtappadmin@vtapp-mysql-server",
-										"pass" => "Vtapp-colo20."),
+										"user" => "logicaad_vtapp_u",
+										"pass" => "Vt4ppC0rp0r1t3$"),
 						"deve" => array("db" => "vtappcorp",
-										"host" => "127.0.0.1",
+										"host" => "localhost",
 										"port" => 3306,
-										"user" => "root",
-										"pass" => "C4s0ft17")
+										"user" => "vtappcorp_u",
+										"pass" => "Vt4ppC0rp0r1t3$")
 						);
-var $dataAlt = array(
+	var $dataAlt = array(
 		//LOCAL ALTERNATE CONNECTIONS
 						"deve0" => array("db" => "vtappcorp",
 										"host" => "127.0.0.1",
 										"port" => 3306,
-										"user" => "VTAPPCORP_USER",
+										"user" => "vtappcorp_1",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 						"deve1" => array("db" => "vtappcorp",
 										"host" => "127.0.0.1",
 										"port" => 3306,
-										"user" => "VTAPPCORP_USER_2",
+										"user" => "vtappcorp_2",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 		//TEST ALTERNATE CONNECTIONS
 						"test0" => array("db" => "logicaad_vtapp",
@@ -64,18 +64,23 @@ var $dataAlt = array(
 										"user" => "logicaad_vtapp_5",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 	//PRODUCTION ALTERNATE CONNECTIONS
-						"prod0" => array("db" => "vtapcorp",
-										"host" => "mysql.vtapp.com",
+						"prod0" => array("db" => "prd-vtapp-db",
+										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "searchrace_user",
-										"pass" => "pSJaFhAYkFZqCPB5PTt")
+										"user" => "vtappcorp_user_2",
+										"pass" => "Vt4ppC0rp0r1t3$"),
+						"prod1" => array("db" => "prd-vtapp-db",
+										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
+										"port" => 3306,
+										"user" => "vtappcorp_user_3",
+										"pass" => "Vt4ppC0rp0r1t3$")
 						);
 
 	/* identificador de conexion y consulta */
 	var $conex_id = 0;
 	var $query_id = 0;
 	
-	var $env = "test";
+	var $env = "deve";
 	var $maxAlt = 0;
 	/* numero de error y texto error */
 	var $Errno = 0;
@@ -93,7 +98,7 @@ var $dataAlt = array(
 	
 	//Constructor anterior
     function connector_db() {
-		$this->env = "test";
+		$this->env = "deve";
 		$this->conex_id = 0;
 		$this->maxAlt = $this->getMaxAlternateConnections();
 		foreach($this->datas as $key => $value) {

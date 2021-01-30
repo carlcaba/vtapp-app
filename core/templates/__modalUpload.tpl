@@ -1,5 +1,6 @@
 <? 
 	$extensions = "['csv', 'xls', 'xlsx']";
+	if(!isset($imageToUpload)) $imageToUpload = false;
 	if($imageToUpload) {
 		$extensions = "['jpg', 'png', 'jpeg'], maxFileCount: 1, minImageWidth: 200, minImageHeight: 200";
 	}

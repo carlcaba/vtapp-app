@@ -1,0 +1,58 @@
+{
+	"deve0": {
+		"db": "vtappcorp",
+		"host": "127.0.0.1",
+		"port": 3306,
+		"user": "VTAPPCORP_USER",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"deve1": {
+		"db": "vtappcorp",
+		"host": "127.0.0.1",
+		"port": 3306,
+		"user": "VTAPPCORP_USER_2",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"test0": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_1",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"test1": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_2",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"test2": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_3",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"test3": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_4",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"test4": {
+		"db": "logicaad_vtapp",
+		"host": "162.215.248.225",
+		"port": 3306,
+		"user": "logicaad_vtapp_5",
+		"pass": "Vt4ppC0rp0r1t3$"
+	},
+	"prod0": {
+		"db": "vtapcorp",
+		"host": "mysql.vtapp.com",
+		"port": 3306,
+		"user": "searchrace_user",
+		"pass": "pSJaFhAYkFZqCPB5PTt"
+	}
+}

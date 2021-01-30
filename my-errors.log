@@ -1,0 +1,284 @@
+[17-Nov-2020 18:52:02 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\users.php on line 941
+[17-Nov-2020 18:52:04 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\core\classes\table.php on line 878
+[17-Nov-2020 18:52:04 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\access.php on line 78
+[17-Nov-2020 18:52:05 America/Bogota] PHP Notice:  Undefined variable: titleMapModal in C:\AppServ\www\vtapp\app\core\templates\__mapModal.tpl on line 17
+[17-Nov-2020 18:52:17 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota.php on line 224
+[17-Nov-2020 18:52:19 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota_type.php on line 98
+[17-Nov-2020 18:52:19 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[17-Nov-2020 18:52:19 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 4
+[17-Nov-2020 18:52:20 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 9
+[17-Nov-2020 18:53:57 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota.php on line 224
+[17-Nov-2020 18:54:00 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota_type.php on line 98
+[17-Nov-2020 18:54:00 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[17-Nov-2020 18:54:00 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 4
+[17-Nov-2020 18:54:00 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 9
+[17-Nov-2020 21:01:53 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[17-Nov-2020 21:01:53 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[17-Nov-2020 21:01:53 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[17-Nov-2020 21:01:53 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[17-Nov-2020 21:01:53 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[17-Nov-2020 21:01:54 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[17-Nov-2020 21:39:12 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[20-Jan-2021 12:44:11 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[20-Jan-2021 12:44:24 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[20-Jan-2021 12:45:50 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[27-Jan-2021 07:42:09 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[27-Jan-2021 07:47:22 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[27-Jan-2021 08:18:59 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[27-Jan-2021 08:18:59 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[27-Jan-2021 08:18:59 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[27-Jan-2021 08:18:59 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[27-Jan-2021 08:18:59 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[27-Jan-2021 08:19:00 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[27-Jan-2021 08:19:09 America/Bogota] PHP Notice:  Undefined variable: source in C:\AppServ\www\vtapp\app\client-management.php on line 30
+[27-Jan-2021 10:37:30 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[27-Jan-2021 11:30:22 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[27-Jan-2021 11:30:30 America/Bogota] PHP Notice:  Undefined variable: source in C:\AppServ\www\vtapp\app\client-management.php on line 30
+[27-Jan-2021 11:30:58 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota.php on line 224
+[27-Jan-2021 11:31:02 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota_type.php on line 98
+[27-Jan-2021 11:31:02 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[27-Jan-2021 11:31:02 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 4
+[27-Jan-2021 11:31:02 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 9
+[29-Jan-2021 11:32:25 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:25 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:25 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:26 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:26 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:26 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:27 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:28 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:28 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:28 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:29 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:30 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:31 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:32 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:33 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:34 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:35 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:36 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:36 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:36 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:37 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:38 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:38 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:38 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:39 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:40 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:41 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:41 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:41 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:42 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:43 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:43 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:43 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined index: vtappcorp_skin in C:\AppServ\www\vtapp\app\404.php on line 34
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined offset: 2 in C:\AppServ\www\vtapp\app\404.php on line 84
+[29-Jan-2021 11:32:44 America/Bogota] PHP Notice:  Undefined offset: 1 in C:\AppServ\www\vtapp\app\404.php on line 101
+[29-Jan-2021 17:28:05 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[29-Jan-2021 17:28:18 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[29-Jan-2021 17:28:57 America/Bogota] PHP Notice:  Undefined variable: source in C:\AppServ\www\vtapp\app\client-management.php on line 30
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[29-Jan-2021 19:13:29 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[29-Jan-2021 20:12:07 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[30-Jan-2021 07:26:39 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[30-Jan-2021 07:27:02 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1
+[30-Jan-2021 08:22:08 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[30-Jan-2021 08:22:08 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[30-Jan-2021 08:22:08 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[30-Jan-2021 08:22:08 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[30-Jan-2021 08:22:08 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[30-Jan-2021 08:22:09 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[30-Jan-2021 08:22:43 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 08:22:44 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 451
+[30-Jan-2021 08:22:45 America/Bogota] SQL: SELECT ID, TITLE, LINK, ICON, ACCESS_ID, MENU_NAME, PARENT_ID, ORDER_ID, IS_BLOCKED FROM VIE_MENU_SUMMARY WHERE ID = 0 AND LANGUAGE_ID = 2
+[30-Jan-2021 08:22:47 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:47 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\delivery_type.php on line 124
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: tabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 277
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:48 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:22:49 America/Bogota] PHP Notice:  Undefined variable: titleUpload in C:\AppServ\www\vtapp\app\core\templates\__modalUpload.tpl on line 18
+[30-Jan-2021 08:22:49 America/Bogota] PHP Strict Standards:  Declaration of user_address::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 289
+[30-Jan-2021 08:22:49 America/Bogota] PHP Strict Standards:  Declaration of address_type::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\address_type.php on line 72
+[30-Jan-2021 08:22:50 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 148
+[30-Jan-2021 08:22:50 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:50 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:22:50 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\templates\__modalAddress.tpl on line 120
+[30-Jan-2021 08:22:50 America/Bogota] PHP Notice:  Undefined variable: titleMapModal in C:\AppServ\www\vtapp\app\core\templates\__mapModal.tpl on line 17
+[30-Jan-2021 08:53:19 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 08:53:20 America/Bogota] PHP Warning:  session_destroy(): Session object destruction failed in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 74
+[30-Jan-2021 08:53:49 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 08:53:51 America/Bogota] SQL: SELECT ID, TITLE, LINK, ICON, ACCESS_ID, MENU_NAME, PARENT_ID, ORDER_ID, IS_BLOCKED FROM VIE_MENU_SUMMARY WHERE ID = 0 AND LANGUAGE_ID = 2
+[30-Jan-2021 08:55:15 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 08:55:17 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 451
+[30-Jan-2021 08:55:18 America/Bogota] SQL: SELECT ID, TITLE, LINK, ICON, ACCESS_ID, MENU_NAME, PARENT_ID, ORDER_ID, IS_BLOCKED FROM VIE_MENU_SUMMARY WHERE ID = 0 AND LANGUAGE_ID = 2
+[30-Jan-2021 08:55:20 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:20 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:20 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:20 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\delivery_type.php on line 124
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: tabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 277
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Notice:  Undefined variable: titleUpload in C:\AppServ\www\vtapp\app\core\templates\__modalUpload.tpl on line 18
+[30-Jan-2021 08:55:21 America/Bogota] PHP Strict Standards:  Declaration of user_address::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 289
+[30-Jan-2021 08:55:21 America/Bogota] PHP Strict Standards:  Declaration of address_type::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\address_type.php on line 72
+[30-Jan-2021 08:55:22 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 148
+[30-Jan-2021 08:55:22 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:22 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 08:55:23 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\templates\__modalAddress.tpl on line 120
+[30-Jan-2021 08:55:23 America/Bogota] PHP Notice:  Undefined variable: titleMapModal in C:\AppServ\www\vtapp\app\core\templates\__mapModal.tpl on line 17
+[30-Jan-2021 09:04:48 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 09:04:50 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 451
+[30-Jan-2021 09:04:52 America/Bogota] SQL: SELECT ID, TITLE, LINK, ICON, ACCESS_ID, MENU_NAME, PARENT_ID, ORDER_ID, IS_BLOCKED FROM VIE_MENU_SUMMARY WHERE ID = 0 AND LANGUAGE_ID = 2
+[30-Jan-2021 09:04:54 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:54 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:54 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:54 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\delivery_type.php on line 124
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: tabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 277
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\service.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Notice:  Undefined variable: titleUpload in C:\AppServ\www\vtapp\app\core\templates\__modalUpload.tpl on line 18
+[30-Jan-2021 09:04:55 America/Bogota] PHP Strict Standards:  Declaration of user_address::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 289
+[30-Jan-2021 09:04:55 America/Bogota] PHP Strict Standards:  Declaration of address_type::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\address_type.php on line 72
+[30-Jan-2021 09:04:56 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 148
+[30-Jan-2021 09:04:56 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:56 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\zone.php on line 135
+[30-Jan-2021 09:04:56 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\templates\__modalAddress.tpl on line 120
+[30-Jan-2021 09:04:56 America/Bogota] PHP Notice:  Undefined variable: titleMapModal in C:\AppServ\www\vtapp\app\core\templates\__mapModal.tpl on line 17
+[30-Jan-2021 09:06:20 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota.php on line 224
+[30-Jan-2021 09:06:24 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\quota_type.php on line 98
+[30-Jan-2021 09:06:24 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\client.php on line 205
+[30-Jan-2021 09:06:24 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 4
+[30-Jan-2021 09:06:24 America/Bogota] PHP Notice:  Undefined variable: payment in C:\AppServ\www\vtapp\app\core\templates\__modalPayment.tpl on line 9
+[30-Jan-2021 09:17:58 America/Bogota] SQL: SELECT ID FROM TBL_SYSTEM_MENU WHERE LINK = 'services.php' AND ACCESS_ID <= 100
+[30-Jan-2021 09:18:04 America/Bogota] SQL: SELECT ID, TITLE, LINK, ICON, ACCESS_ID, MENU_NAME, PARENT_ID, ORDER_ID, IS_BLOCKED FROM VIE_MENU_SUMMARY WHERE ID = 0 AND LANGUAGE_ID = 2
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\classes\interfaces.php on line 81
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 43
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: SESSION_EXPIRED in C:\AppServ\www\vtapp\app\core\__check-session.php on line 44
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: vtappcorp_lastAccess in C:\AppServ\www\vtapp\app\core\__check-session.php on line 48
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\__check-session.php on line 51
+[30-Jan-2021 10:00:09 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\templates\__messages.tpl on line 46
+[30-Jan-2021 10:00:24 America/Bogota] SQL: SELECT DESTINY FROM TBL_DIRECT_CHAT WHERE SENDER = 'carlcaba' ORDER BY REGISTERED_ON DESC LIMIT 1

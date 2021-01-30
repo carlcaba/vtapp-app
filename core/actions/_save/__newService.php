@@ -8,7 +8,8 @@
 
     //Variable del codigo
     $result = array('success' => false,
-        'message' => $_SESSION["NO_DATA_FOR_VALIDATE"]);
+        'message' => $_SESSION["NO_DATA_FOR_VALIDATE"],
+		"errorlog" => "");
 
 	//Realiza la operacion
 	require_once("../../classes/service_log.php");
@@ -22,19 +23,16 @@
         }
         else {
             $strmodel = $_GET['strModel'];
-			$strpay = $_GET['strPayment'];
         }
     }
     else {
         $strmodel = $_POST['strModel'];
-		$strpay = $_POST['strPayment'];
     }
 
     //Si es un acceso autorizado
     if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
         //Asigna la informacion
         $datas = json_decode($strmodel);
-		$data = json_decode($strpay);
 
 		$state = new service_state($datas->hfState);
 		$state->ID = $state->getIdByResource($datas->hfState);
@@ -47,7 +45,7 @@
 		$service->REQUESTED_EMAIL = $datas->txtREQUESTED_EMAIL;
 		$service->REQUESTED_PHONE = $datas->txtREQUESTED_PHONE;
 		$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
-		$service->REQUESTED_IP = $datas->txtREQUESTED_IP;
+		$service->REQUESTED_IP = $_SERVER["REMOTE_ADDR"];
 		$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
 		$service->setRequestZone($datas->cbZoneRequestSub);
 		$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
@@ -109,9 +107,9 @@
 		}
 
 		//Verifica si hubo pago
-		if($datas->PAYED) {
+		if(boolval($datas->hfPayed)) {
 			//Cambia el estado
-			$service->updateState($service->service->getNextState());
+			$service->updateState($service->state->getNextState());
 			//Si se genera error
 			if($service->nerror > 0) {
 				$result["message"] = $_SESSION["ERROR"] . " " . $_SESSION["SERVICES"] . ": " . $service->error . " -> " . $service->sql; 
@@ -124,7 +122,7 @@
 			$sLog->setService($service->ID);
 			//Asigna el ultimo estado
 			$sLog->setInitialState($state->ID);
-			$sLog->setFinalState($service->service->getNextState());
+			$sLog->setFinalState($service->state->getNextState());
 			//Limpia los campos no requeridos
 			$sLog->ID = "UUID()";
 			$sLog->EMPLOYEE_INITIAL_ID = "NULL";
@@ -146,6 +144,35 @@
 		if($datas->hfIsMarco == "off") {
 			$state = new service_state($datas->hfState);
 			$state->ID = $state->getIdByResource("SERVICE_STATE_2");
+		}
+		
+		//Verifica si se asigno un aliado
+		if($datas->hfPartnerId != "") {
+			$lastState = $service->STATE_ID;
+			//Cambia el estado
+			$service->updateState($service->state->getNextState());
+			if($service->nerror > 0) {
+				$result["message"] = $_SESSION["ERROR"] . " " . $_SESSION["SERVICES"] . ": " . $service->error . " -> " . $service->sql; 
+				//Termina
+				$result = utf8_converter($result);
+				exit(json_encode($result));
+			}
+			//Agrega la asignación en el log
+			$sLog = new service_log();
+			//Log
+			$sLog->setService($service->ID);
+			//Asigna el ultimo estado
+			$sLog->setInitialState($lastState);
+			$sLog->setFinalState($service->STATE_ID);
+			//Limpia los campos no requeridos
+			$sLog->ID = "UUID()";
+			$sLog->EMPLOYEE_INITIAL_ID = "NULL";
+			$sLog->EMPLOYEE_FINAL_ID = "NULL";
+			$sLog->VEHICLE_INITIAL_ID = "";
+			$sLog->VEHICLE_FINAL_ID = "";
+			$sLog->OBSERVATION = "TBL_PARTNER.ID='" . $datas->hfPartnerId . "'";
+			//Adiciona el log
+			$sLog->__add();
 		}
 		
         //Cambia el resultado

@@ -58,7 +58,7 @@ class vehicle extends table {
             $this->EMPLOYEE_ID = "NULL";
             //Genera error
             $this->nerror = 20;
-            $this->error = "Empleado " . $_SESSION["NOT_REGISTERED"];
+            $this->error = "Employee " . $_SESSION["NOT_REGISTERED"];
         }
     }
 	
@@ -89,7 +89,7 @@ class vehicle extends table {
             $this->VEHICLE_TYPE_ID = "NULL";
             //Genera error
             $this->nerror = 20;
-            $this->error = "Tipo vehículo " . $_SESSION["NOT_REGISTERED"];
+            $this->error = "Vehicle type " . $_SESSION["NOT_REGISTERED"];
         }
     }
 	
@@ -120,7 +120,7 @@ class vehicle extends table {
             $this->JOURNEY_ID = "NULL";
             //Genera error
             $this->nerror = 20;
-            $this->error = "Empleado " . $_SESSION["NOT_REGISTERED"];
+            $this->error = "Journey " . $_SESSION["NOT_REGISTERED"];
         }
     }
 	
@@ -139,7 +139,7 @@ class vehicle extends table {
 		//Verifica la informacion
 		if($this->nerror > 0) {
 			//Asigna el error
-			$this->error = $_SESSION["NOT_REGISTERED"];
+            $this->error = "Vehicle " . $_SESSION["NOT_REGISTERED"];
 			$this->nerror = 20;
 		}
 		else {
@@ -186,6 +186,35 @@ class vehicle extends table {
 	}
 
 	//Funcion que despliega los valores en una categoria
+	function showJSONListByUser($user) {
+		//Verifica el lenguaje
+		if($lang == 0) {
+			//Lenguaje establecido
+			$lang = $_SESSION["LANGUAGE"];
+		}
+		//Arma la sentencia SQL
+		$this->sql = "SELECT DISTINCT VEHICLE_ID, VEHICLE_FULL_NAME, PLATE, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME, PARTNER_ID, PARTNER_NAME " .
+					"FROM $this->view WHERE IS_BLOCKED = FALSE AND LANGUAGE_ID = $lang AND IDENTIFICATION = '$user' ORDER BY 2"; 
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$data = array("vehicle_id" => $row[0],
+							"plate" => $row[2],
+							"vehicle_full_name" => $row[1],
+							"vehicle_type_id" => $row[3],
+							"vehicle_type_name" => $row[4],
+							"partner_id" => $row[5],
+							"partner_name" => $row[6]);
+			array_push($return,$data);
+		}
+		//Retorna
+		return $return;
+	}
+
+
+
+	//Funcion que despliega los valores en una categoria
 	function showOptionEmployeeList($tabs = 8,$selected = "", $lang = 0) {
 		//Verifica el lenguajebyhu u	QF B
 		if($lang == 0) {
@@ -229,7 +258,7 @@ class vehicle extends table {
             $this->ID = "UUID()";
             //Genera el error
             $this->nerror = 10;
-            $this->error = $_SESSION["NOT_REGISTERED"];
+            $this->error = "Vehicle " . $_SESSION["NOT_REGISTERED"];
         }
         else {
             //Asigna el ID
@@ -241,6 +270,32 @@ class vehicle extends table {
             $this->error = "";
         }
     }
+
+	//Funcion para buscar un empleado por otra 
+    function getInformationByUserId($userid) {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT VEHICLE_ID FROM $this->view WHERE USER_ID = '$user' AND IS_BLOCKED = FALSE LIMIT 1";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "UUID()";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = "Vehicle " . $_SESSION["NOT_REGISTERED"];
+        }
+        else {
+            //Asigna el ID
+            $this->ID = $row[0];
+            //Llama el metodo
+            $this->__getInformation();
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+    }
+
 	
 	//Funcion que activa o habilita a un empleado
 	function activate($activate) {

@@ -585,6 +585,22 @@ class partner_client extends table {
 		//Retorna
 		return $return;
 	}
+	
+	//Funcion para mostrar los aliados de un cliente
+	function getMyPartners() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT DISTINCT PARTNER_ID, PARTNER_NAME, EMPLOYEE_ID FROM $this->view WHERE CLIENT_ID = " . $this->_checkDataType("CLIENT_ID");
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$data = array("id" => "'" . $row[0] . "'",
+							"employee" => $row[2]);
+			array_push($return,$data);
+		}
+		return $return;	
+	}
+	
 }
 
 ?>

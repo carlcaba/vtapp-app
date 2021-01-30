@@ -57,6 +57,12 @@ $(document).ready(function () {
 			$("#cbDeliverTime").trigger("change");
 			$("#cbClient").trigger("change");			
 		}
+		else if(nextStepId == "step-4") {
+			$('#txtTOTAL_WIDTH').trigger("change");
+			$("#txtTOTAL_HEIGHT").trigger("change");
+			$("#txtTOTAL_LENGTH").trigger("change");			
+			$("#txtTOTAL_WEIGHT").trigger("change");			
+		}
 		if (isValid) 
 			nextStepWizard.removeAttr('disabled').trigger('click');
 		else 

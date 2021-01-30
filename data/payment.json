@@ -1,0 +1,76 @@
+[
+	{
+		"id": "",
+		"name": "KUSHKI",
+		"url": "{{}}",
+		"options": [
+			{
+				"id": 1,
+				"name": "Tarjeta de crédito",
+				"enabled": true
+			}
+		],
+		"enabled": false
+	},
+	{
+		"id": "",
+		"name": "WOMPI",
+		"url": "{{PAYMENT_WOMPI_URL}}",
+		"options": [
+			{
+				"id": 1,
+				"name": "Tarjeta de crédito",
+				"enabled": true
+			},
+			{
+				"id": 2,
+				"name": "Transferencia Bancolombia",
+				"enabled": true
+			},
+			{
+				"id": 3,
+				"name": "NEQUI",
+				"enabled": true
+			},
+			{
+				"id": 4,
+				"name": "PSE",
+				"enabled": true
+			}
+		],
+		"steps": [
+			{
+				"option": 1,
+				"step": 1,
+				"url": "{{PAYMENT_WOMPI_GETTOKEN_URL}}",
+				"method": "POST",
+				"data": {
+							"number": "4242424242424242", 
+							"cvc": "123", 
+							"exp_month": "08", 
+							"exp_year": "28", 
+							"card_holder": "José Pérez" 
+				}
+			},
+			{
+				"option": 1,
+				"step": 2,
+				"url": "{{PAYMENT_WOMPI_GETTOKEN_URL}}",
+				"method": "POST",
+				"data": {
+					"payment_method": {
+						"type": "CARD",
+						"installments": 2, 
+						"token": "tok_prod_1_BBb749EAB32e97a2D058Dd538a608301" 
+					}
+					"value": 0.00,
+					"reference": "",	//Id servicio
+					"return_url": "{{PAYMENT_WOMPI_RETURN_URL}}"
+				}
+			}
+		"enabled": true
+			
+			
+			
+			
+	

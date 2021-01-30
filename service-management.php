@@ -433,6 +433,8 @@
 											<input type="hidden" name="hfPartnerName" id="hfPartnerName" value="" />
 											<input type="hidden" name="cbVehicleType" id="cbVehicleType" value="" />
 											<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="" />
+											<input type="hidden" name="hfAssignedPartner" id="hfAssignedPartner" value="" />
+											<input type="hidden" name="hfAssignedEmployee" id="hfAssignedEmployee" value="" />
 										</div>
 									</div>
 								</div>
@@ -574,6 +576,7 @@
 					url: "core/actions/_load/__checkRate.php",
 					data: { 
 						distance: distance,
+						client: $("#cbClient").val(),
 						round: $("#cbRoundTrip").is(':checked')
 					},
 					dataType: "json",
@@ -595,6 +598,10 @@
 						if(data.success) {
 							$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
 							$("#panelBodyPartners").html(data.message);
+							if(data.filtered && data.filter != "") {
+								$("#spanSelected_" + data.filter).show();
+								$("#hfAssignedPartner").val(data.filter);
+							}
 							$(".optPartner").on("click", function() {
 								var datas = $(this).data();
 								$("#hfRateId").val($(this).val());
@@ -815,6 +822,12 @@
 		});
 	}
 	function checkSerializedObject(datasObj) {
+		if(!datasObj.hasOwnProperty("txtREQUESTED_ADDRESS")) {
+			datasObj["txtREQUESTED_ADDRESS"] = $("#txtREQUESTED_ADDRESS").val();
+		}
+		if(!datasObj.hasOwnProperty("txtDELIVER_ADDRESS")) {
+			datasObj["txtDELIVER_ADDRESS"] = $("#txtDELIVER_ADDRESS").val();
+		}
 		if(!datasObj.hasOwnProperty("txtUSER_ID")) {
 			datasObj["txtUSER_ID"] = $("#hfUSERID").val();
 		}

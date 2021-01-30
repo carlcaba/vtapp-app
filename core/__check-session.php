@@ -1,7 +1,9 @@
 <?
     //Inicio de sesion
     session_name('vtappcorp_session');
-    session_start();
+	if (session_status() == PHP_SESSION_NONE) {
+		session_start();
+	}
 
 	//Incluye las clases requeridas
 	include_once("classes/configuration.php");
@@ -57,7 +59,7 @@
 		$user->__getInformation();
 		
 		//Verifica si debe revisar el acceso al menu
-		if($check) {
+		if($check && intval($_SESSION['vtappcorp_useraccessid']) < 100) {
 			//Verifica el acceso del usuario
 			if(!$user->checkAccess($_SESSION["menu_id"])) {
 				//Si el menu no está registrado

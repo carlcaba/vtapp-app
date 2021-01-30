@@ -14,7 +14,7 @@
 	//Realiza la operacion
 	require_once("../../classes/payment.php");
 
-	$payment = "false";
+	$paymentType = "false";
 	
 	//Captura las variables
 	if(empty($_POST['strModel'])) {
@@ -42,7 +42,7 @@
 		$payment = new payment();
 		
 		//Llamado desde payments
-		if($payment == "false") {
+		if($paymentType == "false") {
 			//Actualiza la información
 			$payment->setType($datas->cbQuotaType);
 			$payment->setClient($datas->cbClient);
@@ -126,7 +126,7 @@
 		
 		//Cambia el resultado
 		$result['success'] = true;
-		$result['message'] = $payment == "false" ? $_SESSION["PAYMENT_REGISTERED"] : $payment->ID;
+		$result['message'] = $paymentType == "false" ? $_SESSION["PAYMENT_REGISTERED"] : $payment->ID;
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];

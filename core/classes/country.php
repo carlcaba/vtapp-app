@@ -9,17 +9,17 @@ require_once("resources.php");
 class country extends table {
 
 	//Constructor de la clase
-	function __constructor() {
-		$this->country();
+	function __constructor($pais = "") {
+		$this->country($pais);
 	}
 	
 	//Constructor anterior
-	function country() {
+	function country($pais = "") {
 		//Llamado al constructor padre
 		parent::tabla("TBL_SYSTEM_COUNTRY");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
-		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
+		$this->REGISTERED_BY = $_SESSION["vtappcorp_userid"];
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 	}

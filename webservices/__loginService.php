@@ -5,6 +5,11 @@
 	//Inicio de sesion
 	session_name('vtappcorp_session');
 	session_start();
+
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+	header('Access-Control-Allow-Methods: GET, POST, PUT');	
+	header('Content-Type: application/json');	
 	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
@@ -12,6 +17,7 @@
 	require_once("../core/classes/interfaces.php");
 	require_once("../core/classes/external_session.php");
 	require_once("../core/classes/configuration.php");
+	require_once("../core/classes/vehicle.php");
 	
 	//Carga los recursos
     include("../core/__load-resources.php");
@@ -68,13 +74,15 @@
 
 	//Instancia la clase usuario
 	$usua = new users($user);
-	$conf = new configuration();
+	$conf = new configuration("WEB_SITE");
+	$website = $conf->verifyValue();
+	$siteroot = $conf->verifyValue("SITE_ROOT");
 
 	//Asigna los valores
-	$usua->THE_PASSWORD = Desencriptar($pass);
+	$usua->THE_PASSWORD = $pass;
 		
 	//Valida la contrase�a
-	$usua->check();
+	$usua->check(true);
 	
 	//Si hay error
 	if($usua->nerror > 0) {
@@ -122,8 +130,20 @@
 	}
 	
 	$exts->_add();
+	
+	$vehi = new vehicle();
+	$dataV = $vehi->showJSONListByUser($usua->IDENTIFICATION);
 		
 	$result["token"] = $exts->ID;
+	$result["user_data"] = array("user_id" => $usua->ID,
+								 "full_name" => $usua->getFullName(),
+								 "personal_id" => $usua->IDENTIFICATION,
+								 "email" => $usua->EMAIL,
+								 "address" => $usua->ADDRESS,
+								 "phone" => $usua->PHONE,
+								 "cellphone" => $usua->CELLPHONE,
+								 "image" => $website . $siteroot . $usua->getUserPicture(true),
+								 "vehicles" => $dataV);
 	
 	//Termina
 	exit(json_encode($result));

@@ -409,17 +409,19 @@ class users extends table {
         $ext = [".png",".jpg",".gif",".jpeg"];
 		//Nombre del archivo
 		$filename = $this->ID;
+		//Nombre largo
+		$lrgname = "";
 		//Define el nombre de la imagen
 		if($large)
-			$filename .= "_160x160";
+			$lrgname = "_160x160";
         //Define el path
         $path = "img/users/";
         //Define el valor por defecto
-        $name = "user.jpg";
+        $name = "user" . $lrgname . ".jpg";
         //Recorre el array
         foreach($ext as $valor) {
             //Define el nombre
-            $check = $filename . $valor;
+            $check = $filename . $lrgname . $valor;
             //Verifica si existe el archivo
             if(file_exists($path . $check)) {
                 $name = $check;
@@ -431,7 +433,7 @@ class users extends table {
     }
 
 	//Funcion que verifica los datos del usuario
-	function check() {         
+	function check($phone = false) {         
 		//Verifica que no haya ingresado el usuario SUPERADMIN
 		if($this->ID == $this->conf->verifyValue("SUPERADMIN_USER")) {
 			//Compara las contrase�as
@@ -486,8 +488,13 @@ class users extends table {
 			//Termina
 			return;
 		}
+		//Si es un mensajero
+		if($phone)
+			$result = $this->checkUser(Desencriptar($this->THE_PASSWORD), $phone);
+		else
+			$result = $this->checkUser(Desencriptar($row[1]));
 		//Verifica el password
-		if(!$this->checkUser(Desencriptar($row[1]))) {
+		if(!$result) {
 			//Genera el error
 			$this->nerror = 20;
 			$this->error = $_SESSION["WRONG_PASSWORD"];
@@ -502,9 +509,9 @@ class users extends table {
 	}
 	
 	//Valida la contrasena del usuario
-	function checkUser($pass) {
+	function checkUser($pass,$phone = false) {
 		//Valida la informacion
-		return $pass==$this->THE_PASSWORD;
+		return $phone ? $pass == $this->CELLPHONE : $pass==$this->THE_PASSWORD ;
 	}	
 		
 	//Valida el acceso del usuario a un menu
@@ -571,7 +578,7 @@ class users extends table {
 	//Funcion que adiciona el usuario
 	function __add($origin = "", $lang = "", $client = "") {
 		//Verifica el acceso
-		if($this->acceso->ID == 70) {
+		if($this->acceso->ID == 70 || $this->ACCESS_ID == 70) {
 			//Asigna usuario a cédula
 			$this->ID = explode("-",$this->IDENTIFICATION)[1];
 			//Asigna contraseña a celular
@@ -687,6 +694,28 @@ class users extends table {
         //Verifica que no se presenten errores
         $this->executeQuery();
     }
+
+    //Funcion que actualiza el estado y posicion
+    function updatePosition($state, $position, $gluser = "") {
+		$lat = "NULL";
+		$lng = "NULL";
+		//Verifica si envía posicion
+		if($position != "") {
+			$pos = explode(",",$position);
+			$lat = $pos[0];
+			$lng = $pos[1];
+		}
+        //Arma la sentencia SQL
+        $this->sql = "UPDATE " . $this->table . " SET ON_LINE = " . ($state ? "TRUE" : "FALSE") . ", LATITUDE = $lat, LONGITUDE = $lng";
+		//Si el estado es activo
+		if($state && $gluser != "")
+			$this->sql .= ", GOOGLE_USER = '" . $gluser . "'";
+		//Completa la sentencia sql
+		$this->sql .= " WHERE ID = " . $this->_checkDataType("ID");
+        //Verifica que no se presenten errores
+        $this->executeQuery();
+    }
+
 
     //Funcion que modifica el cambio de contraseña
     function modifyChangePassword() {
@@ -1331,32 +1360,61 @@ class users extends table {
         //Verifica que no se presenten errores
         $this->executeQuery();
     }
-	
-	function sendGCM($message, $id) {
+
+    //Funcion que verifica usuarios enlinea
+    function getOnline($value) {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT ID, GOOGLE_USER FROM " . $this->table . " WHERE ON_LINE AND ACCESS_ID = 70";
+		//Verify value
+		if($value != "") {
+			$this->sql .= " AND REFERENCE = '$value'";
+		}
+		//Variable a devolver
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			//Arma la respuesta
+			$data = array("uid" => $row[0],
+							"fbid" => $row[1]);
+			array_push($return,$data);
+		}
+		return $return;
+    }
+
+	//Enviar notification a firebase
+	function sendGCM($message) {
+		$id = $this->GOOGLE_USER;
 		$url = 'https://fcm.googleapis.com/fcm/send';
-		$fields = array (
-				'registration_ids' => array (
-						$id
-				),
-				'data' => array (
-						"message" => $message
-				)
-		);
-		$fields = json_encode ( $fields );
+		$fields = array ('registration_ids' => array ($id),
+						'data' => array ("message" => $message)
+					);
+		$fields = json_encode ($fields);
 		$headers = array (
-				'Authorization: key=' . "YOUR_KEY_HERE",
+				'Authorization: key=' . $this->conf->verifyValue("FIREBASE_SERVER_KEY"),
 				'Content-Type: application/json'
 		);
-
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
-		$result = curl_exec($ch);
-		echo $result;
-		curl_close ($ch);
+		error_log("Start notification: data -> " . print_r($fields,true));
+		$this->nerror = 0;
+		$this->error = "";
+		try {
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+			$result = curl_exec($ch);
+			curl_close ($ch);
+		}
+		catch (Exception $ex) {
+			$this->nerror = 110;
+			$this->error = $ex->getMessage();
+			error_log("Error on notification: " . $ex->getMessage());
+			$result = "";
+		}
+		return $result;
 	}	
 	
 }

@@ -1,6 +1,11 @@
 <?
 	//Web service que verifica la sesion del usuario
 	//LOGICA ESTUDIO 2019
+	
+	header('Access-Control-Allow-Origin: *');
+	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+	header('Access-Control-Allow-Methods: GET, POST, PUT');	
+	
 	function checkSession($login, $txid) {
 		//Incluye las clases necesarias
 		require_once("../core/classes/resources.php");

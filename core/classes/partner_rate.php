@@ -96,13 +96,19 @@ class partner_rate extends table {
     }	
 
 	//Funcion para seleccionar operador
-	function selectPartner($distance, $round) {
+	function selectPartner($distance, $round, $filter = "") {
 		//Arma la sentencia SQL
 		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME " .
 					"FROM $this->view " .
-					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX ORDER BY PRICE";
+					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX ";
+		//Si hay un filtro			
+		if($filter != "") 
+			$this->sql .= "AND PARTNER_ID IN ($filter) ";
+		//Termina la sentencia SQL
+		$this->sql .= "ORDER BY PRICE";
 		$count = 0;
 		$max = 0;
+		$id = "";
 		$min = 900000000;
 		//Valor a retornar
 		$return = "";
@@ -132,7 +138,7 @@ class partner_rate extends table {
 			$return .=  "</div>\n";
 			$return .=  "<div class=\"col-md-3\">\n";
 			$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
-			$return .=  "<span class=\"info-box-text\">$ " . number_format($row[5],2,".",",") . "</span>\n";
+			$return .=  "<span class=\"info-box-text\">$ " . number_format($price*1.25,2,".",",") . "</span>\n";
 			$return .=  "</div>\n";
 			$return .=  "<div class=\"col-md-3\">\n";
 			$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
@@ -140,21 +146,24 @@ class partner_rate extends table {
 			$return .=  "</div>\n";
 			$return .=  "<div class=\"col-md-3\">\n";
 			$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
-			$return .=  "<span class=\"info-box-text\">$ " . number_format($row[5]*0.75,2,".",",") . "</span>\n";
+			$return .=  "<span class=\"info-box-text\">$ " . number_format($price,2,".",",") . "</span>\n";
 			$return .=  "</div>\n";
 			$return .=  "</div>\n";
 			$return .=  "</div>\n";
 			$return .=  "<span class=\"info-box-icon\"><i class=\"" . $row[7] . "\" title=\"$row[12]\"></i></span>\n";
-			$return .=  "<span class=\"info-box-icon\" id=\"spanSelected_$row[0]\" style=\"display: none;\"><i class=\"fa fa-check\" title=\"" . $_SESSION["YOUR_SELECTION"] . "\"></i></span>\n";
+			$return .=  "<span class=\"info-box-icon text-warning\" id=\"spanSelected_$row[0]\" style=\"display: none;\"><i class=\"fa fa-check\" title=\"" . $_SESSION["YOUR_SELECTION"] . "\"></i></span>\n";
 			$return .=  "</div>\n";
 			$return .=  "</label>\n";
+			$id = $row[0];
 			$count++;
 		}
 		$result = array("html" => $return,
 						"cont" => $count,
 						"max" => $max,
 						"min" => $min,
-						"sql" => $this->sql);
+						"sql" => $this->sql,
+						"filter" => ($filter != "" && $count == 1) ? $id : "");
+						
 		return $result;
 	}
 

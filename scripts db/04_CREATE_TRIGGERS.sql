@@ -1,5 +1,3 @@
-﻿/* SELECT THE SCHEMA */
-USE VTAPPCORP;
 
 SET GLOBAL log_bin_trust_function_creators = 1;
 
@@ -1199,7 +1197,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1268,7 +1268,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1349,7 +1351,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1414,7 +1418,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1476,7 +1482,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1543,7 +1551,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1673,7 +1683,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1734,7 +1746,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1831,7 +1845,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -1952,7 +1968,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2029,7 +2047,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2150,7 +2170,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2219,7 +2241,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2380,7 +2404,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2441,7 +2467,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2502,7 +2530,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2571,7 +2601,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2676,7 +2708,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2753,7 +2787,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2818,7 +2854,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -2995,7 +3033,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3056,7 +3096,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3125,7 +3167,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3190,7 +3234,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3251,7 +3297,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3308,11 +3356,13 @@ BEGIN
 	DECLARE vOld VARCHAR(4000);
 	DECLARE vNew VARCHAR(4000);
 	DECLARE vLogId INTEGER;
-	DECLARE vVersion DECIMAL(4,2);
+	DECLARE vVersion DECIMAL(4,1);
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3393,7 +3443,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3510,7 +3562,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3575,7 +3629,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3640,7 +3696,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3721,7 +3779,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3782,7 +3842,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3863,7 +3925,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -3936,7 +4000,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4057,7 +4123,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4126,7 +4194,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4251,7 +4321,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4349,7 +4421,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4415,7 +4489,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version
@@ -4504,7 +4580,9 @@ BEGIN
 	
 	-- Find username of person performing the INSERT into table
 	SELECT SUBSTRING_INDEX(USER(), '@', 1) INTO vUser;
-	SELECT CAST((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END) AS DECIMAL(4,1)) INTO vVersion;
+	-- SELECT CAST(SUBSTRING_INDEX((CASE WHEN INSTR(@@GLOBAL.version,'-') > 0 THEN LEFT(@@GLOBAL.version, INSTR(@@GLOBAL.version,'-')-1) ELSE @@GLOBAL.version END),'.',2) AS DECIMAL(4,1)) INTO vVersion;
+	SET vVersion = 8.0;
+
    
 	IF vUser <> 'root' THEN
 		-- Verify the version

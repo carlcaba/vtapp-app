@@ -119,6 +119,8 @@
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_9"] ?></th>
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_10"] ?></th>
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_11"] ?></th>
+											<th width="1%">Notif</th>
+											<th width="1%">Payed</th>
 											<th width="10%"><?= $_SESSION["ACTIONS_TABLE_TITLE"] ?></th>
 										</tr>
 									</thead>		
@@ -167,8 +169,14 @@
 	
     <script>
 	var fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "ID_STATE"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ID_STATE"];
 	$(document).ready(function() {
+		$('#divActivateModal').on('shown.bs.modal', function (e) {
+			if($("#hfTextButton").val() != "")
+				$("#btnActivate").html($("#hfTextButton").val());
+			else 
+				$("#btnActivate").html($("#hfDefaultTextButton").val());
+		});
 		$('[data-toggle="tooltip"]').tooltip();		
         table = $('#tableService').DataTable({
 			"ajax": { 
@@ -188,8 +196,10 @@
 				{ "data": "DELIVER_ADDRESS", "responsivePriority": 5 },
 				{ "data": "ZONE_NAME_DELIVERY", "responsivePriority": 10 },
 				{ "data": "DELIVERY_TYPE_NAME", "responsivePriority": 6 },
-				{ "data": "PRICE", "responsivePriority": 7 },
+				{ "data": "PRICE", "responsivePriority": 7, "render": $.fn.dataTable.render.number(',', '.', 2, '') },
 				{ "data": "SERVICE_STATE_NAME", "responsivePriority": 8 },
+				{ "data": "NOTIFIED", "searchable": false, "responsivePriority": 12, "sortable": false, visible: false },
+				{ "data": "PAYED", "searchable": false, "responsivePriority": 13, "sortable": false, visible: false },
 				{ "data": "ID_STATE", "searchable": false, "responsivePriority": 1, "sortable": false }
 			],
 			"autoWidth": false,
@@ -265,6 +275,86 @@
 			});
 		});
 		$("#divActivateModal").modal("toggle");
+	}
+	function markAsPayed(id) {
+		var _msg = "<?= $_SESSION["PAY"] ?>";
+		$("#spanTitle").html(_msg);
+		$("#spanTitleName").html("");
+		$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
+		$("#btnActivate").unbind("click");
+		$("#btnActivate").bind("click", function() {
+			var noty;
+			$.ajax({
+				url:'core/actions/_save/__saveMarkAsPayed.php',
+				dataType: "json",
+				data: {
+					service: id
+				},
+				beforeSend: function (xhrObj) {
+					var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+					noty = notify("", "dark", "", message, "", false);												
+				},
+				success:function(data) {
+					noty.close();
+					notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+					if(data.success) {
+						if($("#bidBtn" + id).attr("disabled")) $("#bidBtn" + id).attr("disabled", false);
+						if($("#assBtn" + id).attr("disabled")) $("#assBtn" + id).attr("disabled", false);
+						$("#payBtn" + id).attr("disabled", true);						
+					}
+				}
+			});
+		});
+		$("#divActivateModal").modal("toggle");
+	}
+	function startBid(id) {
+		$.ajax({
+			url:'core/actions/_load/__getOnlineEmployees.php',
+			dataType: "json",
+			beforeSend: function (xhrObj) {
+				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+				noty = notify("", "dark", "", message, "", false);												
+			},
+			success:function(data) {
+				noty.close();
+				if(data.success) {
+					var _msg = data.message;
+					$("#spanTitle").html(_msg);
+					$("#spanTitleName").html(name);
+					$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
+					$("#hfTextButton").val(data.btnText);
+					$("#btnActivate").unbind("click");
+					$("#btnActivate").bind("click", function() {
+						var noty;
+						$.ajax({
+							url:'core/actions/_save/__startBid.php',
+							data: { 
+								users: JSON.stringify(data.data),
+								id: id
+							},
+							dataType: "json",
+							beforeSend: function (xhrObj) {
+								var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+								noty = notify("", "dark", "", message, "", false);												
+							},
+							success:function(data){
+								$("#hfTextButton").val("");
+								noty.close();
+								notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+								if(data.success) {
+									$("#bidBtn" + id).attr("disabled", true);
+									$("#assBtn" + id).attr("disabled", true);
+								}
+							}
+						});
+					});
+					$("#divActivateModal").modal("toggle");
+				}
+				else {
+					notify("", 'info', "", data.message, "");
+				}
+			}
+		});
 	}
 	function assign(id) {
 		var noty;

@@ -45,7 +45,8 @@
 				$datas = $_GET["hfIPData"];
 				$fbid = $_GET["hfFBID"];
 				$fbuser = $_GET["hfIsFB"];
-				$fbemail = $_GET["hfFBMail"];
+				if(isset($_GET['hfFBMail']))
+					$fbemail = $_GET["hfFBMail"];
 			}
 		}
 		else {
@@ -55,7 +56,8 @@
 			$datas = $_POST["hfIPData"];
 			$fbid = $_POST["hfFBID"];
 			$fbuser = $_POST["hfIsFB"];
-			$fbemail = $_POST["hfFBMail"];
+			if(isset($_POST['hfFBMail']))
+				$fbemail = $_POST["hfFBMail"];
 		}
 	} 
 	else {
@@ -67,7 +69,8 @@
 		$datas = $vars["hfIPData"];
 		$fbid = $vars["hfFBID"];
 		$fbuser = $vars["hfIsFB"];
-		$fbemail = $vars["hfFBMail"];
+		if(isset($vars['hfFBMail']))
+			$fbemail = $vars["hfFBMail"];
 	}
 	
 	//Verifica la informacion
@@ -120,6 +123,10 @@
     $_SESSION['vtappcorp_useraccess'] = $usua->access->PREFIX;
     $_SESSION['vtappcorp_referenceid'] = $usua->REFERENCE;
     $_SESSION['vtappcorp_location'] = $ipdata->lat . "," . $ipdata->lon;
+	if (!defined('LANGUAGE')) {
+		define("LANGUAGE", 2);
+	}
+	$_SESSION["LANGUAGE"] = 2;
 	$link = ($link != "") ? $link : $usua->access->LINK_TO;
 
 	//Actualiza la hora de acceso

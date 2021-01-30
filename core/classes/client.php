@@ -294,6 +294,7 @@ class client extends table {
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";

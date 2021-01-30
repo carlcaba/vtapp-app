@@ -1,0 +1,62 @@
+[30-Jan-2021 07:52:52 America/Bogota] GetCardToken: cUrl init
+[30-Jan-2021 07:52:53 America/Bogota] CUrl Error: 
+[30-Jan-2021 07:52:53 America/Bogota] Return: {"error":{"type":"INPUT_VALIDATION_ERROR","messages":{"number":["El número de tarjeta usado no es aceptado en el ambiente de pruebas."]}}}
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Undefined property: stdClass::$status in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 62
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Undefined property: stdClass::$data in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 63
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 63
+[30-Jan-2021 07:52:53 America/Bogota] Array
+(
+    [success] => 1
+    [token] => 
+    [status] => 
+    [message] => 
+)
+
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 81
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 81
+[30-Jan-2021 07:52:53 America/Bogota] GetCardToken: cUrl init
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Array to string conversion in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 110
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Array to string conversion in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 110
+[30-Jan-2021 07:52:53 America/Bogota] PHP Notice:  Array to string conversion in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 110
+[30-Jan-2021 07:52:53 America/Bogota] Array
+(
+    [success] => 1
+    [transaction] => 
+    [status] => 
+    [message] => 
+)
+
+[30-Jan-2021 07:52:53 America/Bogota] Array
+(
+    [success] => 
+    [transaction] => 
+    [status] => 
+    [message] => Error generating transaction: No transaction response
+)
+
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 132
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 132
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 133
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 133
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 138
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 138
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 141
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 141
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 143
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 143
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 147
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 147
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 148
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 148
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 149
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 149
+[30-Jan-2021 07:52:54 America/Bogota] PHP Notice:  Trying to get property of non-object in C:\AppServ\www\vtapp\app\core\actions\_save\__processPayment.php on line 149
+[30-Jan-2021 07:52:54 America/Bogota] SQL: SELECT ID FROM TBL_PAYMENT WHERE ID = '11a3564f-62fa-11eb-b571-54e6f54a840f' 
+[30-Jan-2021 09:06:58 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA WHERE ID = '6a8078b6-6304-11eb-b571-54e6f54a840f' 
+[30-Jan-2021 09:07:00 America/Bogota] PHP Warning:  curl_close(): 123 is not a valid cURL handle resource in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 68
+[30-Jan-2021 09:07:00 America/Bogota] PHP Notice:  Undefined variable: tokenRet in C:\AppServ\www\vtapp\app\core\actions\_save\__newQuota.php on line 102
+[30-Jan-2021 09:07:00 America/Bogota] AcceptanceToken: cUrl init
+[30-Jan-2021 09:08:07 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA WHERE ID = '938d9afa-6304-11eb-b571-54e6f54a840f' 
+[30-Jan-2021 09:08:09 America/Bogota] PHP Warning:  curl_close(): 123 is not a valid cURL handle resource in C:\AppServ\www\vtapp\app\core\actions\_save\__wompiGatewayFunctions.php on line 68
+[30-Jan-2021 09:08:09 America/Bogota] PHP Notice:  Undefined variable: tokenRet in C:\AppServ\www\vtapp\app\core\actions\_save\__newQuota.php on line 102
+[30-Jan-2021 09:08:09 America/Bogota] AcceptanceToken: cUrl init

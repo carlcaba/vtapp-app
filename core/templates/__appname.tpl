@@ -34,7 +34,7 @@
 	$appname .= "\n<small class=\"small-brand-text\">$title</small>\n";
 	$skn = explode(" ",$skin[0]);
 	if(count($skn) == 3)
-		$skn[1] = skn[2];
+		$skn[1] = $skn[2];
 ?>
 			<!-- Brand Logo -->
 			<a href="dashboard.php" class="brand-link <?= $skn[1] ?>">

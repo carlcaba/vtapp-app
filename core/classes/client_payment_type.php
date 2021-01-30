@@ -144,6 +144,7 @@ class client_payment_type extends table {
 			//Lenguaje establecido
 			$lang = $_SESSION["LANGUAGE"];
 		}
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
