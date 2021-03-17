@@ -18,3 +18,190 @@
 [30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 22
 [30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 25
 [30-Jan-2021 10:00:15 America/Bogota] PHP Notice:  Undefined index: vtappcorp_userid in C:\AppServ\www\vtapp\app\core\classes\directchat.php on line 178
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 11:20:16 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\city.php on line 250
+[21-Feb-2021 11:20:19 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\city.php on line 263
+[21-Feb-2021 11:20:19 America/Bogota] PHP Notice:  Undefined variable: viewData in C:\AppServ\www\vtapp\app\core\classes\city.php on line 289
+[21-Feb-2021 11:20:19 America/Bogota] PHP Notice:  Undefined variable: stabs in C:\AppServ\www\vtapp\app\core\classes\country.php on line 31
+[21-Feb-2021 11:20:19 America/Bogota] PHP Notice:  Undefined variable: viewData in C:\AppServ\www\vtapp\app\core\classes\city.php on line 306
+[21-Feb-2021 11:20:19 America/Bogota] PHP Notice:  Undefined index: REQUIRED_FIELDS in C:\AppServ\www\vtapp\app\core\classes\city.php on line 323
+[21-Feb-2021 12:08:56 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 12:13:25 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:26 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:28 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:29 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:31 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:32 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:33 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:34 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:36 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:37 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:38 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:39 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:40 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:41 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:42 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:43 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:44 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:45 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:46 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:13:47 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:14:16 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:15:29 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 12:20:45 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[21-Feb-2021 13:30:15 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:31:54 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\city.php on line 250
+[21-Feb-2021 13:38:43 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Notice:  Undefined variable: activate in C:\AppServ\www\vtapp\app\core\classes\city.php on line 232
+[21-Feb-2021 13:40:03 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\city.php on line 250
+[21-Feb-2021 13:40:24 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[25-Feb-2021 19:49:18 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[08-Mar-2021 13:54:17 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[12-Mar-2021 19:49:56 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:34:39 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:37:12 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:37:27 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:38:18 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:38:27 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 08:38:27 America/Bogota] PHP Warning:  array_push() expects parameter 1 to be array, null given in C:\AppServ\www\vtapp\app\core\classes\area.php on line 270
+[15-Mar-2021 08:38:44 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 09:53:45 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 09:54:59 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:00 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:01 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:02 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:03 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:04 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:05 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:06 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:08 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:09 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:22 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:23 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:24 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:25 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:26 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:26 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:27 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:29 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:30 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:43 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:48 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:49 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:53 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:54 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:55 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:56 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:57 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:58 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:55:59 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:00 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:01 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:02 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:03 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:04 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:05 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:09 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:10 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:11 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:12 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:13 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:14 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:15 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:16 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:17 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:18 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:19 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:20 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:21 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 09:56:22 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 10:09:40 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 10:11:51 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[15-Mar-2021 11:09:34 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 12:24:50 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 12:48:28 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 13:46:16 America/Bogota] PHP Strict Standards:  Declaration of address_type::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\address_type.php on line 72
+[15-Mar-2021 13:46:16 America/Bogota] PHP Strict Standards:  Declaration of user_address::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\user_address.php on line 12
+[15-Mar-2021 14:25:36 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 14:41:48 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 16:10:05 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 16:11:43 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 16:42:50 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 17:56:36 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 17:57:44 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 17:58:27 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 17:58:30 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 19:19:03 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[15-Mar-2021 19:19:46 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[15-Mar-2021 21:18:22 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 10:51:30 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 10:52:12 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 10:52:34 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 11:10:01 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 11:19:24 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 11:19:54 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 15:41:38 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 15:42:55 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 15:42:59 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 15:43:21 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 15:53:24 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 15:53:34 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 15:53:39 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 15:53:53 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 16:09:39 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 16:10:01 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 16:13:54 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 16:14:18 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 16:31:01 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 16:44:04 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 16:44:22 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 16:45:21 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 16:55:02 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:07:50 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:08:31 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:08:55 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 17:10:04 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:21:03 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:21:49 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:23:05 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:23:21 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:23:29 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 17:24:27 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:32:57 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:36:38 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:36:42 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:36:54 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 17:37:44 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 17:51:10 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:51:13 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 17:51:27 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 19:21:51 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164
+[16-Mar-2021 19:22:32 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 19:22:35 America/Bogota] PHP Strict Standards:  Declaration of partner_rate::__constructor() should be compatible with table::__constructor($Tabla = '') in C:\AppServ\www\vtapp\app\core\classes\partner_rate.php on line 10
+[16-Mar-2021 19:22:48 America/Bogota] SQL: SELECT ID FROM TBL_QUOTA_EMPLOYEE WHERE USER_ID = 'carlcaba' AND IS_BLOCKED = FALSE
+[16-Mar-2021 19:29:16 America/Bogota] PHP Notice:  Undefined variable: options in C:\AppServ\www\vtapp\app\core\actions\_load\__loadSummary.php on line 164

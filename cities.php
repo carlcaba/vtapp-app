@@ -79,11 +79,12 @@
 							<div class="card-header">
 								<p class="card-title">
 									<?= $_SESSION["TITLE_PAGE"] ?>
-									<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["MENU_NEW"] ?>" id="btnNewCity" name="btnNewCity" class="btn btn-primary pull-right" onclick="show('','new');">
-										<i class="fa fa-plus-circle"></i>
-										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["MENU_NEW"] ?></span>
-									</button>
-									</button>
+									<div class="btn-group float-right">
+										<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["MENU_NEW"] ?>" id="btnNewCity" name="btnNewCity" class="btn btn-primary pull-right" onclick="show('','new');">
+											<i class="fa fa-plus-circle"></i>
+											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["MENU_NEW"] ?></span>
+										</button>
+									</div>
 								</p>
 							</div>
 							<!-- /.card-header -->

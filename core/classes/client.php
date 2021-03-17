@@ -237,9 +237,13 @@ class client extends table {
 	}
 
 	//Funcion para buscar un empleado por otra informacion
-    function getInformationByOtherInfo($field = "CLIENT_NAME") {
+    function getInformationByOtherInfo($field = "CLIENT_NAME", $uselike = false) {
+		if(!$uselike) 
+			$sWhere = "$field = " . $this->_checkDataType($field);
+		else 
+			$sWhere = "$field LIKE " . $this->_checkDataType($field, $uselike);
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID FROM $this->table WHERE $field = " . $this->_checkDataType($field);
+        $this->sql = "SELECT ID FROM $this->table WHERE " . $sWhere;
         //Obtiene los resultados
         $row = $this->__getData();
         //Registro no existe

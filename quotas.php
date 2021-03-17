@@ -31,6 +31,44 @@
 	
 	require_once("core/classes/quota.php");
 	
+	require_once("core/classes/configuration.php");
+	$conf = new configuration("PAYMENT_MERCHANT_ID");
+	$merchId = $conf->verifyValue();
+
+	$conf = new configuration("PAYMENT_REQUEST_TOKEN");
+	$urlToken = $conf->verifyValue();
+
+	$conf = new configuration("PAYMENT_REQUEST_CHARGE");
+	$urlCharge = $conf->verifyValue();
+	
+	$buttonText = $action == "new" ? $_SESSION["PAY"] : $_SESSION["ADD_FUNDS"];
+	
+	$gate = $conf->verifyValue("PAYMENT_GATEWAY");
+	$accTok = 0;
+	$err = 0;
+	
+	//Verifica la pasarela
+	if($gate == "WOMPI") {
+		//Libreria requerida
+		require_once("core/actions/_save/__wompiGatewayFunctions.php");
+
+		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
+		$urlAccToken = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_GET_ACCEPTANCE_TOKEN");
+		
+		$accTok = 1;
+		
+		//Obtiene el acceptance token
+		$accTokRet = getAcceptanceToken($urlAccToken, $pubkey);
+
+		//Si no es null
+		if($accTokRet["token"] != null) {
+			$accTokData = $accTokRet["token"];
+		}
+		else {
+			$err = 1;
+		}
+	}
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -214,16 +252,30 @@
 		var noty;
 		var title = "<?= $_SESSION["GO_TO_PAY"] ?>";
 		var url = "core/actions/_save/__processPayment.php";
+		var bodyHtml = "<?= $_SESSION["MSG_PROCESS_PAYMENT"] ?> ";
+		bodyHtml = bodyHtml.replace("{0}", "$" + FormatNumber(amont,2));
+		if(<?= ($accTok && !$err) ?>) {
+			var link = "<?= str_replace("{0}", $accTokData->data->presigned_acceptance->permalink, $_SESSION["ACCEPTANCE_TOKEN_TEXT"]) ?>";
+			bodyHtml += "<br><br><div class=\"form-check\"><input class=\"form-check-input\" type=\"checkbox\" value=\"\" id=\"chkAccToken\" name=\"chkAccToken\"><label class=\"form-check-label\" for=\"chkAccToken\">" + link + "</label></div>";
+		}
 		$("#spanTitle").html(title);
 		$("#spanTitleName").html("");
-		$("#modalBody").html("<?= $_SESSION["MSG_PROCESS_PAYMENT"] ?> ".replace("{0}","$" + FormatNumber(amont,2)));
+		$("#modalBody").html(bodyHtml);
 		$("#btnActivate").unbind("click");
 		$("#btnActivate").bind("click", function() {
+			if(<?= ($accTok && !$err) ?>) {
+				if(!$("#chkAccToken").is(':checked')) {  
+					notify("", "danger", "", "<?= $_SESSION["ERROR_ACCEPT_TOKEN_TEXT"] ?>", "");
+					return false;
+				}  				
+			}
 			var noty;
 			$.ajax({
 				url: url,
 				data: { 
-					id: id
+					id: id,
+					gate: "<?= $gate ?>",
+					token: "<?= $accTokData->data->presigned_acceptance->acceptance_token ?>"
 				},
 				dataType: "json",
 				beforeSend: function (xhrObj) {
@@ -348,6 +400,7 @@
 						}
 						else {
 							notify("", 'info', "", data.message, "");
+							setTimeout(function() { location.href = data.link; }, 5000);
 						}
 					}
 				}

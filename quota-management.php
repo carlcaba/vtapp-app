@@ -98,9 +98,34 @@
 	$conf = new configuration("PAYMENT_REQUEST_CHARGE");
 	$urlCharge = $conf->verifyValue();
 	
-	
-	
 	$buttonText = $action == "new" ? $_SESSION["PAY"] : $_SESSION["ADD_FUNDS"];
+	
+	$gate = $conf->verifyValue("PAYMENT_GATEWAY");
+	$accTok = 0;
+	$err = 0;
+	
+	//Verifica la pasarela
+	if($gate == "WOMPI") {
+		//Libreria requerida
+		require_once("core/actions/_save/__wompiGatewayFunctions.php");
+
+		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
+		$urlAccToken = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_GET_ACCEPTANCE_TOKEN");
+		
+		$accTok = 1;
+		
+		//Obtiene el acceptance token
+		$accTokRet = getAcceptanceToken($urlAccToken, $pubkey);
+
+		//Si no es null
+		if($accTokRet["token"] != null) {
+			$accTokData = $accTokRet["token"];
+		}
+		else {
+			$err = 1;
+		}
+	}
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -280,8 +305,14 @@
 	<script src="plugins/jquery.cc.validator/jquery.creditCardValidator.js"></script>
 	<!-- Cleave -->
 	<script src="plugins/cleave/cleave.min.js"></script>
+<?
+	if(!$accTok) {
+?>
 	<!-- Kushki -->
 	<script src="https://cdn.kushkipagos.com/kushki.min.js"></script>	
+<?
+	}
+?>
 	<!-- Resources -->
 	<script src="js/resources.js"></script>	
 	
@@ -351,10 +382,14 @@
 			});
 			$("#divActivateModal").modal("toggle");			
 		});
+		if(<?= $err ?>) {
+			notify("", 'danger', "", "<?= $_SESSION["ERROR_ON_PAYMENT"] . $accTokRet["message"] ?>", "");
+		}
 	});
 	function pay() {
 		var form = document.getElementById('frmQuota');
 		var noty;
+		var bodyHtml = "<?= $_SESSION["MSG_CONFIRM_AND_PAY"] ?>";
 		if (form.checkValidity() === false) {
 			window.event.preventDefault();
 			window.event.stopPropagation();
@@ -370,15 +405,26 @@
 		var url = $("#hfLinkAction").val();
 		var $frm = $("#frmQuota");
 		var datasObj = $frm.serializeObject();
+		if(<?= ($accTok && !$err) ?>) {
+			var link = "<?= str_replace("{0}", $accTokData->data->presigned_acceptance->permalink, $_SESSION["ACCEPTANCE_TOKEN_TEXT"]) ?>";
+			bodyHtml += "<br><br><div class=\"form-check\"><input class=\"form-check-input\" type=\"checkbox\" value=\"\" id=\"chkAccToken\" name=\"chkAccToken\"><label class=\"form-check-label\" for=\"chkAccToken\">" + link + "</label></div>";
+			datasObj["acceptance_token"] = "<?= $accTokData->data->presigned_acceptance->acceptance_token ?>";
+		}
 		if(!datasObj.hasOwnProperty("txtAMOUNT")) {
 			datasObj["txtAMOUNT"] = $("#txtAMOUNT").val();
 		}
 		var datas = JSON.stringify(datasObj);
 		$("#spanTitle").html(title);
 		$("#spanTitleName").html("");
-		$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM_AND_PAY"] ?>");
+		$("#modalBody").html(bodyHtml);
 		$("#btnActivate").unbind("click");
 		$("#btnActivate").bind("click", function() {
+			if(<?= ($accTok && !$err) ?>) {
+				if(!$("#chkAccToken").is(':checked')) {  
+					notify("", "danger", "", "<?= $_SESSION["ERROR_ACCEPT_TOKEN_TEXT"] ?>", "");
+					return false;
+				}  				
+			}
 			var noty;
 			$.ajax({
 				url: url,
@@ -506,9 +552,9 @@
 								});
 							});
 						}
-						//Si ya genero la transacción de pago
 						else {
 							notify("", 'info', "", data.message, "");
+							setTimeout(function() { location.href = data.link; }, 5000);
 						}
 					}
 				}

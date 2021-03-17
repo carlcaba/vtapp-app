@@ -163,9 +163,9 @@ class service_state extends table {
 	}
 	
 	//Funcion para buscar el primer estado
-	function getFirstState() {
+	function getFirstState($second = false) {
 		//Asigna el valor
-		$this->RESOURCE_NAME = "SERVICE_STATE_0";
+		$this->RESOURCE_NAME = $second ? "SERVICE_STATE_1" : "SERVICE_STATE_0";
         //Arma la sentencia SQL
         $this->sql = "SELECT ID FROM $this->table WHERE RESOURCE_NAME = " . $this->_checkDataType("RESOURCE_NAME");
         //Obtiene los resultados

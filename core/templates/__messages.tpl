@@ -6,10 +6,11 @@
 			 * Notifications
 			 */
 			 var DirectChatVar;
-			function notify(icon, type, title, message, url, dismiss) {
+			function notify(icon, type, title, message, url, dismiss, bckdrp) {
 				var from = "top",
 					align = "right",
-					_return = false;
+					_return = false,
+					bckdrpclss = "";
 				if (dismiss === undefined)
 					dismiss = true;
 				if (type == "dark") {
@@ -17,6 +18,10 @@
 					align = "center";
 					_return = true;
 				}
+				if (bckdrp === undefined)
+					bckdrp = false;
+				if (bckdrp)
+					bckdrpclss = "backdrop";
 				var opt = {
 					message: message,
 					icon: icon
@@ -31,7 +36,7 @@
 						from: from,
 						align: align
 					},
-					template: '<div data-notify="container" class="col-11 col-sm-3 alert alert-{0}" role="alert">' +
+					template: '<div data-notify="container" class="col-11 col-sm-3 ' + bckdrpclss + ' alert alert-{0}" role="alert">' +
 								'<span data-notify="icon"></span> ' +
 								'<span data-notify="title">{1}</span> ' +
 								'<span data-notify="message">{2}</span>' +

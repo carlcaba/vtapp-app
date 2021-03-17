@@ -248,7 +248,7 @@ class quota extends table {
 			$actiontext = ($action == "view") ? $_SESSION["INFORMATION_OF"] : $_SESSION["DELETE"];
 			$link = "core/actions/_save/__deleteQuota.php";
 		}
-
+		
 		//Variable a regresar
 		$return = array("tabs" => $stabs,
 						"readonly" => $readonly,

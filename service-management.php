@@ -105,6 +105,33 @@
 		$service->setClient($uscli->REFERENCE);
 	}
 
+	$gate = $conf->verifyValue("PAYMENT_GATEWAY");
+	$accTok = 0;
+	$err = 0;
+
+	//Verifica la pasarela
+	if($gate == "WOMPI") {
+		//Libreria requerida
+		require_once("core/actions/_save/__wompiGatewayFunctions.php");
+
+		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
+		$urlAccToken = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_GET_ACCEPTANCE_TOKEN");
+		$urlReturn = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT") . $conf->verifyValue("PAYMENT_WOMPI_REDIRECT");
+		
+		$accTok = 1;
+		
+		//Obtiene el acceptance token
+		$accTokRet = getAcceptanceToken($urlAccToken, $pubkey);
+
+		//Si no es null
+		if($accTokRet["token"] != null) {
+			$accTokData = $accTokRet["token"];
+		}
+		else {
+			$err = 1;
+		}
+	}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -398,7 +425,25 @@
 										<h3 class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_TITLE_4"] ?></h3>
 										<p class="panel-title"><?= $_SESSION["COMPLETE_SERVICE_SUBTITLE_4"] ?></p>
 									</div>
-									<div class="panel-body" id="panelBodyPartners"></div>
+									<div class="panel-body" id="panelBodyPartners" data-state="0">
+										<label class="partner-selection btn btn-lg btn-block">
+											<div class="info-box mb-3 ">
+												<span class="info-box-icon"><img src="img/partners/oops.png" class="img-fluid"></span>
+												<div class="info-box-content">
+													<div class="row">
+														<div class="col-md-3">
+															<span class="info-box-number">¡OOPS!</span>
+															<span class="info-box-text">Algo pasó</span>
+														</div>
+														<div class="col-md-9">
+															<span class="info-box-number">¡Ocurrió algo inesperado!</span>
+															<span class="info-box-text">No se puede calcular la distancia y el precio</span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</label>									
+									</div>
 									<div class="panel-footer">
 										<div class="float-left">
 											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
@@ -435,6 +480,7 @@
 											<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="" />
 											<input type="hidden" name="hfAssignedPartner" id="hfAssignedPartner" value="" />
 											<input type="hidden" name="hfAssignedEmployee" id="hfAssignedEmployee" value="" />
+											<input type="hidden" name="hfGateWay" id="hfGateWay" value="<?= $gate ?>" />
 										</div>
 									</div>
 								</div>
@@ -490,6 +536,7 @@
 		alt_address = "txtDELIVER_ADDRESS",
 		latitude = "hfLATITUDE_REQUESTED_ADDRESS",
 		longitude = "hfLONGITUDE_REQUESTED_ADDRESS";
+	var chkRt = null;
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
 		$("select[name^='cbZone']").on("change", function () {
@@ -506,8 +553,8 @@
 				hfLng = "#hfLONGITUDE_DELIVER_ADDRESS";
 			}
 			if(name.indexOf("Sub") > -1) {
-				$(hfLat).val($(this).find("option:selected").data("latitude"));
-				$(hfLng).val($(this).find("option:selected").data("longitude"));
+				if($(hfLat).val() == "") $(hfLat).val($(this).find("option:selected").data("latitude"));
+				if($(hfLng).val() == "") $(hfLng).val($(this).find("option:selected").data("longitude"));
 				setDistance();
 				return false;
 			}
@@ -563,14 +610,18 @@
 		});
 		$('#cbClient').change(function() {
 			var opt = $(this).find("option:selected").data("optionpy")
-			$('#btnPayment').attr("disabled", opt == "off");
+			$('#btnPayment').attr("disabled", opt == "off" && $("#panelBodyPartners").data("state") == "0");
 			$('#btnSave').attr("disabled", opt != "off");
 			$("#hfIsMarco").val(opt);
 		});
 		$("#cbDeliverType").on("change", function(e) {
+			if(chkRt != null)
+				return;
+			chkRt = true;
 			var selected = $("option:selected", this);
-			distance = setDistance();
+			var distance = setDistance();
 			var noty;
+			distance = parseFloat($("#hfDISTANCE").val());
 			if(distance > 0) {
 				$.ajax({
 					url: "core/actions/_load/__checkRate.php",
@@ -591,13 +642,14 @@
 						$("#hfRateId").val("");
 						$("#hfPartnerName").val("");
 						$("#hfPartnerId").val("");
-						$("#panelBodyPartners").html("");
 						$("#btnPayment").attr("disabled",true);
 						$("#btnSave").attr("disabled",true);
+						$("#panelBodyPartners").data("state", 0);
 						$("[id^='spanSelected_']" ).hide();
 						if(data.success) {
 							$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
 							$("#panelBodyPartners").html(data.message);
+							$("#panelBodyPartners").data("state", 1);
 							if(data.filtered && data.filter != "") {
 								$("#spanSelected_" + data.filter).show();
 								$("#hfAssignedPartner").val(data.filter);
@@ -618,12 +670,16 @@
 						}
 						else 
 							notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+						chkRt = null;
 					}
 				});
 			}
 			else {
 				if($("#cbDeliverType").is(":visible"))
 					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
+				else if(parseInt($('.nextBtn').closest(".setup-content").attr("id").substr(5,1)) >= 2)
+					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
+				chkRt = null;
 			}
 		});
 		var checkAddressChange = function(obj) {
@@ -636,7 +692,7 @@
 				$("#" + ref.replace("txt","Zone")).fadeOut();
 			$('#cbDeliverType').trigger("change");
 		};
-		$("[id*=_ADDRESS]").on('input', function () { checkAddressChange(this) });
+		$("[id$=_ADDRESS]").on('input', function () { checkAddressChange(this) });
 		$("[id$=_ADDRESS]").on('change', function () { checkAddressChange(this) });
 		$("[id$=_ADDRESS]").focusout(function () { checkAddressChange(this) });
 		$("#btnSave").on("click", function(e) {
@@ -682,8 +738,9 @@
 			$("#divActivateModal").modal("toggle");			
 		});
 		$('#cbDeliverType').trigger("change");
-		$("#cbDeliverTime").trigger("change");
 		$("#cbClient").trigger("change");
+		if($("#hfLATITUDE_REQUESTED_ADDRESS").val() != "" && $("#hfLONGITUDE_REQUESTED_ADDRESS").val() != "")
+			$("#ZoneREQUESTED").fadeOut();
 
 	});
 	function setDistance() {
@@ -803,20 +860,87 @@
 					$("#divActivateModal").modal("toggle");			
 				}
 				else {
-					$("#frmPayment").attr("action", 'core/actions/_save/__newCheckout.php');
-					$("#frmPayment").empty();
-					$("#frmPayment").append('<input type="hidden" name="serviceData" value="' + $("#frmPayment").serialize() + '">');
-					notify("", 'danger', "", data.message, "");
-					var kushki = new KushkiCheckout({
-						form: "frmPayment",
-						merchant_id: "<?= $merchId ?>",
-						amount: $("#hfPRICE").val(),
-						currency: "COP", 
-						is_subscription: false,
-						inTestEnvironment: true,
-						regional: false 
-					});					
-					$("#divPayment").modal("toggle");			
+					if(<?= ($accTok && !$err) ?>) {
+						var reference = "<?= uniqid() ?>";
+						$.getScript("<?= $script ?>", function( data, textStatus, jqxhr ) {
+							var checkout = new WidgetCheckout({
+								currency: 'COP',
+								amountInCents: (parseInt($("#hfPRICE").val()) * 100),
+								reference: reference,
+								publicKey: '<?= $pubkey ?>'
+								//,redirectUrl: '<?= $urlReturn ?>'
+							});
+							checkout.open(function ( result ) {
+								var transaction = result.transaction
+								if(transaction.status == "APPROVED") {
+									notify("", 'success', "", "<?= $_SESSION["PAYMENT_REGISTERED"] ?>", "");
+									var url = "core/actions/_save/__newService.php";
+									$("#hfPayed").val("true");
+									$("#hfOBJPAY").val(JSON.stringify(transaction));
+									var $frm = $("#frmService");
+									var datasObj = $frm.serializeObject();
+									datasObj = checkSerializedObject(datasObj);
+									var datas = JSON.stringify(datasObj);
+									var noty;
+									$.ajax({
+										url: url,
+										data: { strModel: datas },
+										dataType: "json",
+										beforeSend: function (xhrObj) {
+											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+											noty = notify("", "dark", "", message, "", false);												
+										},
+										success:function(data) {
+											noty.close();
+											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+											if(data.success) {
+												$.ajax({
+													url: "core/actions/_save/__processPayFromGateway.php",
+													data: { 
+														id: data.srvid,
+														strdata: $("#hfOBJPAY").val(),
+														gate: $("#hfGateWay").val(),
+														ref: reference
+													},
+													dataType: "json",
+													beforeSend: function (xhrObj) {
+														var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+														noty = notify("", "dark", "", message, "", false, true);												
+													},
+													success:function(data) {
+														noty.close();
+														notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+														if(data.success) {
+															location.href = data.link
+														}
+													}
+												});
+											}
+										}
+									});
+								}
+								else {
+									notify("", 'danger', "", "<?= $_SESSION["ERROR_ON_PAYMENT"] ?> <br />State: " + transaction.status + "<br />Err:" + transaction.statusMessage, "");
+								}
+							});						
+						});
+					}
+					else {
+						$("#frmPayment").attr("action", 'core/actions/_save/__newCheckout.php');
+						$("#frmPayment").empty();
+						$("#frmPayment").append('<input type="hidden" name="serviceData" value="' + $("#frmPayment").serialize() + '">');
+						notify("", 'danger', "", data.message, "");
+						var kushki = new KushkiCheckout({
+							form: "frmPayment",
+							merchant_id: "<?= $merchId ?>",
+							amount: $("#hfPRICE").val(),
+							currency: "COP", 
+							is_subscription: false,
+							inTestEnvironment: true,
+							regional: false 
+						});					
+						$("#divPayment").modal("toggle");			
+					}
 				}
 			}
 		});

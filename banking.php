@@ -130,8 +130,8 @@
 		<!-- /.content-wrapper -->
 
 <?
-	$title = $_SESSION["QUOTAS"];
-	$icon = "<i class=\"fa fa-credit-card\"></i>";
+	$title = $_SESSION["BANKING"];
+	$icon = "<i class=\"fa fa-bank\"></i>";
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
 ?>

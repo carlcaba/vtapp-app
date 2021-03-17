@@ -86,3 +86,7 @@ function getDistance(p1, p2) {
 	// returns the distance in meter	
 	return d;
 }
+
+function removeAccents(str) {
+	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+} 

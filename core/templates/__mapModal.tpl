@@ -240,15 +240,17 @@
 			if(typeof(address) !== "undefined" && address) {
 				element = address;
 			}
+
 			autocomplete = new google.maps.places.Autocomplete(
 				document.getElementById(element), {
-					types: ['geocode']
+					strictBounds: false,
+					types: ['geocode', 'establishment']
 				}
 			);
 			
 			// Avoid paying for data that you don't need by restricting the set of
 			// place fields that are returned to just the address components.
-			autocomplete.setFields(['address_component']);
+			autocomplete.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
 
 			// When the user selects an address from the drop-down, populate the
 			// address fields in the form.
@@ -257,13 +259,14 @@
 			if(typeof(alt_address) !== "undefined" && alt_address) {
 				autocomplete2 = new google.maps.places.Autocomplete(
 					document.getElementById(alt_address), {
-						types: ['geocode']
+						strictBounds: false,
+						types: ['geocode', 'establishment']
 					}
 				);
 				
 				// Avoid paying for data that you don't need by restricting the set of
 				// place fields that are returned to just the address components.
-				autocomplete2.setFields(['address_component']);
+				autocomplete2.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
 
 				// When the user selects an address from the drop-down, populate the
 				// address fields in the form.
@@ -275,27 +278,62 @@
 		function fillInAddress() {
 			// Get the place details from the autocomplete object.
 			var place = autocomplete.getPlace();
+			if(typeof(place) === "undefined" && !place)
+				place = autocomplete2.getPlace();
+				
 			for (var component in componentForm) {
 				document.getElementById(component).value = '';
 				document.getElementById(component).disabled = false;
 			}
 			
-			if(place != null) {
-				// Get each component of the address from the place details,
-				// and then fill-in the corresponding field on the form.
-				for (var i = 0; i < place.address_components.length; i++) {
-					var addressType = place.address_components[i].types[0];
-					if (componentForm[addressType]) {
-						var val = place.address_components[i][componentForm[addressType]];
-						document.getElementById(addressType).value = val;
+			if(typeof(place) !== "undefined" && place) {
+				if (!place.geometry || !place.geometry.location) {
+					// User entered the name of a Place that was not suggested and
+					// pressed the Enter key, or the Place Details request failed.
+					console.log("No details available for input: '" + place.name + "'");
+				}
+				else {
+					$("#" + alt_address.replace("txt", "hfLATITUDE_")).val(place.geometry.location.lat());
+					$("#" + alt_address.replace("txt", "hfLONGITUDE_")).val(place.geometry.location.lng());
+				}
+				
+				if(place != null) {
+					console.log(place);
+					var typ = alt_address.replace("txt","");
+					var sele = "";
+					var neigh = "";
+					typ = typ.replace("_ADDRESS","");
+					typ = typ.charAt(0).toUpperCase() + typ.substr(1).toLowerCase();
+					for (var i = 0; i < place.address_components.length; i++) {
+						var addressType = place.address_components[i].types[0];
+						if (componentForm[addressType]) {
+							var val = place.address_components[i][componentForm[addressType]];
+							document.getElementById(addressType).value = val;
+						}
+						else if(addressType == "neighborhood") {
+							neigh = removeAccents(place.address_components[i].long_name.toUpperCase());
+						}
+						else if(addressType == "sublocality_level_1") {
+							sele = removeAccents(place.address_components[i].long_name.toUpperCase());
+						}
+					}
+					if(sele != "" && neigh != "") {
+						$("#cbZone" + typ + ' option').map(function() {
+							if ($(this).text() == sele) return this;
+						}).attr('selected', 'selected');						
+						$("#cbZone" + typ).trigger("change");
+						$("#cbZone" + typ + 'Sub option').map(function() {
+							if ($(this).text() == neigh + " (" + sele + ")") return this;
+						}).attr('selected', 'selected');						
+						$("#Zone" + typ.toUpperCase()).fadeIn();
 					}
 				}
-			}
-			
-			//Verify the value
-			if ($("#locality").val() != "" && $("#country").val() != "") {
-				var searchterm = $("#locality").val() + " (" + $("#country").val() + ")";
-				$("#cbCity option:contains(" + searchterm + ")").attr('selected', 'selected');
+				
+				//Verify the value
+				if ($("#locality").val() != "" && $("#country").val() != "") {
+					var searchterm = $("#locality").val() + " (" + $("#country").val() + ")";
+					$("#cbCity option:contains(" + searchterm + ")").attr('selected', 'selected');
+				}
 			}
 		}
 

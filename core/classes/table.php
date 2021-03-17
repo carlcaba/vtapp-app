@@ -74,12 +74,23 @@
 
         //Funcion que conecta a la BD
         private function connectIt() {
+			/*
             //Revisa que no esté previamente conectado
             if(!isset($this->conx)) {
 				//Refresca la conexion a la BD
 				$this->conx = new connector_db();
 			}
 			//Si ocurre algun error
+			if(!$this->conx->connect()) {
+				$this->error = $this->conx->Error;
+				$this->nerror = 10;
+			}
+			else {
+				$this->nerror = 0;
+				$this->error = "";
+			}
+			*/
+			$this->conx = connector_db::getInstance();
 			if(!$this->conx->connect()) {
 				$this->error = $this->conx->Error;
 				$this->nerror = 10;
@@ -239,7 +250,7 @@
         }
 
         //Funcion que verifica el tipo de dato
-        public function _checkDataType($idCol) {
+        public function _checkDataType($idCol, $uselike = false) {
 			$uuid = preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/', strtoupper($this->arrColDatas[$idCol]));
 			if($uuid) {
 				$datas = "'" . $this->arrColDatas[$idCol] . "'";						
@@ -263,7 +274,7 @@
 							$datas = "NULL";
 						}
 						else {
-							$datas = "'" . $this->arrColDatas[$idCol] . "'";
+							$datas = "'" . ($uselike ? "%" : "") . $this->arrColDatas[$idCol] . ($uselike ? "%" : "") . "'";
 						}
 						if($datas == "''''")
 							$datas = "''";
@@ -561,6 +572,14 @@
         public function _delete() {
             //Arma la sentencia SQL
             $this->sql = "UPDATE $this->table SET IS_BLOCKED = TRUE WHERE ID = " . $this->_checkDataType("ID");
+            //Ejecuta la sentencia
+            $this->executeQuery();
+        }
+
+        //Funcion que elimina la informacion de un registro
+        public function _deleteForever() {
+            //Arma la sentencia SQL
+            $this->sql = "DELETE FROM $this->table WHERE ID = " . $this->_checkDataType("ID");
             //Ejecuta la sentencia
             $this->executeQuery();
         }

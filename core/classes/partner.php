@@ -431,6 +431,24 @@ class partner extends table {
 		//Retorna
 		return $return;
     }	
+
+	//Funcion que despliega los valores para el webservice
+	function listData() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT PARTNER_ID, PARTNER_NAME " .
+					"FROM $this->view WHERE IS_BLOCKED = FALSE";
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$data = array("id" => $row[0],
+							"partner_name" => $row[1]);
+			array_push($return, $data);
+		}
+		//Retorna
+		return $return;
+	}	
+
 	
 }
 

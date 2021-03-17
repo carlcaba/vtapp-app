@@ -117,8 +117,9 @@
 		$result["message"] = $_SESSION["STATE_UPDATED"];
 	}
 	else {
-		$result["message"] = $class->error;
+		$result["message"] = $usua->error;
 	}
+	$result["sql"] = $usua->sql;
 	
 	//Termina
 	exit(json_encode($result));

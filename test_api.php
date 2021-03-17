@@ -1,4 +1,7 @@
 <?php
+
+
+/*
 // Your ID and token
 $authToken = 'Basic c29hcF91c2VyQGV0Yi50ZXN0OkIwZzB0QA==';
 
@@ -37,4 +40,10 @@ $responseData = json_decode($response, TRUE);
 // Print the date from the response
 print_r($responseData);
 
+*/
+
+	echo $_SERVER['DOCUMENT_ROOT'];
+	echo "\n";
+	$err = 0;
+	echo $err;
 ?>

@@ -3,6 +3,7 @@
 // LOGICA ESTUDIO 2019
 
 class connector_db {
+	private static $instance = null;
 	/* variables de conexion */
 	var $database;
 	var $server;
@@ -94,6 +95,15 @@ class connector_db {
 	function __destruct() {
 		//try to close the MySql connection
 		@mysqli_close($this->conex_id);
+	}
+	
+	// The object is created from within the class itself
+	// only if the class has no instance.
+	public static function getInstance() {
+		if (self::$instance == null) {
+			self::$instance = new connector_db();
+		}
+		return self::$instance;
 	}	
 	
 	//Constructor anterior

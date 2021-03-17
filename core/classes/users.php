@@ -1384,7 +1384,7 @@ class users extends table {
 	//Enviar notification a firebase
 	function sendGCM($message) {
 		$id = $this->GOOGLE_USER;
-		$url = 'https://fcm.googleapis.com/fcm/send';
+		$url = $this->conf->verifyValue("FIREBASE_SERVER");
 		$fields = array ('registration_ids' => array ($id),
 						'data' => array ("message" => $message)
 					);

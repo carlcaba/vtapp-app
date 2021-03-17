@@ -179,6 +179,7 @@
         $result['success'] = true;
         $result['message'] = str_replace("%d", "", $_SESSION["SAVED"]);
 		$result["link"] = "services.php";
+		$result["srvid"] = $service->ID;
     }
     else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];

@@ -51,13 +51,15 @@
 		else {
             $class = $_GET['class'];
 			$fields = $_GET['field'];
-			$options = $_GET['options'];
+			if(!empty($_GET['options']))
+				$options = $_GET['options'];
 		}
     }
     else {
 		$class = $_POST['class'];
 		$fields = $_POST['field'];
-		$options = $_POST['options'];
+		if(!empty($_POST['options']))
+			$options = $_POST['options'];
     }
 	
 	require_once("../../classes/" . $class . ".php");
