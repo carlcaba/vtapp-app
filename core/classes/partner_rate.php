@@ -114,11 +114,9 @@ class partner_rate extends table {
 		$return = "";
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
+			$skins = ["","","",""];
 			if($row[2] != "") {
 				$skins = explode(",",$row[2]);
-			}
-			else {
-				$skins = ["","","",""];
 			}
 			$price = !$round ? $row[5] : $row[8];
 			if($price < $min)

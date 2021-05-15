@@ -93,6 +93,7 @@
 	
 	$conf = $reso->getResourceByName("DATA_TYPE_WEBSERVICE");
 	$className = "";
+	$options = "";
 	
 	foreach(explode(";",$conf) as $data) {
 		$temp = explode("=",$data);
@@ -109,14 +110,22 @@
 		//Termina
 		exit(json_encode($result));
 	}
-		
+	
+	if(strpos($className,"%") !== false) {
+		$options = explode("%",$className)[1];
+		$className = explode("%",$className)[0];
+	}
+	
 	//Instancia la clase usuario
 	require_once("../core/classes/" . $className . ".php");
 	$class = new $className;
 
 	//Obtiene la informacion
-	$datos = $class->listData();
-	
+	if($options != "")
+		$datos = $class->listData(0,$options);
+	else 
+		$datos = $class->listData();
+		
 	$result["success"] = count($datos) > 0;
 
 	if($result["success"] == true) {

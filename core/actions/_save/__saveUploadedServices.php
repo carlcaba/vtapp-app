@@ -51,7 +51,6 @@
 		$idcli = "";
 
 		$state = new service_state("SERVICE_STATE_1");
-		$state->ID = $state->getIdByResource("SERVICE_STATE_1");
 		
 		//Verifica si es un cliente
 		if(substr($usua->access->PREFIX,0,2) == "CL") {
@@ -68,11 +67,18 @@
 		if($idcli == "") {
 			$serv->client->getInfoByDefault();
 			$idcli = $serv->client->ID;
+			if($serv->nerror > 0) {
+				$result["message"] = $_SESSION["DEFAULT_CLIENT_NOT_FOUND"];
+				$result = utf8_converter($result);
+				exit(json_encode($result));
+			}			
 		}
 		
 		//Instancia las clases necesarias
 		$config = new configuration("SITE_ROOT");
-		$root = $_SERVER["DOCUMENT_ROOT"] . $config->getSiteRoot();
+		$root = $_SERVER["DOCUMENT_ROOT"] . $config->verifyValue("SITE_ROOT");
+		$webapi = $config->verifyValue("MAPS_API_GET_LOCATION");
+		$apikey = $config->verifyValue("MAPS_API_KEY");
 		
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
 			$sep = "\/";
@@ -81,8 +87,9 @@
 			$root = realpath("../../../");
 			if(strpos($root,"vtappcorp.com/") !== false)
 				$root = str_replace("vtappcorp.com/","",$root);
-			$root = str_replace('\/','/',$root) . $sep;
+			$root .= $sep;
 		}
+		$root = str_replace('/',$sep,$root);
 	
 		$storeFolder = $root . 'uploads' . $sep;
 		$respFolder = $root . 'uploads' . $sep . 'response' . $sep;
@@ -143,6 +150,8 @@
 						}
 						//Recorre los resultados
 						for($i = 2; $i <= $highestRow; $i++) {
+							//Reinicia el estado
+							$state->ID = $state->getIdByStep(1);
 							$counter++;
 							//Asigna la informacion
 							$serv->setUser($usua->ID);
@@ -152,7 +161,7 @@
 							$serv->REQUESTED_PHONE = $usua->PHONE;
 							$serv->REQUESTED_CELLPHONE = $usua->CELLPHONE;
 							$serv->REQUESTED_IP = $_SERVER['REMOTE_ADDR'];
-							$serv->REQUESTED_ADDRESS = $objWorksheet->getCellByColumnAndRow(1,$i)->getValue() . ", " . $objWorksheet->getCellByColumnAndRow(0,$i)->getValue();
+							$serv->REQUESTED_ADDRESS = $objWorksheet->getCellByColumnAndRow(1,$i)->getValue() . ", " . $objWorksheet->getCellByColumnAndRow(0,$i)->getValue() . ", Colombia";
 							//Verifica la zona por default
 							$serv->request_zone->ZONE_NAME = "NO DEFINIDA";
 							$serv->request_zone->getInformationByOtherInfo();
@@ -162,7 +171,7 @@
 							$serv->DELIVER_EMAIL = $objWorksheet->getCellByColumnAndRow(3,$i)->getValue();
 							$serv->DELIVER_PHONE = $objWorksheet->getCellByColumnAndRow(4,$i)->getValue();
 							$serv->DELIVER_CELLPHONE = $objWorksheet->getCellByColumnAndRow(5,$i)->getValue();
-							$serv->DELIVER_ADDRESS = $objWorksheet->getCellByColumnAndRow(6,$i)->getValue() . ", " . $objWorksheet->getCellByColumnAndRow(0,$i)->getValue();
+							$serv->DELIVER_ADDRESS = $objWorksheet->getCellByColumnAndRow(6,$i)->getValue() . ", " . $objWorksheet->getCellByColumnAndRow(0,$i)->getValue() . ", Colombia";
 							$serv->setDeliverZone($serv->request_zone->ID);
 							//Verifica el tipo de envio
 							$serv->type->getInformationByOtherInfo("DELIVERY_TYPE_NAME", $objWorksheet->getCellByColumnAndRow(8,$i)->getValue());
@@ -226,8 +235,25 @@
 							//Actualiza el ID
 							$serv->ID = "UUID()";
 							
+							//Actualiza las coordenadas
+							$rqCoord = $serv->GetCoordinates($webapi, $apikey);
+							$dvCoord = $serv->GetCoordinates($webapi, $apikey, "DELIVER");
+							
+							//Verifica
+							if($rqCoord != null) {
+								$serv->REQUESTED_COORDINATES = $rqCoord->results[0]->geometry->location->lat . "," . $rqCoord->results[0]->geometry->location->lng;
+								
+							}
+							if($dvCoord != null) {
+								$serv->DELIVER_COORDINATES = $dvCoord->results[0]->geometry->location->lat . "," . $dvCoord->results[0]->geometry->location->lng;
+							}
+							
+							error_log(print_r($rqCoord,true) . " " . print_r(debug_backtrace(2), true));
+							error_log(print_r($dvCoord,true) . " " . print_r(debug_backtrace(2), true));
+							
 							//Agrega el recurso
 							$serv->_add();
+							
 							//Verifica si hubo error
 							if($serv->nerror > 0) {
 								$errors++;
@@ -243,6 +269,9 @@
 								$rowResponse++;
 								continue;
 							}
+							
+							//Actualiza el registro al siguiente estado
+							$serv->updateState($state->getNextState());
 						}
 					}
 					else {
@@ -252,7 +281,7 @@
 					}
 				}
 			}
-			$msgerror = sprintf($_SESSION["SOME_ERROR_OCURRED"],($counter-$errors),$errors);
+			$msgerror = sprintf($_SESSION["SOME_ERROR_OCURRED"],($counter-$errors),$errors) . "<br />" . implode("<br />", $arrErr);
 			$result["to_download"] = false;
 			//Verifica si hubo errores
 			if($errors > 0) {
@@ -284,6 +313,7 @@
 				$notification->setType($notification->type->ID);
 				$notification->MESSAGE = str_replace("{0}",($counter-$errors),$_SESSION["SERVICE_UPLOAD_MESSAGE"]);
 				$notification->MESSAGE = str_replace("{1}",$result["link"],$notification->MESSAGE);
+				$notification->MESSAGE .= implode("<br />", $arrErr);
 				$notification->SOURCE = "services-management.php";
 				//La agrega
 				$notification->_add(false,false);

@@ -343,3 +343,7 @@ label .glyphicon {
 	background: black;
 	opacity: 0.5;
 }
+
+.not-required-field-label {
+	font-weight: normal !important;
+}

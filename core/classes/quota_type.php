@@ -97,26 +97,78 @@ class quota_type extends table {
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
 		//Arma la sentencia SQL
-		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, A.AMOUNT FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
+		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, A.AMOUNT, A.IS_MARCO FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
 				"ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
-            if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
+            if(!mb_detect_encoding($row[1], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS
                 $row[1] = utf8_encode($row[1]);
             }
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
-				//Ajusta al dise�o segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' data-amount=\"$row[2]\" selected>" . $row[1] . "</option>\n";
+				//Ajusta al diseño segun GUI
+				$return .= "$stabs<option value='" . $row[0] . "' data-amount=\"$row[2]\" data-ismarco=\"$row[3]\" selected>" . $row[1] . "</option>\n";
 			else
-				//Ajusta al dise�o segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' data-amount=\"$row[2]\">" . $row[1] . "</option>\n";
+				//Ajusta al diseño segun GUI
+				$return .= "$stabs<option value='" . $row[0] . "' data-amount=\"$row[2]\" data-ismarco=\"$row[3]\">" . $row[1] . "</option>\n";
 		}
 		//Retorna
 		return $return;
+	}
+
+	//Funcion que despliega los valores en un option
+	function showOptionListJson($lang = 0) {
+		//Verifica el lenguaje
+		if($lang == 0) {
+			//Lenguaje establecido
+			$lang = $_SESSION["LANGUAGE"];
+		}
+		//Arma la sentencia SQL
+		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, A.AMOUNT, A.IS_MARCO FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
+				"ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+            if(!mb_detect_encoding($row[1], 'utf-8', true)) {
+                //Guarda la informacion en GLOBALS
+                $row[1] = utf8_encode($row[1]);
+            }
+			$data = array("id" => $row[0],
+							"text" => $row[1],
+							"amount" => number_format($row[2],2,".",""),
+							"ismarco" => $row[3]);
+			array_push($return,$data);
+		}
+		//Retorna
+		return $return;
+	}
+	
+	//Funcion que obtiene la cantidad
+	function getAmount() {
+		$text = $this->getResource();
+		if(strpos($text,"Notificaciones") !== false) {
+			return intval(str_replace(",","",$text));
+		}
+		else {
+			return intval($this->AMOUNT);
+		}			
+	}
+	
+	//Funcion que obtiene la informacion de descuento
+	//TRUE: Descontar dinero
+	//FALSE: Descontar unidad notificacion
+	function discountType() {
+		$text = $this->getResource();
+		if(strpos($text,"Notificaciones") !== false) {
+			return false;
+		}
+		else {
+			return true;
+		}			
 	}
 
 }

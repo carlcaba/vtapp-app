@@ -16,7 +16,10 @@
 	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
 		//Asigna la informacion
 		$usua = new users();
-		$online = $usua->getOnline($_SESSION['vtappcorp_referenceid']);
+		if($_SESSION["vtappcorp_useraccess"] == "GOD" || $_SESSION["vtappcorp_useraccess"] == "ADM")
+			$online = $usua->getOnline();
+		else
+			$online = $usua->getOnline($_SESSION['vtappcorp_referenceid']);
 		$result["success"] = count($online) > 0;
 		$result["data"] = $online;
 		$result["counter"] = count($online);

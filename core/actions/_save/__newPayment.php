@@ -54,7 +54,7 @@
 			$payment->VERIFICATION_CODE = $datas->txtVERIFICATION_CODE;
 			$payment->DIFERRED_TO = $datas->txtDIFERRED_TO;
 			$payment->PAYMENT_ID = "";
-			$payment->IS_PAYED = "FALSE";
+			//$payment->IS_PAYED = "FALSE";
 			$payment->IS_VERIFIED = strtoupper($datas->hfValidCard);
 		}
 		//Llamado callback desde la pasarela de pagos
@@ -106,7 +106,7 @@
 			$payment->PAYER_NAME = $quota->client->CLIENT_NAME;
 			$payment->PAYER_IDENTIFICATION = $quota->client->IDENTIFICATION;
 			$payment->PAYER_PHONE = $quota->client->PHONE;
-			$payment->IS_PAYED = "TRUE";
+			//$payment->IS_PAYED = "TRUE";
 			$payment->OBSERVATION = "QUOTA:" . $quota->type->getResource();
 			
 		}

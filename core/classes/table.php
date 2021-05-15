@@ -733,6 +733,7 @@
             //Verifica si es requerido
             $required = ($flags[0] == "NO")? " <span class=\"required\">*</span>" : " ";
             $required2 = ($flags[0] == "NO")? " required=\"required\" " : " ";
+			$required3 = ($flags[0] == "NO")? " " : " class=\"not-required-field-label\"";
             //Verifica si tiene feedback
             $feedback = ($icon != "") ? "has-feedback" : "";
             //Verifica el label
@@ -807,7 +808,7 @@
 
             //Genera la GUI
             $return .= "$stabs<div class=\"form-group\">\n";
-            $return .= "$stabs\t<label for=\"$fieldname\">" . $comments[1] . $required . "</label>\n";
+            $return .= "$stabs\t<label $required3 for=\"$fieldname\">" . $comments[1] . $required . "</label>\n";
 			
 			//Si hay icono
 			if($icon != "") {

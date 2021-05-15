@@ -128,10 +128,10 @@ class area_type extends table {
 			$text = ($row[3] != "") ? ($row[3] . " " . $row[1]) : $row[1];
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $text . "</option>\n";
 			else
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "'>" . $text . "</option>\n";
 		}
 		//Retorna

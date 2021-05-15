@@ -28,7 +28,26 @@
 
 	require_once("core/classes/service.php");
 	
+	$service = new service();
+	$qty = $service->loadCount();
+	$btncompl = "btn-default";
+	$btnicon = "fa-info-circle";
+	$btnbadge = "";
+	if($qty > 0) {
+		$btncompl = "btn-warning";
+		$btnicon = "fa-exclamation-triangle fa-lg";
+		$btnbadge = "<span class=\"badge badge-danger\">$qty</span>";
+	}
+	
 	$template = "services.xlsx";
+	
+	$disabled = "disabled";
+	if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
+		$disabled = "";
+	}
+	else if($_SESSION["vtappcorp_useraccess"] == "GOD") {
+		$disabled = "";
+	}
 	
 ?>
 <!DOCTYPE html>
@@ -97,9 +116,10 @@
 <?
 	include("core/templates/__buttons.tpl");
 ?>
-									<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["COMPLETE_SERVICES"] ?>" id="btnComplete" name="btnComplete" class="btn btn-default pull-right" onclick="location.href = 'services-complete.php';">
-										<i class="fa fa-info-circle"></i>
+									<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["COMPLETE_SERVICES"] ?>" id="btnComplete" name="btnComplete" class="btn <?= $btncompl ?> pull-right" onclick="location.href = 'services-complete.php';">
+										<i class="fa <?= $btnicon ?>"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["COMPLETE_SERVICES"] ?></span>
+										<?= $btnbadge ?>
 									</button>
 								</div>
 							</div>

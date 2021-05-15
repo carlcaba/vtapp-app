@@ -52,9 +52,11 @@
             exit(json_encode($result));
 		}
 
+		/*
 		//Log
 		$slog->setService($service->ID);
 		$slog->setInitialState($service->STATE_ID);
+		*/
 		
 		$valor = floatval($datas->price);
 
@@ -69,12 +71,15 @@
 			$service->setClient($datas->client);
 		}
 		
-		$idstate = $service->state->getNextState();
+		$idstate = $service->state->getIdByStep(3);
 		//Si hay nuevo estado
 		if($idstate != "") {
 			$service->setState($idstate);
 		}
+		
+		/*
 		$slog->setFinalState($service->STATE_ID);
+		*/
 		
 		//Lo actualiza
 		$service->_modify();
@@ -87,10 +92,10 @@
 			exit(json_encode($result));
 		}
 		
-		$payment = $service->client->CLIENT_PAYMENT_TYPE_ID != 1;
+		$payment = $service->client->CLIENT_PAYMENT_TYPE_ID != "1";
 		
 		//Si debe verificar el cupo
-		if($payment && $service->client->CLIENT_PAYMENT_TYPE_ID == 2) {
+		if($payment && $service->client->CLIENT_PAYMENT_TYPE_ID == "2") {
 			//Realiza la operacion
 			require_once("../../classes/quota_employee.php");
 			
@@ -100,12 +105,14 @@
 			$row = $quota->getInformationByOtherInfo();
 			//Si no hay error
 			if($quota->nerror == 0) {
+				$valor = $quota->quota->type->discountType() ? $valor : 1;
 				//Si el cupo es suficiente
 				if(($row[13] - $row[14]) >= $valor) {
 					//Actualiza la informacion
-					$quota->USED_ASSIGNED = ($quota->USED_ASSIGNED + $valor);
-					//Lo modifica
-					$quota->_modify();
+					$quota->useQuota($amount);
+					if($quota->nerror > 0) {
+						error_log("Error applying quota on Client Quota: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
+					}
 					//Asigna el valor a devolver
 					$data = array("id" => $row[0],
 									"cc" => $row[16],
@@ -124,7 +131,11 @@
 				}
 			}
 		}
-
+		if($payment)
+			//Actualiza el servicio
+			$service->updateState($service->state->getIdByStep(4));
+		
+		/*
 		//Si hay registrado un pago
 		if($payment) {
 			$slog->OBSERVATION = $result["data_payment"];
@@ -136,6 +147,7 @@
 		if($slog->nerror > 0) {
 			$result["errorlog"] = $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $slog->error . " -> " . $slog->sql; 
 		}
+		*/
 		
         //Cambia el resultado
         $result['success'] = true;

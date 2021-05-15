@@ -134,8 +134,8 @@
 								else {
 									marker.formatted_address = '<?= $_SESSION["ADDRESS_NOT_DETERMINED"] ?>';
 								}
-								infowindow.setContent(marker.formatted_address + "<br><?= $_SESSION["COORDINATES"] ?>: " + marker.getPosition().toUrlValue(6));
-								infowindow.open(map, marker);
+								infoWindow.setContent(marker.formatted_address + "<br><?= $_SESSION["COORDINATES"] ?>: " + marker.getPosition().toUrlValue(6));
+								infoWindow.open(map, marker);
 							});					
 						});            
 					});
@@ -150,9 +150,9 @@
 					this.directionsDisplay = new google.maps.DirectionsRenderer;
 					this.directionsDisplay.setMap(map);
 					//this.placesService = new google.maps.places.PlacesService(map);
-					this.infowindow = new google.maps.InfoWindow;
-					this.infowindowContent = document.getElementById('infowindow-content');
-					this.infowindow.setContent(this.infowindowContent);
+					this.infoWindow = new google.maps.InfoWindow;
+					this.infoWindowContent = document.getElementById('infowindow-content');
+					this.infoWindow.setContent(this.infoWindowContent);
 					// Listen for clicks on the map.
 					this.map.addListener('click', this.handleClick.bind(this));
 				};
@@ -188,9 +188,12 @@
 									if(typeof(address) !== "undefined" && address) {
 										element = address;
 									}
+									else if(typeof(alt_address) !== "undefined" && alt_address) {
+										element = alt_address;
+									}
 									$("#" + element).val(results[0].formatted_address);
-									infowindow.setContent(results[0].formatted_address);
-									infowindow.open(map, marker);
+									infoWindow.setContent(results[0].formatted_address);
+									infoWindow.open(map, marker);
 								} 
 								else {
 									console.log('No results found');
@@ -205,17 +208,22 @@
 
 				ClickEventHandler.prototype.getPlaceInformation = function(placeId) {
 					var me = this;
-					this.placesService.getDetails({placeId: placeId}, function(place, status) {
-						if (status === 'OK') {
-							me.infowindow.close();
-							me.infowindow.setPosition(place.geometry.location);
-							me.infowindowContent.children['place-icon'].src = place.icon;
-							me.infowindowContent.children['place-name'].textContent = place.name;
-							me.infowindowContent.children['place-id'].textContent = place.place_id;
-							me.infowindowContent.children['place-address'].textContent = place.formatted_address;
-							me.infowindow.open(me.map);
-						}
-					});
+					try {
+						this.placesService.getDetails({placeId: placeId}, function(place, status) {
+							if (status === 'OK') {
+								me.infoWindow.close();
+								me.infoWindow.setPosition(place.geometry.location);
+								me.infoWindowContent.children['place-icon'].src = place.icon;
+								me.infoWindowContent.children['place-name'].textContent = place.name;
+								me.infoWindowContent.children['place-id'].textContent = place.place_id;
+								me.infoWindowContent.children['place-address'].textContent = place.formatted_address;
+								me.infoWindow.open(me.map);
+							}
+						});
+					}
+					catch(ex) {
+						console.log(ex);
+					}
 				};
 
 				function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -298,7 +306,6 @@
 				}
 				
 				if(place != null) {
-					console.log(place);
 					var typ = alt_address.replace("txt","");
 					var sele = "";
 					var neigh = "";
@@ -354,4 +361,35 @@
 				});
 			}
 		}
+	
+		function GetDistanceRoute(pos1, pos2) {
+			var distance = 0;
+			let directionsService = new google.maps.DirectionsService();
+			const route = {
+				origin: pos1,
+				destination: pos2,
+				travelMode: 'DRIVING'
+			}
+			directionsService.route(route,
+				function(response, status) { // anonymous function to capture directions
+					console.log(response);
+					if (status !== 'OK') {
+						console.log('Directions request failed due to ' + status);
+						return;
+					}
+					else {
+						var directionsData = response.routes[0].legs[0]; // Get data about the mapped route
+						if (!directionsData) {
+							console.log('Directions request failed');
+							return;
+						}
+						else {
+							distance = parseFloat(directionsData.distance.text);
+						}
+					}
+					return distance;
+				}
+			);		
+		}
+		
 	</script>

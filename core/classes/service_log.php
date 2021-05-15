@@ -341,7 +341,7 @@ class service_log extends table {
 
 	
 	//Funcion para listar los servicios de acuerdo al estado
-	function listServices($state, $id) {
+	function listServices($state, $id, $usr = "", $history = false, $limit = 0) {
 		//Define las columnas
 		$columns = ["SERVICE_ID", "CLIENT_ID", "CLIENT_NAME", "CLIENT_IDENTIFICATION", "CLIENT_ADDRESS", "CLIENT_PHONE", "CLIENT_CELLPHONE", 
 					"REQUESTED_BY", "REQUESTED_EMAIL", "REQUESTED_ADDRESS", "REQUESTED_PHONE", "REQUESTED_CELLPHONE", "REQUEST_CITY_ID", "REQUEST_CITY_NAME", "REQUEST_COUNTRY", 
@@ -350,9 +350,26 @@ class service_log extends table {
 					"LAT_DELIVERY_INI", "LON_DELIVERY_INI", "LAT_DELIVERY_END", "LON_DELIVERY_END", "DELIVER_ZONE", "ZONE_NAME_DELIVERY",
 					"STATE_ID", "SERVICE_STATE_NAME", "ROUND_TRIP", "FRAGILE", "VEHICLE_TYPE_ID", "VEHICLE_TYPE_NAME", "TIME_START_TO_DELIVER", "TIME_FINISH_TO_DELIVER", "ID_STATE", 
 					"EMPLOYEE_INITIAL_ID", "EMPLOYEE_INITIAL_NAME", "PARTNER_INITIAL_ID", " EMPLOYEE_FINAL_ID", "EMPLOYEE_FINAL_NAME", "PARTNER_FINAL_ID"];
+		if($history) {
+			$columns = ["SERVICE_ID", "REGISTERED_ON", "PRICE", "REQUESTED_ADDRESS", "DELIVER_ADDRESS", "REQUESTED_COORDINATES", "DELIVER_COORDINATES"];
+		}
 		//Arma la sentencia SQL
-		$this->sql = "SELECT " . implode(",", $columns) .
-					" FROM $this->view WHERE STATE_ID = '$state' AND EMPLOYEE_FINAL_ID = '$id' ORDER BY SERVICE_ID";
+		$this->sql = "SELECT DISTINCT " . implode(",", $columns) .
+					" FROM $this->view WHERE STATE_ID = '$state' ";
+					
+		if($history)			
+			$this->sql .= "AND EMPLOYEE_FINAL_ID = '$id' ";
+		else 
+			$this->sql .= "AND NOTIFIED_EMPLOYEE = '$id' ";
+		
+		if($usr != "")
+			$this->sql .= "AND USER_NOTIFICATION = '$usr' AND NOTIFICATION_BLOCKED = FALSE ";
+		
+		$this->sql .= "ORDER BY SERVICE_ID";
+		
+		if($history && $limit > 0)
+			$this->sql .= " LIMIT $limit";
+		
 		//Variable a retornar
 		$return = array();
 		$isThereData = false;
@@ -360,6 +377,11 @@ class service_log extends table {
 		foreach($this->__getAllData() as $row) {
 			for($i = 0; $i < count($row); $i++) {
 				$data[$columns[$i]] = $row[$i];
+			}
+			if($history) {
+				$reqcor = explode(",", $row[5]);
+				$delcor = explode(",", $row[6]);
+				$data["DISTANCE"] = number_format(($this->haversineGreatCircleDistance(floatval($reqcor[0]), floatval($reqcor[1]), floatval($delcor[0]), floatval($delcor[1])) / 1000), 2) . " Kms";
 			}
 			array_push($return,$data);
 			$isThereData = true;
@@ -388,21 +410,95 @@ class service_log extends table {
 			return false;
 		}
 		
-		//Genera el nuevo log
-		$this->ID = "UUID()";
-		$this->setInitialState($this->service->STATE_ID);
-		$this->setFinalState($this->service->STATE_ID);
-		$this->LAST_POSITION = $object->position;
-		$this->REGISTERED_BY = "WS.Vtapp";
-		$this->MODIFIED_BY = "WS.Vtapp";
-		$this->MODIFIED_ON = "NOW()";
+		if($this->service->STATE_ID != $this->service->state->getIdByStep(9) && $this->service->state->STEP_ID < 9) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep(9));
+			
+			//Busca ultimo log
+			$this->getLastLog();
+			
+			//Modifica la locacion
+			$this->LAST_POSITION = $object->position;
 
-		//Llama la agregada 
-		parent::_add();
+			//Llama la agregada 
+			parent::_modify();
+		}
 		
 		//Retorna
 		return $this->nerror == 0;
 	}
+
+	function onRoad($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		//Verifica la posicion final
+		if(!preg_match('/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/', $object->position)) {
+			$this->nerror = 104;
+			$this->error = $_SESSION["BAD_POSITION"];
+			return false;
+		}
+		
+		if($this->service->STATE_ID != $this->service->state->getIdByStep($object->state) && $this->service->state->STEP_ID < $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+			
+			//Busca ultimo log
+			$this->getLastLog();
+			//Modifica la locacion
+			$this->LAST_POSITION = $object->position;
+
+			//Llama la agregada 
+			parent::_modify();
+		}
+		
+		//Retorna
+		return $this->nerror == 0;
+	}
+
+	function delivered($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		if($this->service->STATE_ID != $this->service->state->getIdByStep($object->state) && $this->service->state->STEP_ID < $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+		}
+		
+		//Retorna
+		return $this->nerror == 0;
+	}
+	
+	function finished($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		if($this->service->STATE_ID != $this->service->state->getIdByStep($object->state) && $this->service->state->STEP_ID < $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+		}
+		
+		//Retorna
+		return $this->nerror == 0;
+	}	
 	
 	function updateProcess($object) {
 		//Asigna el servicio
@@ -510,71 +606,71 @@ class service_log extends table {
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
 			//Verifica la fecha
-			if($fecha != $row[75]) {
+			if($fecha != $row[76]) {
 				//Genera el nuevo timeline
-				$return .= "<li class=\"time-label\"><span class=\"bg-success\">" . date("d M Y",strtotime($row[75])) . "</span></li>\n";
+				$return .= "<li class=\"time-label\"><span class=\"bg-success\">" . date("d M Y",strtotime($row[76])) . "</span></li>\n";
 				//Asigna la fecha
-				$fecha = $row[75];
+				$fecha = $row[76];
 			}
-			$time = strtotime($row[75] . " " . $row[76]);
+			$time = strtotime($row[76] . " " . $row[77]);
             $elap = explode(" ", $this->elapsedTime($time));			
-            $icon = $row[77] . " bg-info";
-            $msg = $_SESSION["SERVICE"] . " " . $row[72];
+            $icon = $row[78] . " bg-info";
+            $msg = $_SESSION["SERVICE"] . " Estado: " . $row[73];
 
-            $return .= $this->addLogLine($icon,$row[76],$msg);
+            $return .= $this->addLogLine($icon,$row[77],$msg);
 
             //Si es la asignacion de un aliado
-            if($row[69] != $row[70]) {
+            if($row[70] != $row[71]) {
                 //Si es la primera asignacion
-                if($row[69] == "") {
+                if($row[70] == "") {
                     $icon = "fa fa-briefcase bg-success";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . " (" . $row[79] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . " (" . $row[80] . ")";
                 }
                 else {
                     $icon = "fa fa-coffee bg-warning";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . " (" . $row[78] . " -> " . $row[79] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . " (" . $row[79] . " -> " . $row[80] . ")";
                 }
-                $return .= $this->addLogLine($icon,$row[76],$msg);
+                $return .= $this->addLogLine($icon,$row[77],$msg);
             }
             //Si es la asignacion de un empleado
-            if($row[61] != $row[62]) {
+            if($row[62] != $row[63]) {
                 //Si es la primera asignacion
-                if($row[61] == "") {
+                if($row[62] == "") {
                     $icon = "fa fa-user-plus bg-success";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . " (" . $row[68] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . " (" . $row[69] . ")";
                 }
                 else {
                     $icon = "fa fa-user-times bg-warning";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . " (" . $row[67] . " -> " . $row[68] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . " (" . $row[68] . " -> " . $row[69] . ")";
                 }
-                $return .= $this->addLogLine($icon,$row[76],$msg);
+                $return .= $this->addLogLine($icon,$row[77],$msg);
             }
             //Si asigna un vehiculo
-            if($row[63] != $row[64]) {
+            if($row[64] != $row[65]) {
                 //Si es la primera asignacion
-                if($row[63] == "") {
+                if($row[64] == "") {
                     $icon = "fa fa-motorcycle bg-success";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . " (" . $row[74] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . " (" . $row[75] . ")";
                 }
                 else {
                     $icon = "fa fa-paper-plane bg-warning";
-                    $msg = $_SESSION["SERVICE"] . " " . $row[72] . "(" . $row[73] . " -> " . $row[74] . ")";
+                    $msg = $_SESSION["SERVICE"] . " " . $row[73] . "(" . $row[74] . " -> " . $row[75] . ")";
                 }
-                $return .= $this->addLogLine($icon,$row[76],$msg);
+                $return .= $this->addLogLine($icon,$row[77],$msg);
             }
             //Si hay movimiento
-            if($position != $row[66]) {
-                $icon = "fa fa-map-marker bg-info\" title=\"" . $_SESSION["VIEW_MAP"] . "\" onclick=\"showMap(" . $row[66] . ");\"";
+            if($position != $row[67]) {
+                $icon = "fa fa-map-marker bg-info\" title=\"" . $_SESSION["VIEW_MAP"] . "\" onclick=\"showMap(" . $row[67] . ");\"";
                 $msg = $_SESSION["UPDATE_POSITION"] . " (" . $row[25] . ") ";
-                $return .= $this->addLogLine($icon,$row[76],$msg);
-                $position = $row[66];
+                $return .= $this->addLogLine($icon,$row[77],$msg);
+                $position = $row[67];
             }
             //Si hay comentarios
-            if($row[65] != "") {
+            if($row[66] != "") {
                 $icon = "fa fa-comment bg-success";
                 $msg = $_SESSION["COMMENTS"] . "<br />";
-                $msg .= "<blockquote class=\"quote-secondary\"><p>$row[65]</p><small>$row[24] <cite title=\"$row[76]\">$row[76]</cite></small></blockquote>";
-                $return .= $this->addLogLine($icon,$row[76],$msg);
+                $msg .= "<blockquote class=\"quote-secondary\"><p>$row[66]</p><small>$row[24] <cite title=\"$row[77]\">$row[77]</cite></small></blockquote>";
+                $return .= $this->addLogLine($icon,$row[77],$msg);
             }
 		}
 		//Si no hay actividad
@@ -589,7 +685,30 @@ class service_log extends table {
 		return $return;
 	}
 
+	/**
+	 * Calculates the great-circle distance between two points, with
+	 * the Haversine formula.
+	 * @param float $latitudeFrom Latitude of start point in [deg decimal]
+	 * @param float $longitudeFrom Longitude of start point in [deg decimal]
+	 * @param float $latitudeTo Latitude of target point in [deg decimal]
+	 * @param float $longitudeTo Longitude of target point in [deg decimal]
+	 * @param float $earthRadius Mean earth radius in [m]
+	 * @return float Distance between points in [m] (same as earthRadius)
+	 */
+	private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371000) {
+		// convert from degrees to radians
+		$latFrom = deg2rad($latitudeFrom);
+		$lonFrom = deg2rad($longitudeFrom);
+		$latTo = deg2rad($latitudeTo);
+		$lonTo = deg2rad($longitudeTo);
 
+		$latDelta = $latTo - $latFrom;
+		$lonDelta = $lonTo - $lonFrom;
+
+		$angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+		cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+		return $angle * $earthRadius;
+	}
 }
 
 ?>

@@ -28,11 +28,13 @@
 	$reso = new resources();
 	$result["description"] = $reso->getResourceByName(explode(".",basename(__FILE__))[0],2);
 	
-	$type = "";
+	$tipo = "";
 	$user = "";
 	$token = "";
 	$id = "";
 	$pos = "";
+	$det = "";
+	$note = "";
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -43,28 +45,34 @@
 			}
 			else {
 				$user = $_GET['user'];
-				$type = $_GET['type'];
+				$tipo = $_GET['type'];
 				$token = $_GET['token'];
 				$id = $_GET['id'];
 				$pos = $_GET['pos'];
+				$det = $_GET['details'];
+				$note = $_GET['notes'];
 			}
 		}
 		else {
 			$user = $_POST['user'];
-			$type = $_POST['type'];
+			$tipo = $_POST['type'];
 			$token = $_POST['token'];
 			$id = $_POST['id'];
 			$pos = $_POST['pos'];
+			$det = $_POST['details'];
+			$note = $_POST['notes'];
 		}
 	} 
 	else {
 		//Captura las variables
 		parse_str(file_get_contents("php://input"),$vars);
 		$user = $vars['user'];
-		$type = $vars['type'];
+		$tipo = $vars['type'];
 		$token = $vars['token'];
 		$id = $vars['id'];
 		$pos = $vars['pos'];
+		$det = $vars['details'];
+		$note = $vars['notes'];
 	}
 	
 	//Verifica la informacion
@@ -81,7 +89,6 @@
 		//Termina
 		exit(json_encode($result));
 	}
-
 	if(empty($id)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ID_SERVICE_EMPTY"];
@@ -89,7 +96,7 @@
 		exit(json_encode($result));
 	}
 	
-	if(empty($type)) {
+	if(empty($tipo)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_TYPE_EMPTY"];
 		//Termina
@@ -97,13 +104,40 @@
 	}
 
 	//Si NO es una de las acciones definidas
-	if(!(intval($type) > 0 && intval($type) < 10)) {
+	if(!(intval($tipo) > 0 && intval($tipo) < 10)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_NOT_DEFINED"];
 		//Termina
 		exit(json_encode($result));
 	}
 
+	//Si no tiene los parametros para la accion
+	//Actualizar posicion
+	if(intval($tipo) == 1 && $pos == "") {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["POSITION_REQUIRED"];
+		//Termina
+		exit(json_encode($result));
+	}
+
+	//Si no tiene los parametros para la accion
+	//Cancelar
+	if(intval($tipo) == 8 && $det == "") {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["NO_DETAILS_FOR_CANCEL"];
+		//Termina
+		exit(json_encode($result));
+	}
+
+	//Si no tiene los parametros para la accion
+	//Actualizar posicion
+	if(intval($tipo) == 4 && $pos == "") {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["POSITION_REQUIRED"];
+		//Termina
+		exit(json_encode($result));
+	}
+	
 	//Verifica la sesion
 	include_once("__validateSession.php");
 	
@@ -131,7 +165,7 @@
 	}
 	
 	$actions = json_decode($reso->getResourceByName("ACTIONS"));
-	$action = $actions[intval($type)-1];
+	$action = $actions[intval($tipo)-1];
 
 	$className = $action->class;
 	$method = $action->method;
@@ -166,6 +200,8 @@
 	$action->id = $id;
 	$action->token = $token;
 	$action->user = $user;
+	$action->{"collect"} = false;
+	$action->{"price"} = 0;
 	
 	//Instancia la clase usuario
 	require_once("../core/classes/" . $className . ".php");
@@ -176,6 +212,12 @@
 
 	if($result["success"] == true) {
 		$result["message"] = $_SESSION["INFORMATION"];
+		
+		if(intval($tipo) == 6) {
+			$action->collect = $service->CheckToCollect();
+			$action->price = $service->PRICE;
+		}
+		
 		$result["data"] = $action;
 	}
 	else {

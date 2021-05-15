@@ -57,10 +57,16 @@
 		
 		//Si no hay cupo asignado
 		if($quota->nerror > 0) {
-			$result["message"] = $_SESSION["CLIENT_NO_QUOTA"];
-			$result["sql"] = $quota->sql;
-			$result = utf8_converter($result);
-			exit(json_encode($result));
+			//Verifica si hay un cupo
+			$quota->quota->setClient($id);
+			$row = $quota->quota->getInformationByOtherInfo("CLIENT_ID");
+			//Si no se encuentra
+			if($quota->quota->nerror > 0) {
+				$result["message"] = $_SESSION["CLIENT_NO_QUOTA"];
+				$result["sql"] = $quota->sql;
+				$result = utf8_converter($result);
+				exit(json_encode($result));
+			}
 		}
 		
 		//Si el cupo ya esta completo
@@ -102,7 +108,7 @@
 		$form .= $dataForm["tabs"] . "\t<div class=\"form-group\">\n";
 		$form .= $dataForm["tabs"] . "\t\t<label>" . $quota->arrColComments["CLIENT_ID"] . " *</label>\n";
 		$form .= $dataForm["tabs"] . "\t\t\t<select class=\"form-control\" id=\"cbClient\" name=\"cbClient\" " . $dataForm["readonly"][$cont++] . " required>\n";
-		$form .= $quota->client->showOptionList(8,$quota->CLIENT_ID);
+		$form .= $quota->client->showOptionList(8,$id);
 		$form .= $dataForm["tabs"] . "\t\t\t</select>\n";
 		$form .= $dataForm["tabs"] . "\t</div>\n";
 

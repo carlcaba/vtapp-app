@@ -132,13 +132,18 @@ class delivery_type extends table {
                 //Guarda la informacion en GLOBALS
                 $row[1] = utf8_encode($row[1]);
             }
+			$adds = "data-block=\"false\"";
+			//Verifica si es sobre
+			if($row[0] == 1) {
+				$adds = "data-block=\"true\" data-height=\"28\" data-width=\"22\" data-weight=\"5\" data-length=\"10\"";
+			}
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' selected $adds>" . $row[1] . "</option>\n";
 			else
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "'>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' $adds>" . $row[1] . "</option>\n";
 		}
 		//Retorna
 		return $return;

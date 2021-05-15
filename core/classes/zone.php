@@ -130,6 +130,7 @@ class zone extends table {
 			//Lenguaje establecido
 			$lang = $_SESSION["LANGUAGE"];
 		}
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
@@ -419,8 +420,8 @@ class zone extends table {
 	//Funcion para obtener zonas aleatorias
 	function getRandomZone($limit = 3) {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT ZONE_ID, ZONE_NAME, PARENT_ZONE, (SELECT Z1.ZONE_NAME FROM $this->table Z1 WHERE Z1.ID = PARENT_ZONE LIMIT 1) PARENT_ZONE_NAME " .
-					"FROM $this->view WHERE IS_BLOCKED = FALSE AND NOT PARENT_ZONE IS NULL ORDER BY RAND() LIMIT $limit";
+		$this->sql = "SELECT Z.ZONE_ID, Z.ZONE_NAME, Z.PARENT_ZONE, (SELECT Z1.ZONE_NAME FROM $this->table Z1 WHERE Z1.ID = Z.PARENT_ZONE LIMIT 1) PARENT_ZONE_NAME " .
+					"FROM $this->view Z WHERE Z.IS_BLOCKED = FALSE AND NOT Z.PARENT_ZONE IS NULL ORDER BY RAND() LIMIT $limit";
 		//Variable a retornar
 		$return = array();
 		//Recorre los valores

@@ -102,21 +102,20 @@
 	
 	//Busca el estado de asignacion
 	$state = new service_state();
-	$state->getInformationByOtherInfo("2", "ID_STATE");
+	$sid = $state->getIdByStep(5);
 	//Verifica si existe
-	if($state->nerror > 0) {
+	if($sid == "") {
 		//Asigna el mensaje
-		$result["message"] = "State: " . $state->error;
+		$result["message"] = "State: " . $_SESSION["NOT_REGISTERED"];
 		//Termina
 		exit(json_encode($result));
 	}
-	$sid = $state->ID;
 	
 	//Asigna la informacion
 	$serv->setFinalEmployee($usid);
 	
 	//Obtiene la informacion
-	$datos = $serv->listServices($sid,$usid);
+	$datos = $serv->listServices($sid,$usid,$user);
 	
 	if(isset($datos["success"])) {
 		$result["message"] = $datos["message"];
@@ -125,6 +124,7 @@
 		$result["success"] = true;
 		$result["message"] = $datos;
 	}
+	$result["sql"] = $serv->sql;
 	//Termina
 	exit(json_encode($result));
 ?>

@@ -181,7 +181,7 @@ class client extends table {
 	//Verifica el cliente por default
 	function getInfoByDefault() {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT ID FROM $this->table WHERE CLIENT_NAME = 'NO DEFINIDO'";
+		$this->sql = "SELECT ID FROM $this->table WHERE CLIENT_NAME = 'CLIENTE INDIVIDUAL'";
 		//Obtiene los resultados
 		$row = $this->__getData();
 		//Valida el resultado

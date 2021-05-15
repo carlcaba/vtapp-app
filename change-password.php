@@ -109,15 +109,16 @@
 						<span class="fa fa-lock form-control-feedback"></span>
 					</div>
 					<div class="row">
-						<div class="col-8">
+						<div class="col-12">
 							<div class="checkbox icheck">
 								<label>
-									<input type="checkbox"> <?= $_SESSION["SEND_EMAIL"] ?></a>
+									<input type="checkbox"> <?= $_SESSION["SEND_EMAIL"] ?>
 								</label>
 							</div>
 						</div>
-						<!-- /.col -->
-						<div class="col-4">
+					</div>
+					<div class="row">
+						<div class="col-12">
 							<button type="button" class="btn btn-primary btn-block btn-flat" id="btnChangePassword" name="btnChangePassword" onclick="submitForm();"><?= $_SESSION["UPDATE_PASSWORD"] ?></button>
 							<input type="hidden" name="hfLink" id="hfLink" value="<?= $link ?>" />
 							<input type="hidden" name="isEmail" id="isEmail" value="false" />

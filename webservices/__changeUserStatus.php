@@ -29,11 +29,12 @@
 	$reso = new resources();
 	$result["description"] = $reso->getResourceByName(explode(".",basename(__FILE__))[0],2);
 	
-	$state = "true";	//Activar a disponible
+	$estado = "true";	//Activar a disponible
 	$user = "";
 	$token = "";
 	$pos = "";
 	$id = "";
+	$dbg = "";
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -44,7 +45,7 @@
 			}
 			else {
 				$user = $_GET['user'];
-				$state = $_GET['state'];
+				$estado = $_GET['state'];
 				$token = $_GET['token'];
 				$pos = $_GET['pos'];
 				$id = $_GET['id'];				
@@ -52,7 +53,7 @@
 		}
 		else {
 			$user = $_POST['user'];
-			$state = $_POST['state'];
+			$estado = $_POST['state'];
 			$token = $_POST['token'];
 			$pos = $_POST['pos'];
 			$id = $_POST['id'];				
@@ -63,7 +64,7 @@
 		parse_str(file_get_contents("php://input"),$vars);
 		$user = $vars['user'];
 		$token = $vars['token'];
-		$state = $vars['state'];
+		$estado = $vars['state'];
 		$pos = $vars['pos'];
 		$id = $vars['id'];
 	}
@@ -106,12 +107,22 @@
 		exit(json_encode($result));
 	}
 	
-	$usua->updatePosition(boolval($state),$pos,$id);
+	if(gettype($estado) == "string")
+		$estado = ($estado === "true");
+
+	/*
+	if(is_bool($estado) === false)
+		$result["warning"] = "$estado No es bool";
+	else if(is_bool($estado) === true)
+		$result["warning"] = "$estado es bool";
+	*/	
+	
+	$usua->updatePosition($estado,$pos,$id);
 	
 	//Realiza la accion
-	$result["success"] = $usua->error == 0;
+	$result["success"] = $usua->nerror == 0;
 	//Regresa el estado solicitado
-	$result["available"] = boolval($state);
+	$result["available"] = $estado;
 
 	if($result["success"] == true) {
 		$result["message"] = $_SESSION["STATE_UPDATED"];

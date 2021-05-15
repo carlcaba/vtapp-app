@@ -109,10 +109,10 @@ class payment_state extends table {
             }
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $row[1] . "</option>\n";
 			else
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "'>" . $row[1] . "</option>\n";
 		}
 		//Retorna
@@ -120,22 +120,37 @@ class payment_state extends table {
 	}
 
 	//Funcion que despliega los valores para el webservice
-	function listData($lang = 0) {
+	function listData($lang = 0, $extra = "") {
 		//Verifica el lenguaje
 		if($lang == 0) {
 			//Lenguaje establecido
 			$lang = $_SESSION["LANGUAGE"];
 		}
-		//Arma la sentencia SQL
+		$label = "payment_type";
+		$cont = 0;
 		//Arma la sentencia SQL
 		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, R.LANGUAGE_ID FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
 				"ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
+
+		//Verifica si es informacion extra
+		if($extra == "si") {
+			//Arma la sentencia SQL
+			$this->sql .= " AND A.RESOURCE_NAME LIKE 'PAYMENT_STATE_99%' AND LENGTH(A.RESOURCE_NAME) > 16 ORDER BY ID";
+			$label = "service_issue";
+		}
+		else if($extra == "ss") {
+			//Arma la sentencia SQL
+			$this->sql .= " AND A.RESOURCE_NAME LIKE 'PAYMENT_STATE_89%' AND LENGTH(A.RESOURCE_NAME) > 16 ORDER BY ID";
+			$label = "service_state_update";
+			$cont = 2;
+		}
+		
 		//Variable a retornar
 		$return = array();
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
-			$data = array("id" => $row[0],
-							"payment_type" => $row[1],
+			$data = array("id" => (($extra == "ss") ? $cont++ : $row[0]),
+							$label => $row[1],
 							"language" => $row[2]);
 			array_push($return, $data);
 		}

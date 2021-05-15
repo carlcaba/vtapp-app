@@ -1,5 +1,5 @@
 		<footer class="main-footer">
-			<strong><a href="http://www.vtapp.com" target="_blank">Vtapp</a> - v.2.1 - Copyright &copy; 2019-<a href="javascript: showVariables();"><?= date("Y") ?></a></strong>
+			<strong><a href="http://www.vtapp.com" target="_blank">Vtapp</a> - v.2.5 - Copyright &copy; 2019-<a href="javascript: showVariables();"><?= date("Y") ?></a></strong>
 			<!--
 			<a href="http://www.logicaestudio.com" target="_blank">Lógica Estudio</a>.</strong> All rights reserved.
 			-->

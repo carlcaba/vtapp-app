@@ -8,6 +8,8 @@
 	require_once("core/classes/interfaces.php");
 	
 	$inter = new interfaces();
+	$conf = new configuration("PAYMENT_MERCHANT_ID");
+	$merchId = $conf->verifyValue();
 	
 	$filename = "services.php";
 	
@@ -21,6 +23,9 @@
 	if($result["success"] !== true) 
 		$inter->redirect($result["link"]);
 
+	require_once("core/classes/users.php");
+	$uscli = new users($_SESSION["vtappcorp_userid"]);
+
 	require_once("core/classes/service.php");
 	
 	$service = new service();
@@ -31,6 +36,36 @@
 		$_SESSION["vtappcorp_user_alert"] = $_SESSION["NO_SERVICES_TO_COMPLETE"];		
 		$inter->redirect("services.php");
 	}		
+
+	$payment = !(substr($uscli->access->PREFIX,0,2) == "AL");
+
+	$gate = $conf->verifyValue("PAYMENT_GATEWAY");
+	$accTok = 0;
+	$err = 0;
+
+	//Verifica la pasarela
+	if($gate == "WOMPI") {
+		//Libreria requerida
+		require_once("core/actions/_save/__wompiGatewayFunctions.php");
+
+		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
+		$urlAccToken = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_GET_ACCEPTANCE_TOKEN");
+		$urlReturn = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT") . $conf->verifyValue("PAYMENT_WOMPI_REDIRECT");
+		
+		$accTok = 1;
+		
+		//Obtiene el acceptance token
+		$accTokRet = getAcceptanceToken($urlAccToken, $pubkey);
+
+		//Si no es null
+		if($accTokRet["token"] != null) {
+			$accTokData = $accTokRet["token"];
+		}
+		else {
+			$err = 1;
+		}
+	}
+
 
 ?>
 <!DOCTYPE html>
@@ -115,10 +150,11 @@
 									</thead>		
 									<tbody>
 <?
-	$service->showLoaded();
+	$count = $service->showLoaded();
 ?>
 									</tbody>
 								</table>
+								<input type="hidden" id="hfSQL" name="hfSQL" value="<?= $service->sql ?>" />
 								<input type="hidden" id="hfClientId" name="hfClientId" value="<?= $client ?>" />
 							</div>
 							<!-- /.card-body -->
@@ -131,6 +167,9 @@
 										<i class="fa fa-money"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
 									</button>
+									<input type="hidden" name="hfTtl2Py" id="hfTtl2Py" value="0" />
+									<input type="hidden" name="hfTotalRegsToComplete" id="hfTotalRegsToComplete" value="<?= $count ?>" />
+									<input type="hidden" name="hfTotalAmount" id="hfTotalAmount" value="0" />
 								</div>
 							</div>
 						</div>
@@ -150,13 +189,8 @@
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
 	
-	if($payment) {
-		require_once("core/classes/configuration.php");
-		$conf = new configuration("PAYMENT_MERCHANT_ID");
-		$merchId = $conf->verifyValue();
-
+	if($payment) 
 		include("core/templates/__modalPayment.tpl");
-	}
 	
 ?>
 
@@ -176,6 +210,8 @@
 	<script src="js/resources.js"></script>	
 	
     <script>
+	var url = null;
+	var ky = null;
 	$(document).ready(function() {
 		$('[data-widget="pushmenu"]').trigger("click");
 		$('[data-toggle="tooltip"]').tooltip();
@@ -187,8 +223,12 @@
 				var id = control.split("_")[2];
 				var ReqDel = control.indexOf("REQUEST") > -1 ? "Req" : "Del";
 				var data = ui.item;
-				$("#hfLng" + ReqDel + "_" + id).val(parseFloat(data.lng));
-				$("#hfLat" + ReqDel + "_" + id).val(parseFloat(data.lat));
+				if($("#hfLng" + ReqDel + "_" + id).val() == "") {
+					$("#hfLng" + ReqDel + "_" + id).val(parseFloat(data.lng));
+				}
+				if($("#hfLat" + ReqDel + "_" + id).val() == "") {
+					$("#hfLat" + ReqDel + "_" + id).val(parseFloat(data.lat));
+				}
 				$("#hfZon" + ReqDel + "_" + id).val(data.id);
 				var distance = setDistance(id);
 				if(distance > 0) {
@@ -243,6 +283,43 @@
 				table.search(this.value).draw();	
 			}
 		});
+		url = getResourceValue("MAGLO", "<?= $_SESSION["MSG_PROCESSING"] ?>");
+		var noty;
+		$.ajax({
+			url: "core/actions/_load/__getValue.php",
+			data: { 
+				value: "MKLM"
+			},
+			dataType: "json",
+			beforeSend: function (xhrObj) {
+				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+				noty = notify("", "dark", "", message, "", false);												
+			},
+			success:function(data){
+				noty.close();
+				if(data.success) {
+					ky = data.message;
+					$.getScript("https://maps.googleapis.com/maps/api/js?key=" + data.message)
+					.done(function( script, textStatus ) {
+						console.log( textStatus );
+					})
+					.fail(function( jqxhr, settings, exception ) {
+						$( "div.log" ).text( "Triggered ajaxError handler." );
+					});	
+				}
+				else {
+					notify("", 'danger', "", data.message, "");
+					return "";
+				}
+			}
+		});
+		var ttl = 0;
+		for(i=0;i<parseInt($("#hfTotalRegsToComplete").val());i++) {
+			if($("#hfPayed_" + i).val() == "false" && $("#hfSaved_" + i).val() == "true") {
+				ttl += parseFloat($("#hfPrice_" + i).val());
+			}
+		}
+		$("#hfTotalAmount").val(ttl);
 	});
 	function setDistance(id) {
 		var distance;
@@ -268,7 +345,9 @@
 				$(".dtr-data > span#spPrice_" + id).html(FormatNumber(value,2,3));
 				return false;
 			}
-			distance = typeof distance !== 'undefined' ?  distance : setDistance(id);
+			if(typeof distance !== 'undefined')
+				if(distance == 0)
+					distance = setDistance(id);
 		}
 		else {
 			distance = setDistance(id);
@@ -278,7 +357,8 @@
 			url: "core/actions/_load/__checkRate.php",
 			data: { 
 				distance: distance,
-				round: $("#cbRoundTrip_" + id).is(':checked')
+				round: $("#cbRoundTrip_" + id).is(':checked'),
+				select: false
 			},
 			dataType: "json",
 			beforeSend: function (xhrObj) {
@@ -287,11 +367,12 @@
 			},
 			success:function(data){
 				if(data.success) {
-					$("#hfPrice_" + id).val(data.message);
-					$("#spPrice_" + id).html(data.message);
+					$("#hfPrice_" + id).val(data.max);
+					$("#spPrice_" + id).html(data.max);
 					if($(".dtr-data > span#spPrice_" + id).is(":visible")) {
-						$(".dtr-data > span#spPrice_" + id).html(FormatNumber(parseFloat(data.message),2,3));
+						$(".dtr-data > span#spPrice_" + id).html(FormatNumber(parseFloat(data.max),2,3));
 					}
+					$("#hfTtl2Py").val(parseFloat($("#hfTtl2Py").val()) + data.max);
 				}
 				else 
 					notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
@@ -302,13 +383,225 @@
 			}
 		});
 	}
+	function completeLocation(id) {
+		var address = $("#tdREQUESTED_ADDRESS_" + id).html();
+		var address2 = $("#tdDELIVER_ADDRESS_" + id).html();
+		var calc1 = false;
+		var calc2 = false;
+		try {
+			var geocoder = new google.maps.Geocoder();
+			if (geocoder) {
+				geocoder.geocode({ 'address': address }, function (results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						$("#hfLatReq_" + id).val(results[0].geometry.location.lat());
+						$("#hfLngReq_" + id).val(results[0].geometry.location.lng());
+						var sele = "";
+						var neigh = "";
+						var place = results[0];
+						for (var i = 0; i < place.address_components.length; i++) {
+							if(place.address_components[i].types.indexOf("neighborhood") > -1) {
+								neigh = removeAccents(place.address_components[i].long_name.toUpperCase());
+							}
+							else if(place.address_components[i].types.indexOf("sublocality_level_1") > -1) {
+								sele = removeAccents(place.address_components[i].long_name.toUpperCase());
+							}
+						}
+						if(neigh != "" && sele != "")
+							$("#txtZONE_REQUEST_" + id).val(neigh + " (" + sele + ")");
+						$("#hfZonReq_" + id).val(neigh + "," + sele);
+						calc1 = true;
+						geocoder.geocode({ 'address': address2 }, function (results, status) {
+							if (status == google.maps.GeocoderStatus.OK) {
+								$("#hfLatDel_" + id).val(results[0].geometry.location.lat());
+								$("#hfLngDel_" + id).val(results[0].geometry.location.lng());
+								var sele = "";
+								var neigh = "";
+								var place = results[0];
+								for (var i = 0; i < place.address_components.length; i++) {
+									if(place.address_components[i].types.indexOf("neighborhood") > -1) {
+										neigh = removeAccents(place.address_components[i].long_name.toUpperCase());
+									}
+									else if(place.address_components[i].types.indexOf("sublocality_level_1") > -1) {
+										sele = removeAccents(place.address_components[i].long_name.toUpperCase());
+									}
+								}
+								if(neigh != "" && sele != "")
+									$("#txtZONE_DELIVER_" + id).val(neigh + " (" + sele + ")");
+								$("#hfZonDel_" + id).val(neigh + "," + sele);
+								calc2 = true;
+								$("#txtZONE_REQUEST_" + id).attr("disabled", calc1);
+								$("#txtZONE_DELIVER_" + id).attr("disabled", calc2);
+								$("#tdREQUESTED_ADDRESS_" + id).trigger("click");
+								if(calc1 && calc2) {
+									$("#btnLocate_" + id).attr("disabled", true);
+									var distance = setDistance(id);
+									if(distance > 0) {
+										calculate(id,distance);
+									}
+								}
+							}
+							else {
+								notify("", 'danger', "", "Geocoding failed REQ: " + status, "");
+								console.log("Geocoding failed REQ: " + status);
+								calc2 = false;
+							}
+						});
+					}
+					else {
+						notify("", 'danger', "", "Geocoding failed REQ: " + status, "");
+						console.log("Geocoding failed REQ: " + status);
+						calc1 = false;
+					}
+				});
+			}    		
+		}
+		catch (error) {
+			console.log(error);
+		}
+	}
+	
+	function payment() {
+		var total = 0;
+		var counter = 0;
+		var uid = "<?= uniqid() ?>";
+		var datser = {};
+		var datas = { 
+			id: uid,
+			services: []
+		};
+		for(i=0;i<parseInt($("#hfTotalRegsToComplete").val());i++) {
+			if($("#hfPayed_" + i).val() == "false" && $("#hfSaved_" + i).val() == "true") {
+				$("#hfToPay_" + i).val(uid);
+				total += parseFloat($("#hfPrice_" + i).val());
+				counter++;
+				datser = { 
+					id: $("#hfId_" + i).val(),
+					indx: i,
+					price: parseFloat($("#hfPrice_" + i).val()),
+					user: $("#hfUserId_" + i).val(),
+					payed: false,
+					quota: false,
+					qid: "",
+					datapayment: {}
+				};
+				console.log(datser);
+				datas["services"].push(datser);
+			}
+		}
+		if(total <= 0) {
+			notify("", 'danger', "", "<?= $_SESSION["NO_SERVICES_COMPLETED_TO_PAY"] ?>", "");
+			return false;
+		}
+		if(counter <= 0) {
+			notify("", 'danger', "", "<?= $_SESSION["NO_SERVICES_COMPLETED_TO_PAY"] ?>", "");
+			return false;
+		}
+		console.log(datas);
+		console.log(total);
+		console.log(counter);
+		$("#hfTotalAmount").val(total);
+		$.ajax({
+			url: "core/actions/_save/__saveUserQuotaMultiple.php",
+			data: { 
+				datas: JSON.stringify(datas)
+			},
+			method: "POST",
+			dataType: "json",
+			beforeSend: function (xhrObj) {
+				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+				noty = notify("", "dark", "", message, "", false);												
+			},
+			success: function(data) {
+				noty.close();
+				if(data.success) {
+					var amount = 0;
+					var qty = 0;
+					for(i=0;i<counter;i++) {
+						if(!data.objPay[i].payed) {
+							amount+=data.objPay[i].price; 
+							qty++;
+						}
+					}
+					datas.services = data.objPay;
+					console.log(datas);
+					$("#hfTotalAmount").val(amount);
+					if(amount > 0 && <?= ($accTok && !$err) ?>) {
+						$.getScript("<?= $script ?>", function( data, textStatus, jqxhr ) {
+							var checkout = new WidgetCheckout({
+								currency: 'COP',
+								amountInCents: Math.ceil(parseFloat($("#hfTotalAmount").val()) * 100),
+								reference: datas.id,
+								publicKey: '<?= $pubkey ?>'
+								//,redirectUrl: '<?= $urlReturn ?>'
+							});
+							checkout.open(function ( result ) {
+								var transaction = result.transaction
+								if(transaction.status == "APPROVED") {
+									notify("", 'success', "", "<?= $_SESSION["PAYMENT_REGISTERED"] ?>", "");
+									var url = "core/actions/_save/__processMultiplePayFromGateway.php";
+									var datasObj = JSON.stringify(datas.services);
+									var payObj = JSON.stringify(transaction);
+									console.log(datasObj);
+									console.log(transaction);
+									var noty;
+									$.ajax({
+										url: url,
+										data: { 
+											datas: datasObj,
+											payment: payObj,
+											gate: "<?= $gate ?>",
+											ref: uid
+										},
+										dataType: "json",
+										method: "POST",
+										beforeSend: function (xhrObj) {
+											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+											noty = notify("", "dark", "", message, "", false);												
+										},
+										success:function(data) {
+											noty.close();
+											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+											if(data.success) {
+												window.onbeforeunload = function () { }
+												location.href = data.link
+											}
+										}
+									});
+								}
+								else {
+									notify("", 'danger', "", "<?= $_SESSION["ERROR_ON_PAYMENT"] ?> <br />State: " + transaction.status + "<br />Err:" + transaction.statusMessage, "");
+								}
+							});						
+						});
+					}
+					else {
+						$("#frmPayment").attr("action", 'core/actions/_save/__newCheckout.php');
+						$("#frmPayment").empty();
+						$("#frmPayment").append('<input type="hidden" name="serviceData" value="' + $("#frmPayment").serialize() + '">');
+						notify("", 'danger', "", data.message, "");
+						var kushki = new KushkiCheckout({
+							form: "frmPayment",
+							merchant_id: "<?= $merchId ?>",
+							amount: $("#hfPRICE").val(),
+							currency: "COP", 
+							is_subscription: false,
+							inTestEnvironment: true,
+							regional: false 
+						});					
+						$("#divPayment").modal("toggle");			
+					}
+				}
+			}
+		});
+	}
+	
 	function save(id) {
-		if($("#txtZONE_REQUEST_" + id).val() == "") {
+		if($("#hfZonReq_" + id).val() == "" && $("#txtZONE_REQUEST_" + id).val() == "") {
 			notify("", 'danger', "", "<?= $_SESSION["ZONE_REQUEST_NOT_DEFINED"] ?>", "");
 			$("#txtZONE_REQUEST_" + id).focus();
 			return false;
 		}
-		if($("#txtZONE_DELIVER_" + id).val() == "") {
+		if($("#hfZonDel_" + id).val() == "" && $("#txtZONE_DELIVER_" + id).val() == "") {
 			notify("", 'danger', "", "<?= $_SESSION["ZONE_DELIVER_NOT_DEFINED"] ?>", "");
 			$("#txtZONE_DELIVER_" + id).focus();
 			return false;
@@ -345,6 +638,7 @@
 			var noty;
 			$.ajax({
 				url: url,
+				method: "POST",
 				data: { strModel: datas },
 				dataType: "json",
 				beforeSend: function (xhrObj) {
@@ -354,25 +648,32 @@
 				success:function(data){
 					noty.close();
 					notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+					console.log(data);
 					var objPay = typeof data.data_payment !== 'undefined' ?  data.data_payment : {};
 					$("#hfSaved_" + data.counter).val(data.success);
-					$("#hfPayed_" + data.counter).val(!data.payment);
+					$("#hfPayed_" + data.counter).val(data.payment);
 					$("#hfObjPay_" + data.counter).val(JSON.stringify(objPay));
 					$("#btnSave_" + data.counter).attr("disabled", data.success);
+					$("#txtZONE_REQUEST_" + data.counter).attr("disabled", data.success);
+					$("#txtZONE_DELIVER_" + data.counter).attr("disabled", data.success);
+					$("#btnLocate_" + data.counter).attr("disabled", data.success);
+					$("#btnDelete_" + data.counter).attr("disabled", data.success);
 					var enpay = true;
-					$("input[name^='hfPayed_']").each(function() {
-						if($(this).val() == "false") {
+					for(i=0;i<parseInt($("#hfTotalRegsToComplete").val());i++) {
+						if($("#hfPayed_" + i).val() == "false") {
 							enpay = false;
-							return false;
+							break;
 						}
-					});
+					}
 					$("#btnPayment").attr("disabled", enpay);
 				}
 			});
 		});
 		$("#divActivateModal").modal("toggle");			
 	}
-	
+	window.onbeforeunload = function(e) {
+		return "Si sale de la página puede perder información ya completada. ¿Está seguro?";
+	};
     </script>
 <?
 	include("core/templates/__messages.tpl");

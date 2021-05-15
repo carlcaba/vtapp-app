@@ -238,6 +238,8 @@ class quota_employee extends table {
             $this->ID = $row[0];
             //Llama el metodo
             $return = $this->__getInformationFromView();
+			//Completa la informacion
+			$this->__getInformation();
             //Limpia el error
             $this->nerror = 0;
             $this->error = "";
@@ -433,6 +435,14 @@ class quota_employee extends table {
 			array_push($output['data'],$row);
 		}
 		return $output;
+	}
+
+	//Funcion que aumenta el uso del cupo
+	function useQuota($value) {
+		//Arma la sentencia SQL			
+		$this->sql = "UPDATE " . $this->table . " SET USED = USED + $value WHERE ID = " . $this->_checkDataType("ID");
+		//Verifica que no se presenten errores
+		$this->executeQuery();
 	}
 	
 }

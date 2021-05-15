@@ -183,7 +183,7 @@
 			exit(json_encode($result));
 		}
 
-		$usua->setReference($empl->ID);
+		$usua->setReference($datas->cbPartner, true);
 
 		//Cambia el resultado
 		$result['success'] = true;

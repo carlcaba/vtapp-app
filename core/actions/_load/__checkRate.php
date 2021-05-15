@@ -16,6 +16,7 @@
 	$distance = "0";
 	$client = "";
 	$round = "false";
+	$select = "true";
 	//Captura las variables
 	if(empty($_POST['distance'])) {
 		//Verifica el GET
@@ -27,12 +28,14 @@
 			$distance = $_GET['distance'];
 			$client = $_GET['client'];
 			$round = $_GET['round'];
+			$select = empty($_GET['select']) ? $_GET['select'] : $select;
 		}
 	}
 	else {
 		$distance = $_POST['distance'];
 		$round = $_POST['round'];
 		$client = $_POST["client"];
+		$select = empty($_POST['select']) ? $_POST['select'] : $select;
 	}
 		
 	//Si es un acceso autorizado
@@ -69,6 +72,7 @@
 			}
 		}
 		
+		
 		$datos = $rate->selectPartner($distance,$round == "true",$filter);
 		
 		if($rate->nerror > 0) {
@@ -77,7 +81,7 @@
 			exit(json_encode($result));
 		}
 
-		$result["message"] = $datos["html"];
+		$result["message"] = $select = "true" ? $datos["html"] : floatval($datos["max"]);
 		$result["min"] = floatval($datos["min"]);
 		$result["max"] = floatval($datos["max"]);
 		$result["sql"] = $datos["sql"];

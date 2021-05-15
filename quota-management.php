@@ -190,15 +190,14 @@
 								<form id="frmQuota" name="frmQuota">
 									<div class="row">
 										<div class="col-md-4">
-											<label><?= $quota->arrColComments["QUOTA_TYPE_ID"] ?> *</label>
-											<select class="form-control" id="cbQuotaType" name="cbQuotaType" <?= $dataForm["readonly"][$cont++] ?>>
-												<?= $quota->type->showOptionList(9,$quota->type->ID) ?>
-											</select>
-										</div>
-										<div class="col-md-4">
 											<label><?= $quota->arrColComments["CLIENT_ID"] ?> *</label>
 											<select class="form-control" id="cbClient" name="cbClient" <?= $dataForm["readonly"][$cont++] ?> <?= $uscli->REFERENCE != "" ? "disabled" : "" ?>>
 												<?= $quota->client->showOptionList(9,$uscli->REFERENCE) ?>
+											</select>
+										</div>
+										<div class="col-md-4">
+											<label><?= $quota->arrColComments["QUOTA_TYPE_ID"] ?> *</label>
+											<select class="form-control" id="cbQuotaType" name="cbQuotaType" <?= $dataForm["readonly"][$cont++] ?>>
 											</select>
 										</div>
 										<div class="col-md-4">
@@ -248,6 +247,8 @@
 	}
 ?>
 									<input type="hidden" name="hfValidCard" id="hfValidCard" value="false" />
+									<input type="hidden" name="hfIdQuota" id="hfIdQuota" value="<?= $quota->ID ?>" />
+									<input type="hidden" name="hfActionName" id="hfActionName" value="<?= $action ?>" />
 								</form>
 							</div>
 							<!-- /.card-body -->
@@ -255,11 +256,15 @@
 								<div class="btn-group float-right">
 <?
 	if($action != "view") {
+		if($action != "delete") {
 ?>
 									<button type="button" class="btn btn-warning" id="btnPay" name="btnPay" title="<?= $buttonText ?>" onclick="pay();">
 										<i class="fa fa-money"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $buttonText ?></span>
 									</button>
+<?
+		}
+?>
 									<button type="button" class="btn btn-success" id="btnSaveQuota" name="btnSaveQuota" title="<?= $_SESSION["SAVE_CHANGES"] ?>"><i class="fa fa-floppy-o"></i> <?= $_SESSION["SAVE_CHANGES"] ?></button>
 									<button type="button" class="btn btn-danger" id="btnCancel" name="btnCancel" title="<?= $_SESSION["MENU_CANCEL"] ?>" onclick="location.href='quotas.php?src=<?= $source ?>';"><i class="fa fa-times-circle"></i> <?= $_SESSION["MENU_CANCEL"] ?></button>
 <?
@@ -272,6 +277,7 @@
 ?>
 									<input type="hidden" name="hfAction" id="hfAction" value="<?= $dataForm["actiontext"] ?>" /> 
 									<input type="hidden" name="hfLinkAction" id="hfLinkAction" value="<?= $dataForm["link"] ?>" /> 
+									<input type="hidden" name="hfIsSaved" id="hfIsSaved" value="false" /> 
 								</div>							
 							</div>
 						</div>
@@ -318,12 +324,35 @@
 	
     <script>
 	$(document).ready(function() {
+		$.getJSON("core/actions/_load/__loadQuota.php", function(data) {
+			if(data.success) {
+				$.each(data.message, function(key, value) {
+					$("#cbQuotaType").append("<option value='" + value.id + "' data-amount=\"" + value.amount + "\" data-ismarco=\"" + value.ismarco + "\">" + value.text + "</option>");
+				});
+				$("#cbClient").on("change", function(e) {
+					var selected = $("option:selected", this);
+					var ismarco = selected.data("optionpy") == "off" ? "1" : "0";
+					$("#cbQuotaType > option").each(function() {
+						if($(this).data("ismarco") == ismarco)
+							$(this).show();
+						else 
+							$(this).hide();
+					});
+					$('#cbQuotaType option').each(function () {
+						if ($(this).css('display') != 'none') {
+							$(this).prop("selected", true);
+							return false;
+						}
+					});
+					$("#cbQuotaType").trigger("change");
+				});
+				$("#cbClient").trigger("change");		
+			}
+		});
 		$("#cbQuotaType").on("change", function(e) {
 			var selected = $("option:selected", this);
 			$("#txtAMOUNT").val(selected.data("amount"));
-			
 		});
-		$("#cbQuotaType").trigger("change");
 		$('[data-toggle="tooltip"]').tooltip();
 		new Cleave('#txtCREDIT_CARD_NUMBER', {
 			creditCard: true
@@ -342,6 +371,8 @@
 			});
 		});
 		$("#btnSaveQuota").on("click", function(e) {
+			if($("#hfIsSaved").val() != "false")
+				return false;
 			var form = document.getElementById('frmQuota');
 			var noty;
 			if (form.checkValidity() === false) {
@@ -375,8 +406,10 @@
 					success:function(data){
 						noty.close();
 						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-						if(data.success)
+						if(data.success) {
+							$("#hfIsSaved").val("true");
 							location.href = data.link;
+						}
 					}
 				});
 			});
@@ -387,6 +420,8 @@
 		}
 	});
 	function pay() {
+		if($("#hfIsSaved").val() != "false")
+			return false;
 		var form = document.getElementById('frmQuota');
 		var noty;
 		var bodyHtml = "<?= $_SESSION["MSG_CONFIRM_AND_PAY"] ?>";
@@ -443,6 +478,7 @@
 						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 					}
 					else {
+						$("#hfIsSaved").val("true");
 						if(data.continue) {
 							$("#btnSaveQuota").attr("disabled","disabled");
 							var id = data.message;
@@ -548,6 +584,24 @@
 									else {
 										var msg = "<?= $_SESSION["ERROR_ON_PAYMENT"] ?><br />" + response.code + ": " + response.message;
 										notify("", "danger", "", msg, "");
+										$.ajax({
+											url: "core/actions/_save/__inactivateQuota.php",
+											data: { 
+												id: id,
+												reason: response.code + ": " + response.message
+											},
+											dataType: "json",
+											beforeSend: function (xhrObj) {
+												var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+												noty = notify("", "dark", "", message, "", false);												
+											},
+											success:function(data){
+												noty.close();
+												notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+												if(data.success)
+													location.href = data.link;
+											}
+										});
 									}
 								});
 							});

@@ -9,6 +9,7 @@ require_once("resources.php");
 class service_state extends table {
 	var $resources;
 	var $view;
+	var $ceroState;
 	
 	//Constructor
 	function __constructor($service_state = "") {
@@ -29,6 +30,7 @@ class service_state extends table {
 		//Relaciones con otras clases
 		$this->resources = new resources();
 		$this->view = "VIE_SERVICE_STATE_SUMMARY";
+		$this->ceroState = "SERVICE_STATE_0";
 	}
 
 	//Funcion que muestra el texto del resource
@@ -74,7 +76,25 @@ class service_state extends table {
         //Lenguaje establecido
         $lang = $_SESSION["LANGUAGE"];
 	    //Arma la sentencia SQL
-        $this->sql = "SELECT A.ID FROM $this->table A WHERE A.RESOURCE_NAME = '$resource'";
+        $this->sql = "SELECT A.ID FROM $this->table A WHERE A.RESOURCE_NAME = '$resource' AND IS_BLOCKED = FALSE LIMIT 1";
+        //Variable a retornar
+        $result = "";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if($row) {
+            $result = $row[0];
+        }
+        //Retorna
+        return $result;
+	}
+
+	//Funcion que busca el nombre del estado
+	function getIdByStep($step) {
+        //Lenguaje establecido
+        $lang = $_SESSION["LANGUAGE"];
+	    //Arma la sentencia SQL
+        $this->sql = "SELECT A.ID FROM $this->table A WHERE A.STEP_ID = $step AND IS_BLOCKED = FALSE LIMIT 1";
         //Variable a retornar
         $result = "";
         //Obtiene los resultados
@@ -109,7 +129,7 @@ class service_state extends table {
 		if($lang == 0)
 			$lang = $_SESSION["LANGUAGE"]; 			
         //Arma la sentencia SQL
-        $this->sql = "SELECT SERVICE_STATE_ID FROM $this->view WHERE $field = '$value' AND LANGUAGE_ID = $lang";
+        $this->sql = "SELECT SERVICE_STATE_ID FROM $this->view WHERE $field = '$value' AND LANGUAGE_ID = $lang AND IS_BLOCKED = FALSE";
         //Obtiene los resultados
         $row = $this->__getData();
         //Registro no existe
@@ -132,11 +152,23 @@ class service_state extends table {
     }	
 
 	//Funcion para buscar el siguiente estado
-	function getNextState($lang = 0) {
+	function getNextState($lang = 0, $jump = 0) {
 		if($lang == 0)
 			$lang = $_SESSION["LANGUAGE"];
 		//Busca la informacion actual
 		$this->__getInformation();
+		//Obtiene el valor actual
+		$actual = intval($this->_checkDataType("STEP_ID"));
+		//Verifica si hay algun salto
+		if($jump > 0)
+			$actual+=$jump;
+		else 
+			$actual++; 
+		//Arma la sentencia SQL
+		$this->sql = "SELECT ID FROM $this->table WHERE STEP_ID = $actual AND IS_BLOCKED = FALSE LIMIT 1";
+		
+		error_log("SQL Service-state: " . $this->sql . " " . print_r(debug_backtrace(2), true));
+		/*
 		//Separa los valores
 		$name = explode("_", $this->RESOURCE_NAME);
 		//Genera el siguiente valores
@@ -149,6 +181,8 @@ class service_state extends table {
 		$this->RESOURCE_NAME = implode("_",$name);
         //Arma la sentencia SQL
         $this->sql = "SELECT ID FROM $this->table WHERE RESOURCE_NAME = " . $this->_checkDataType("RESOURCE_NAME");
+		*/
+		
         //Obtiene los resultados
         $row = $this->__getData();
 		//Retorno
@@ -161,13 +195,32 @@ class service_state extends table {
 		//Retorna
 		return $return;
 	}
+
+	//Funcion para buscar el primer estado
+	function _getFirstState() {
+		if($lang == 0)
+			$lang = $_SESSION["LANGUAGE"]; 			
+        //Arma la sentencia SQL
+        $this->sql = "SELECT RESOURCE_NAME FROM $this->view WHERE ID_STATE = 1 AND LANGUAGE_ID = $lang AND IS_BLOCKED = FALSE";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+			return $this->ceroState;
+        }
+        else {
+            return $row[0];
+        }
+	}
 	
 	//Funcion para buscar el primer estado
 	function getFirstState($second = false) {
 		//Asigna el valor
-		$this->RESOURCE_NAME = $second ? "SERVICE_STATE_1" : "SERVICE_STATE_0";
+		//$this->RESOURCE_NAME = $second ? $this->_getFirstState() : $this->ceroState;
+		$this->STEP_ID = $second ? 1 : 0;
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID FROM $this->table WHERE RESOURCE_NAME = " . $this->_checkDataType("RESOURCE_NAME");
+        //$this->sql = "SELECT ID FROM $this->table WHERE RESOURCE_NAME = " . $this->_checkDataType("RESOURCE_NAME");
+		$this->sql = "SELECT ID FROM $this->table WHERE STEP_ID = " . $this->_checkDataType("STEP_ID") . " AND IS_BLOCKED = FALSE";
         //Obtiene los resultados
         $row = $this->__getData();
 		//Retorno
@@ -189,8 +242,8 @@ class service_state extends table {
 			$lang = $_SESSION["LANGUAGE"];
 		}
 		//Arma la sentencia SQL
-		$this->sql = "SELECT A.SERVICE_STATE_ID, A.SERVICE_STATE_NAME, ID_STATE, LANGUAGE_ID FROM $this->view " .
-					"WHERE A.LANGUAGE_ID = $lang";
+		$this->sql = "SELECT SERVICE_STATE_ID, SERVICE_STATE_NAME, ID_STATE, LANGUAGE_ID FROM $this->view " .
+					"WHERE LANGUAGE_ID = $lang AND IS_BLOCKED = FALSE";
 		//Variable a retornar
 		$return = array();
 		//Recorre los valores

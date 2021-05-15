@@ -28,6 +28,7 @@ class payment extends table {
 		parent::tabla("TBL_PAYMENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
+		$this->IP_CLIENT = $_SERVER["SERVER_ADDR"];
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		$this->REFERENCE_ID = $payment;

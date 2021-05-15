@@ -184,10 +184,10 @@ class area extends table {
 				$row[1] = $row[1] . " (" . $row[3] . ")";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "' selected data-client-id=\"$row[2]\">" . $row[1] . "</option>\n";
 			else
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "' data-client-id=\"$row[2]\">" . $row[1] . "</option>\n";
 		}
 		//Retorna

@@ -321,10 +321,10 @@ class movement_detail extends table {
             }
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $row[1] . " (" . $row[2] . " " . $row[3] . ")</option>\n";
 			else
-				//Ajusta al dise�o segun GUI
+				//Ajusta al diseño segun GUI
 				$return .= "$stabs<option value='" . $row[0] . "'>" . $row[1] . " (" . $row[2] . " " . $row[3] . ")</option>\n";
 		}
 		//Retorna

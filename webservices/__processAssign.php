@@ -50,7 +50,7 @@
 				$token = $_GET['token'];
 				$step = $_GET['step'];
 				$id = $_GET['id'];
-				$cancel = (isset($_GET['cancel']) ? boolval($_GET['cancel']) : $cancel);
+				$cancel = (isset($_GET['cancel']) ? $_GET['cancel'] != "false" : $cancel);
 			}
 		}
 		else {
@@ -58,7 +58,7 @@
 			$token = $_POST['token'];
 			$step = $_POST['step'];
 			$id = $_POST['id'];
-			$cancel = (isset($_POST['cancel']) ? boolval($_POST['cancel']) : $cancel);
+			$cancel = (isset($_POST['cancel']) ? $_POST['cancel'] != "false" : $cancel);
 		}
 	} 
 	else {
@@ -161,6 +161,10 @@
 		exit(json_encode($result));
 	}
 	
+	if($step == 1 && $service->state->STEP_ID == 5)
+		//Actualiza el estado del servicio
+		$service->updateState();
+	
 	//Busca la informacion
 	$result["data"] = $service->processAssign(intval($step));
 	
@@ -181,7 +185,7 @@
 	if($step == 4 && $result["success"]) {
 		$curState = $service->STATE_ID;
 		//Actualiza el estado del servicio
-		$service->updateState();
+		$service->updateState($service->state->getIdByStep(7));
 		//Si no ha ocurrido un error
 		if($service->nerror > 0) {
 			$result["continue"] = false;
@@ -198,19 +202,21 @@
 			//Busca el ultimo log
 			$sLog->getLastLog();
 			//Limpia los campos no requeridos
-			$sLog->ID = "UUID()";
+			//$sLog->ID = "UUID()";
 			//Asigna el ultimo estado
 			$sLog->setInitialState($curState);
 			$sLog->setFinalState($service->STATE_ID);
 			$sLog->EMPLOYEE_INITIAL_ID = $sLog->EMPLOYEE_FINAL_ID;
 			$sLog->setFinalEmployee($datas->cbEmployee);
 			$sLog->VEHICLE_INITIAL_ID = $sLog->VEHICLE_FINAL_ID;
-			$sLog->setFinalVehicle($vehicle->ID);
-			
+			if($vehicle->nerror > 0)
+				$sLog->VEHICLE_FINAL_ID = "NULL";
+			else
+				$sLog->setFinalVehicle($vehicle->ID);
 			$sLog->MODIFIED_BY = $sLog->REGISTERED_BY;
 			$sLog->MODIFIED_ON = "NOW()";
 			//Adiciona el log
-			$sLog->__add();
+			$sLog->_modify();
 			//Si se genera error
 			if($sLog->nerror > 0) {
 				$result["message"] .= "<br/>" . $_SESSION["ERROR"] . " " . $_SESSION["SERVICES"] . ": " . $sLog->error;

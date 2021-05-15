@@ -273,9 +273,6 @@ class service extends table {
 	//Funcion para mostrar las horas disponibles
 	function showTimeOptionList() {
 		$hour = intval(date("H")) + 1;
-		//Calcula las tabs
-		for($i=0;$i<$tabs;$i++)
-			$stabs .= "\t";
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -286,7 +283,7 @@ class service extends table {
 			$text .= ($j > 12 ? $j - 12 : $j);
 			$text .= " " . ($j >= 12 ? "PM" : "AM");
 			//Ajusta al diseño segun GUI
-			$return .= "$stabs<option value=\"" . $i . "\" data-end=\"" . $j . "\">" . $text . "</option>\n";
+			$return .= "<option value=\"" . $i . "\" data-end=\"" . $j . "\">" . $text . "</option>\n";
 		}
 		//Retorna
 		return $return;
@@ -333,27 +330,45 @@ class service extends table {
 		}
 	}
 
-	function updateState($state = "") {
+	function CheckToCollect() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT TO_COLLECT FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
+        //Obtiene los resultados
+        $row = $this->__getData();
+		//Numero a retornar
+		$return = false;
+        //Registro existe
+        if($row)
+			$return = ($row[0] == "1");
+		return $return;	
+	}
+	
+	function updateState($state = "", $lp = "") {
 		//Verifica el estado
 		if($state == "") 
 			$state = $this->state->getNextState();
 		//Arma la sentencia sql
 		$this->sql = "UPDATE " . $this->table . " SET STATE_ID = '" . $state . "' WHERE ID = " . $this->_checkDataType("ID");
+		error_log("SQL Service: " . $this->sql . " " . print_r(debug_backtrace(2), true));
 		//Ejecuta la sentencia
 		$this->executeQuery();
+	}
+
+	function ConditionLoad() {
+		return " AND STATE_ID IN ('" . $this->state->getIdByStep(2) . "','" . $this->state->getIdByStep(3) . "') ";
 	}
 	
 	function loadCount() {
 		//Verifica la informacion
 		$this->request_zone->ZONE_NAME = "NO DEFINIDA";
 		$this->request_zone->getInformationByOtherInfo();
-		$this->state->ID = $this->state->getIdByResource("SERVICE_STATE_1");
 		//Arma la sentencia de consulta
 		$this->sql = "SELECT COUNT(ID) FROM $this->table WHERE IS_BLOCKED = FALSE AND " .
 					"REGISTERED_BY = " . $this->_checkDataType("REGISTERED_BY") . " AND " .
 					"REQUESTED_ZONE = " . $this->request_zone->ID . " AND " .
-					"DELIVER_ZONE = " . $this->request_zone->ID . " AND " .
-					"STATE_ID = '" . $this->state->ID . "'";
+					"DELIVER_ZONE = " . $this->request_zone->ID .
+					$this->ConditionLoad();
+		error_log($this->sql . " " . print_r(debug_backtrace(2), true));
 		//Obtiene los resultados
         $row = $this->__getData();
 		//Numero a retornar
@@ -368,33 +383,46 @@ class service extends table {
 		//Verifica la informacion
 		$this->request_zone->ZONE_NAME = "NO DEFINIDA";
 		$this->request_zone->getInformationByOtherInfo();
-		$this->state->ID = $this->state->getIdByResource("SERVICE_STATE_1");
 		//Arma la sentencia de consulta
 		$this->sql = "SELECT * FROM $this->view WHERE IS_BLOCKED = FALSE AND " .
 					"REGISTERED_BY = " . $this->_checkDataType("REGISTERED_BY") . " AND " .
-					"REQUESTED_ZONE = " . $this->request_zone->ID . " AND " .
-					"DELIVER_ZONE = " . $this->request_zone->ID . " AND " .
-					"STATE_ID = '" . $this->state->ID . "'";
+					//"REQUESTED_ZONE = " . $this->request_zone->ID . " AND " .
+					//"DELIVER_ZONE = " . $this->request_zone->ID .
+					"PAYED = FALSE AND NOTIFIED = FALSE " .
+					$this->ConditionLoad();
+		error_log($this->sql . " " . print_r(debug_backtrace(2), true));
 		//Variable a retornar
 		$return = "";
 		$counter = 0;
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
+			$blZR = false;
+			$blZD = false;
 			$return .= "<tr>\n";
 			//Requested address
-			$return .= "<td>$row[13]</td>\n";
+			$return .= "<td id=\"tdREQUESTED_ADDRESS_$counter\">$row[13]</td>\n";
 			//Requested zone
-			$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\"/></td>\n";
+			if($row[40] == $this->request_zone->ZONE_NAME) {
+				$blZR = true;
+				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" /></td>\n";
+			}
+			else 
+				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" value=\"$row[40]\" disabled/></td>\n";
 			//Deliver to
 			$return .= "<td>$row[16]</td>\n";
 			//Deliver address
-			$return .= "<td>$row[20]</td>\n";
+			$return .= "<td id=\"tdDELIVER_ADDRESS_$counter\">$row[20]</td>\n";
 			//Deliver zone
-			$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\"/></td>\n";
+			if($row[48] == $this->request_zone->ZONE_NAME) {
+				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\"/></td>\n";
+				$blZD = true;
+			}
+			else 
+				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" value=\"$row[48]\" disabled/></td>\n";
 			//Type
 			$return .= "<td>$row[28]</td>\n";
 			//PRICE
-			$badge = "<a class=\"badge badge-primary\" href=\"#\" onclick=\"calculate($counter);\">" . $_SESSION["CALCULATE"] . "</a>";
+			$badge = "<a class=\"badge badge-primary\" id=\"btnCalculate_$counter\" name=\"btnCalculate_$counter\" href=\"#\" onclick=\"calculate($counter);\">" . $_SESSION["CALCULATE"] . "</a>";
 			$return .= "<td><span id=\"spPrice_$counter\">$row[21]</span> $badge</td>\n";
 			//Ida y vuelta
 			$return .= "<td><input id=\"cbRoundTrip_$counter\" name=\"cbRoundTrip_$counter\" type=\"checkbox\" class=\"form-control\"" . ($row[50] ? "checked" : " ") . " data-toggle=\"toggle\" data-on=\"" . $_SESSION["MSG_YES"] . "\" data-off=\"" . $_SESSION["MSG_NO"] . "\" data-onstyle=\"success\" data-offstyle=\"primary\" /></td>\n";
@@ -412,40 +440,48 @@ class service extends table {
 				$ask = "false";
 			}
 			$return .= "</td>";
+			
 			//Actions
-			$save = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["SAVE"] . "\" onclick=\"save($counter);\" id=\"btnSave_$counter\" name=\"btnSave_$counter\"><i class=\"fa fa-floppy-o\"></i></button>";
+			if($row[69] == "" || $row[70] == "")
+				$maps = "<button type=\"button\" class=\"btn btn-default\" id=\"btnLocate_$counter\" name=\"btnLocate_$counter\" title=\"" . $_SESSION["COMPLETE_LOCATION"] . "\" onclick=\"completeLocation($counter);\" " . ($blZR && $blZD ? "" : "disabled") . "><i class=\"fa fa-map\"></i></button>";
+			else 
+				$maps = "";
+			$save = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["SAVE"] . "\" onclick=\"save($counter);\" id=\"btnSave_$counter\" name=\"btnSave_$counter\" " . ($blZR && $blZD ? "" : "disabled") . "><i class=\"fa fa-floppy-o\"></i></button>";
 			$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $row[0] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
-			$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $row[0] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
-			$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $view . $save . $delete . "</div></div>";
+			$delete = "<button type=\"button\" class=\"btn btn-default\" id=\"btnDelete_$counter\" name=\"btnDelete_$counter\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $row[0] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+			$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $maps . $view . $save . $delete . "</div></div>";
 			//acciones
 			$return .= "<td>$action</td>";
 			//Hiddens
 			$return .= "<input type=\"hidden\" id=\"hfId_$counter\" name=\"hfId_$counter\" value=\"$row[0]\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfZonReq_$counter\" name=\"hfZonReq_$counter\" value=\"\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfLatReq_$counter\" name=\"hfLatReq_$counter\" value=\"\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfLngReq_$counter\" name=\"hfLngReq_$counter\" value=\"\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfZonDel_$counter\" name=\"hfZonDel_$counter\" value=\"\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfLatDel_$counter\" name=\"hfLatDel_$counter\" value=\"\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfLngDel_$counter\" name=\"hfLngDel_$counter\" value=\"\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfZonReq_$counter\" name=\"hfZonReq_$counter\" value=\"" . ($blZR ? "" : $row[52]) . "\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfLatReq_$counter\" name=\"hfLatReq_$counter\" value=\"" . ($blZR ? "" : $row[36]) . "\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfLngReq_$counter\" name=\"hfLngReq_$counter\" value=\"" . ($blZR ? "" : $row[38]) . "\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfZonDel_$counter\" name=\"hfZonDel_$counter\" value=\"" . ($blZD ? "" : $row[53]) . "\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfLatDel_$counter\" name=\"hfLatDel_$counter\" value=\"" . ($blZD ? "" : $row[44]) . "\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfLngDel_$counter\" name=\"hfLngDel_$counter\" value=\"" . ($blZD ? "" : $row[46]) . "\" />\n";
 			$return .= "<input type=\"hidden\" id=\"hfDistance_$counter\" name=\"hfDistance_$counter\" value=\"\" />\n";
 			$return .= "<input type=\"hidden\" id=\"hfAskClient_$counter\" name=\"hfAskClient_$counter\" value=\"$ask\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfPrice_$counter\" name=\"hfPrice_$counter\" value=\"\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfPrice_$counter\" name=\"hfPrice_$counter\" value=\"" . ($blZR && $blZD ? "" : $row[21]) . "\" />\n";
 			$return .= "<input type=\"hidden\" id=\"hfClientId_$counter\" name=\"hfClientId_$counter\" value=\"$row[2]\" />\n";
-			$return .= "<input type=\"hidden\" id=\"hfSaved_$counter\" name=\"hfSaved_$counter\" value=\"false\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfSaved_$counter\" name=\"hfSaved_$counter\" value=\"" . ($blZR && $blZD ? "false" : "true") . "\" />\n";
 			$return .= "<input type=\"hidden\" id=\"hfPayed_$counter\" name=\"hfPayed_$counter\" value=\"false\" />\n";
 			$return .= "<input type=\"hidden\" id=\"hfObjPay_$counter\" name=\"hfObjPay_$counter\" value=\"\" />\n";
-			
+			$return .= "<input type=\"hidden\" id=\"hfToPay_$counter\" name=\"hfToPay_$counter\" value=\"false\" />\n";
+			$return .= "<input type=\"hidden\" id=\"hfUserId_$counter\" name=\"hfUserId$counter\" value=\"$row[1]\" />\n";
 			$return .= "</tr>\n";
 			//Incrementa contador
 			$counter++;
 		}
-		echo $return;	
+		echo $return;
+		return $counter;
 	}
 	
 	function dataForm($action, $tabs = 5) {
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
@@ -683,7 +719,7 @@ class service extends table {
 							"parent_name" => $_SESSION["NO_PARENT_ZONE_DEFINED"],
 							"valid" => true));
 		//Arma la sentencia SQL
-		$this->sql = "SELECT CLIENT_ID,CLIENT_IDENTIFICATION,CLIENT_NAME,DELIVER_ADDRESS,DELIVER_CELLPHONE,DELIVER_DESCRIPTION,DELIVER_EMAIL,DELIVER_PHONE,DELIVER_TO,DELIVER_ZONE,DELIVERY_CITY_ID," .
+		$this->sql = "SELECT DISTINCT CLIENT_ID,CLIENT_IDENTIFICATION,CLIENT_NAME,DELIVER_ADDRESS,DELIVER_CELLPHONE,DELIVER_DESCRIPTION,DELIVER_EMAIL,DELIVER_PHONE,DELIVER_TO,DELIVER_ZONE,DELIVERY_CITY_ID," .
 							"DELIVERY_CITY_NAME,DELIVERY_COUNTRY,DELIVERY_TYPE_ID,DELIVERY_TYPE_NAME,FRAGILE,ICON,ID_STATE,LANGUAGE_ID,LAT_DELIVERY_END,LAT_DELIVERY_INI," .
 							"LAT_REQUEST_END,LAT_REQUEST_INI,LON_DELIVERY_END,LON_DELIVERY_INI,LON_REQUEST_END,LON_REQUEST_INI,OBSERVATION,PRICE,QUANTITY,REGISTERED_BY," .
 							"REGISTERED_ON,REQUEST_CITY_ID,REQUEST_CITY_NAME,REQUEST_COUNTRY,REQUESTED_ADDRESS,REQUESTED_BY,REQUESTED_CELLPHONE,REQUESTED_EMAIL,REQUESTED_PHONE,REQUESTED_ZONE," .
@@ -861,6 +897,75 @@ class service extends table {
 		
 	}
 	
+	function GetCoordinates($url, $key, $field = "REQUESTED") {
+		$result = "";
+		$data = null;
+		$this->nerror = 0;
+		$this->error = "";
+		try {
+			$url = sprintf($url,rawurlencode($this->arrColDatas[$field . "_ADDRESS"]),$key);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
+			$result = curl_exec($ch);
+			curl_close ($ch);
+			$data = json_decode($result);
+			switch(json_last_error()) {
+				case JSON_ERROR_NONE:
+					break;
+				case JSON_ERROR_DEPTH:
+					throw new Exception('JSON DECODE ERROR - Excedido tamaño máximo de la pila\n' . $result);
+					break;
+				case JSON_ERROR_STATE_MISMATCH:
+					throw new Exception('JSON DECODE ERROR - Desbordamiento de buffer o los modos no coinciden\n' . $result);
+					break;
+				case JSON_ERROR_CTRL_CHAR:
+					throw new Exception('JSON DECODE ERROR - Encontrado carácter de control no esperado\n' . $result);
+					break;
+				case JSON_ERROR_SYNTAX:
+					throw new Exception('JSON DECODE ERROR - Error de sintaxis, JSON mal formado\n' . $result);
+					break;
+				case JSON_ERROR_UTF8:
+					throw new Exception('JSON DECODE ERROR - Caracteres UTF-8 malformados, posiblemente codificados de forma incorrecta\n' . $result);
+					break;
+				default:
+					throw new Exception('JSON DECODE ERROR - Error desconocido\n' . $result);
+				break;
+			}			
+			if($data->status != "OK") {
+				throw new Exception($data->error_message);
+			}
+			if(!property_exists($data[0],"geometry")) {
+				throw new Exception("No geometry found in address from GoogleMaps");
+			}
+			if(!property_exists($data[0]->geometry,"location")) {
+				throw new Exception("No geometry.location found in address from GoogleMaps");
+			}
+		}
+		catch (Exception $ex) {
+			$this->nerror = 110;
+			$this->error = $ex->getMessage();
+			error_log("Error getting coordinates: " . $ex->getMessage() . "\n" . $url . "\n" . $result . " " . print_r(debug_backtrace(2), true));
+			$data = null;
+		}
+		return $data;
+	}
+
+    function url_encode($string){
+        return urlencode(utf8_encode($string));
+    }
+   
+    function url_decode($string){
+        return utf8_decode(urldecode($string));
+    }
+	
+	function OtherUrlEncode($string) {
+		$entities = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%25', '%23', '%5B', '%5D', '%20', '%22', '%3C', '%3E', '%25', '%7C');
+		$replacements = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]", " ", '"', "<", ">", "%", "|");
+		return str_replace($replacements, $entities, $string);
+	}	
 }
 
 ?>

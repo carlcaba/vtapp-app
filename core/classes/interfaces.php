@@ -215,7 +215,7 @@ class interfaces extends table {
 		if(strpos($link,";") !== false)
 			$link = substr($link,0,strpos($link,";"));
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID FROM $this->table WHERE LINK = '$link' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
+        $this->sql = "SELECT ID FROM $this->table WHERE LINK LIKE '" . $link . "%' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
         //Obtiene los resultados
         $row = $this->__getData();
         //Valida el resultado

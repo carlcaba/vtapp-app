@@ -43,30 +43,36 @@
 		//Asigna la informacion
 		$quota = new quota_employee();
 		
-		//Asigna la informacion
-		$quota->ID = $datas->txtID;
-		$quota->__getInformation();
+		if($datas->txtID != "0") {
+			//Asigna la informacion
+			$quota->ID = $datas->txtID;
+			$quota->__getInformation();
 		
-		//Si no hay cupo asignado
-		if($quota->nerror > 0) {	
-			$result["message"] = $_SESSION["NOT_REGISTERED"];
-			$result["sql"] = $quota->sql;
-			$result = utf8_converter($result);
-			exit(json_encode($result));
-		}
+			//Si no hay cupo asignado
+			if($quota->nerror > 0) {	
+				$result["message"] = $_SESSION["NOT_REGISTERED"];
+				$result["sql"] = $quota->sql;
+				$result = utf8_converter($result);
+				exit(json_encode($result));
+			}
 
-		//Actualiza el cupo usado
-		$quota->AREA_ID = "NULL";
-		$quota->USED += intval($datas->txtAMOUNT);
-		//Modifica
-		$quota->__modify(intval($datas->txtAMOUNT));
-		
-		//Si hay error
-		if($quota->nerror > 0) {
-			$result["message"] = $_SESSION["NO_DATA_FOR_UPDATE"] . "\n" . $quota->error;
-			$result["sql"] = $quota->sql;
-			$result = utf8_converter($result);
-			exit(json_encode($result));
+			//Actualiza el cupo usado
+			$quota->AREA_ID = "NULL";
+			$quota->USED += intval($datas->txtAMOUNT);
+			//Modifica
+			$quota->__modify(intval($datas->txtAMOUNT));
+			
+			//Si hay error
+			if($quota->nerror > 0) {
+				$result["message"] = $_SESSION["NO_DATA_FOR_UPDATE"] . "\n" . $quota->error;
+				$result["sql"] = $quota->sql;
+				$result = utf8_converter($result);
+				exit(json_encode($result));
+			}
+		}
+		else {
+			$quota->setClient($datas->cbClient);
+			$quota->setQuota($datas->cbQuota);
 		}
 		
 		//Agrega el nuevo registro

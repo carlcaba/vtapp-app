@@ -111,9 +111,7 @@
 			}
 			else {
 				$result['success'] = true;
-				$service->IS_PAYED = "TRUE";
-				$service->STATE_ID = $service->state->getNextState();
-				$service->_modify();
+				$service->updateState($service->state->getNextState());
 				//Si hay error
 				if($service->nerror > 0) {
 					//Confirma mensaje al usuario

@@ -90,3 +90,27 @@ function getDistance(p1, p2) {
 function removeAccents(str) {
 	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 } 
+
+function getResourceValue(value, msg) {
+	var noty;
+	$.ajax({
+		url: "core/actions/_load/__getValue.php",
+		data: { 
+			value: value 
+		},
+		dataType: "json",
+		beforeSend: function (xhrObj) {
+			var message = "<i class=\"fa fa-refresh fa-spin\"></i> " + msg;
+			noty = notify("", "dark", "", message, "", false);												
+		},
+		success:function(data){
+			noty.close();
+			if(data.success)
+				return data.message;
+			else {
+				notify("", 'danger', "", data.message, "");
+				return "";
+			}
+		}
+	});
+}

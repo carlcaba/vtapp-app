@@ -72,7 +72,7 @@
 	$service->REQUESTED_BY = $datas->txtREQUESTED_BY;
 	$service->REQUESTED_EMAIL = $datas->txtREQUESTED_EMAIL;
 	$service->REQUESTED_PHONE = $datas->txtREQUESTED_PHONE;
-	$service->RREQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
+	$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 	$service->REQUESTED_IP = $datas->txtREQUESTED_IP;
 	$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
 	$service->setRequestZone($datas->cbZoneRequestSub);
@@ -83,6 +83,8 @@
 	$service->DELIVER_PHONE = $datas->txtDELIVER_PHONE;
 	$service->DELIVER_CELLPHONE = $datas->txtDELIVER_CELLPHONE;
 	$service->DELIVER_ADDRESS = $datas->txtDELIVER_ADDRESS;
+	$service->REQUESTED_COORDINATES = $datas->hfLATITUDE_REQUESTED_ADDRESS . "," . $datas->hfLONGITUDE_REQUESTED_ADDRESS;
+	$service->DELIVER_COORDINATES = $datas->hfLATITUDE_DELIVER_ADDRESS . "," . $datas->hfLONGITUDE_DELIVER_ADDRESS;
 	$service->setDeliverZone($datas->cbZoneDeliverSub);
 	$service->setDeliveryType($datas->cbDeliverType);
 	$service->ROUND_TRIP = $datas->cbRoundTrip;
@@ -136,6 +138,29 @@
 			//Confirma mensaje al usuario
 			$result["message"] .= "<br />" . $payment->error; 
 		}
+		
+		require_once("../../classes/partner.php");
+		require_once("../../classes/configuration.php");
+		require_once("../../classes/users.php");
+
+		$part = new partner();
+		$part->ID = $datas->hfPartnerId;
+		$part->__getInformation();
+		
+		$usua = new users();
+		
+		$conf = new configuration("NOTIFICATE_NEW_SERVICE");
+		$sendemail = $conf->verifyValue();
+		$app = $conf->verifyValue("APP_NAME");
+		
+		if($sendemail) {
+			$mailBody = sprintf($_SESSION["NEW_SERVICE_CREATED"], $service->client->CLIENT_NAME, $app, $service->REQUESTED_ADDRESS, $service->DELIVER_ADDRESS, $service->client->CLIENT_NAME);
+			$usua->sendMail($mailBody, $part->EMAIL, $_SESSION["NEW_SERVICE_CREATED_SUBJECT"]);
+			if($usua->nerror > 0) {
+				$result['message'] = $usua->error . "<br />";
+			}
+		}
+	
 	}
 
 	if($result["success"]) {

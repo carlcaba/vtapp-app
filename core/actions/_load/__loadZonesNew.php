@@ -21,6 +21,8 @@
     else {
 		$term = $_POST['q'];
     }	
+
+	$term = $term == "all" ? "" : $term;
 	
 	$zone = new zone();
 	

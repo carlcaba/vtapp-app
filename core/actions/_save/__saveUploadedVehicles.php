@@ -43,7 +43,7 @@
 		
 		//Instancia las clases necesarias
 		$config = new configuration("SITE_ROOT");
-		$root = $_SERVER["DOCUMENT_ROOT"] . $config->getSiteRoot();
+		$root = $_SERVER["DOCUMENT_ROOT"] . $config->verifyValue("SITE_ROOT");
 		
 		if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
 			$sep = "\/";

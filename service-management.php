@@ -470,7 +470,7 @@
 											<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
 											<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
 											<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
-											<input type="hidden" name="hfState" id="hfState" value="SERVICE_STATE_1" />
+											<input type="hidden" name="hfState" id="hfState" value="1" />
 											<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
 											<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
 											<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
@@ -537,15 +537,39 @@
 		latitude = "hfLATITUDE_REQUESTED_ADDRESS",
 		longitude = "hfLONGITUDE_REQUESTED_ADDRESS";
 	var chkRt = null;
+	var zones = null;
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
+		$.getJSON( "core/actions/_load/__loadZonesNew.php", { q: "all" } ).done(function( data ) {
+			var items = [];
+			zones = data;
+			$.each(zones, function( key, val ) {
+				if(val.parent == null) {
+					items.push( "<option value='" + val.id + "'>" + val.label + "</option>" );
+				}
+			});
+			$("#cbZoneRequest").find('option').remove().end().append(items.join(""));
+			$("#cbZoneRequest").val($("#cbZoneRequest option:first").val());
+			$("#cbZoneRequest").trigger('change');
+			$("#cbZoneDeliver").find('option').remove().end().append(items.join(""));
+			$("#cbZoneDeliver").val($("#cbZoneDeliver option:first").val());
+			$("#cbZoneDeliver").trigger('change');
+			$("#cbZone").find('option').remove().end().append(items.join(""));
+			$("#cbZone").val($("#cbZone option:first").val());
+			$("#cbZone").trigger('change');
+		}).fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ", " + error;
+			console.log( "Request Failed: " + err );
+		});
 		$("select[name^='cbZone']").on("change", function () {
 			var value = $(this).val();
 			var name = $(this).attr("id");
 			var hfLat = "";
 			var hfLng = "";
+			var sub = name + "Sub";
+			var items = [];
 			if(name.indexOf("Request") > -1) {
-				hfLat = "#hfLATITUDE_REQUESTED_ADDRESS";
+				hfLat = "#hfLATITUDE_REQUESTED_ADDRESS"; 
 				hfLng = "#hfLONGITUDE_REQUESTED_ADDRESS";
 			}
 			else {
@@ -558,12 +582,16 @@
 				setDistance();
 				return false;
 			}
-			var sub = name + "Sub";
-			$("#" + sub).removeAttr("disabled");
-			$("#" + sub).find("option[data-parent='" + value + "']").removeAttr("disabled");
-			$("#" + sub).find("option[data-parent!='" + value + "']").attr("disabled","disabled");
-			$('#' + sub + ' option:not([disabled]):first').attr('selected', 'selected');
-			$('#' + sub).trigger("change");
+			else {
+				$.each(zones, function( key, val ) {
+					if(val.parent == value) {
+						items.push( "<option value='" + val.id + "' data-parent='" + value + "' data-latitude='" + val.lat + "' data-longitude='" + val.lng + "'>" + val.label + "</option>" );
+					}
+				});
+				$("#" + sub).removeAttr("disabled");
+				$("#" + sub).find('option').remove().end().append(items.join(""));
+				$('#' + sub).trigger("change");
+			}				
 		});
 		$("select[name^='cbZone']").trigger("change");
 		$('#cbRoundTrip').change(function() {
@@ -609,10 +637,33 @@
 			$('#hfTimeEnd').val(end);
 		});
 		$('#cbClient').change(function() {
-			var opt = $(this).find("option:selected").data("optionpy")
+			var opt = $(this).find("option:selected").data("optionpy");
+			var val = $(this).find("option:selected").val();
 			$('#btnPayment').attr("disabled", opt == "off" && $("#panelBodyPartners").data("state") == "0");
 			$('#btnSave').attr("disabled", opt != "off");
 			$("#hfIsMarco").val(opt);
+			if(opt == "off") {
+				$.ajax({
+					url: "core/actions/_load/__loadClientQuota.php",
+					data: { 
+						client: $("#cbClient").val(),
+						user: $("#hfUSERID").val()
+					},
+					dataType: "json",
+					beforeSend: function (xhrObj) {
+						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+						noty = notify("", "dark", "", message, "", false);												
+					},
+					success:function(data){
+						noty.close();
+						if (data.success) {
+							$("#hfQUOTAID").val(data.quota_id);
+						}
+						else 
+							$("#hfQUOTAID").val("");
+					}
+				});
+			}
 		});
 		$("#cbDeliverType").on("change", function(e) {
 			if(chkRt != null)
@@ -621,6 +672,15 @@
 			var selected = $("option:selected", this);
 			var distance = setDistance();
 			var noty;
+			var dats = selected.data();
+			$("#txtTOTAL_WIDTH").attr("disabled", dats.block);
+			$("#txtTOTAL_HEIGHT").attr("disabled", dats.block);
+			$("#txtTOTAL_WEIGHT").attr("disabled", dats.block);
+			$("#txtTOTAL_LENGTH").attr("disabled", dats.block);
+			$("#txtTOTAL_WIDTH").val(dats.block ? dats.width : "");
+			$("#txtTOTAL_HEIGHT").val(dats.block ? dats.height : "");
+			$("#txtTOTAL_WEIGHT").val(dats.block ? dats.weight : "");
+			$("#txtTOTAL_LENGTH").val(dats.block ? dats.length : "");
 			distance = parseFloat($("#hfDISTANCE").val());
 			if(distance > 0) {
 				$.ajax({
@@ -683,10 +743,10 @@
 			}
 		});
 		var checkAddressChange = function(obj) {
-			var val = $(obj).val().toUpperCase();
+			var val = removeAccents($(obj).val().toUpperCase());
 			var id = $(obj).attr('id');
 			var ref = id.split("_")[0];
-			if(val.indexOf("BOGOTÁ") > -1)
+			if(val.indexOf("BOGOTA") > -1)
 				$("#" + ref.replace("txt","Zone")).fadeIn();
 			else 
 				$("#" + ref.replace("txt","Zone")).fadeOut();
@@ -723,6 +783,7 @@
 					url: url,
 					data: { strModel: datas },
 					dataType: "json",
+					method: "POST",
 					beforeSend: function (xhrObj) {
 						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
 						noty = notify("", "dark", "", message, "", false);												
@@ -886,6 +947,7 @@
 										url: url,
 										data: { strModel: datas },
 										dataType: "json",
+										method: "POST",
 										beforeSend: function (xhrObj) {
 											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
 											noty = notify("", "dark", "", message, "", false);												
@@ -905,7 +967,7 @@
 													dataType: "json",
 													beforeSend: function (xhrObj) {
 														var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-														noty = notify("", "dark", "", message, "", false, true);												
+														noty = notify("", "dark", "", message, "", false);												
 													},
 													success:function(data) {
 														noty.close();
@@ -984,6 +1046,18 @@
 		}
 		if(!datasObj.hasOwnProperty("hfPartnerId")) {
 			datasObj["hfPartnerId"] = $("#hfPartnerId").val();
+		}
+		if(!datasObj.hasOwnProperty("txtTOTAL_HEIGHT")) {
+			datasObj["txtTOTAL_HEIGHT"] = $("#txtTOTAL_HEIGHT").val();
+		}
+		if(!datasObj.hasOwnProperty("txtTOTAL_LENGTH")) {
+			datasObj["txtTOTAL_LENGTH"] = $("#txtTOTAL_LENGTH").val();
+		}
+		if(!datasObj.hasOwnProperty("txtTOTAL_WEIGHT")) {
+			datasObj["txtTOTAL_WEIGHT"] = $("#txtTOTAL_WEIGHT").val();
+		}
+		if(!datasObj.hasOwnProperty("txtTOTAL_WIDTH")) {
+			datasObj["txtTOTAL_WIDTH"] = $("#txtTOTAL_WIDTH").val();
 		}
 		return datasObj;	
 	}

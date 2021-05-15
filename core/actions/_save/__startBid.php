@@ -85,6 +85,11 @@
 			}
 			$cont++;
 		}
+		
+		//Si hay alguna actualizacion
+		if($cont > 0) {
+			$service->updateState();
+		}
 
         //Cambia el resultado
         $result['success'] = true;
