@@ -117,7 +117,7 @@
 	//Actualiza la informacion
 	$exts->USER_ID = $usua->ID;
 	$exts->setAccess($usua->ACCESS_ID);
-	$exts->REQUESTED_BY = $_SERVER['REMOTE_ADDR'];
+	$exts->REQUESTED_BY = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 	$exts->REGISTERED_BY = "Vtapp.WS";
 
 	//Verifica si esta registrado como empleado

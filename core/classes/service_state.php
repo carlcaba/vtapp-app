@@ -243,7 +243,7 @@ class service_state extends table {
 		}
 		//Arma la sentencia SQL
 		$this->sql = "SELECT SERVICE_STATE_ID, SERVICE_STATE_NAME, ID_STATE, LANGUAGE_ID FROM $this->view " .
-					"WHERE LANGUAGE_ID = $lang AND IS_BLOCKED = FALSE";
+					"WHERE LANGUAGE_ID = $lang";
 		//Variable a retornar
 		$return = array();
 		//Recorre los valores

@@ -168,8 +168,10 @@
 		<!-- /.content-wrapper -->
 
 <?
-	$title = $_SESSION["QUOTAS"];
-	$icon = "<i class=\"fa fa-credit-card\"></i>";
+	$title = $_SESSION["QUOTA_USED_SERVICES"];
+	$icon = "<i class=\"fa fa-motorcycle\"></i>";
+	$isTable = true;
+	$tableColumns = [$_SESSION["QUOTA_USED_TABLE_TITLE_1"], $_SESSION["QUOTA_USED_TABLE_TITLE_2"], $_SESSION["QUOTA_USED_TABLE_TITLE_3"], $_SESSION["QUOTA_USED_TABLE_TITLE_4"], $_SESSION["QUOTA_USED_TABLE_TITLE_5"], $_SESSION["QUOTA_USED_TABLE_TITLE_6"], $_SESSION["QUOTA_USED_TABLE_TITLE_7"], $_SESSION["QUOTA_USED_TABLE_TITLE_8"]];
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
 ?>
@@ -191,7 +193,7 @@
 	var fields = ["QUOTA_ID", "CLIENT_NAME", "AMOUNT", "USED", "IS_PAYED", "IS_VERIFIED", "CREDIT_CARD_NUMBER", "CREDIT_CARD_NAME", "QUOTA_TYPE_ID"];
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
-        table = $('#tableQuota').DataTable({
+        var table = $('#tableQuota').DataTable({
 			"ajax": { 
 				"url": "core/actions/_load/__loadSummary.php",
 				"data": {
@@ -248,6 +250,62 @@
 		else 
 			location.href = "quota-management.php?action=" + action;
 	}
+	function list(id) {
+		$('#divTableModal').on('show.bs.modal', function (e) {
+			if($.fn.DataTable.isDataTable('#tableOnModal')) {
+				$('#tableOnModal').DataTable().clear().draw();
+				$('#tableOnModal').DataTable().destroy();
+			}
+			var tableQU = $('#tableOnModal').DataTable({
+				"ajax": { 
+					"url": "core/actions/_load/__loadUsedQuota.php",
+					"data": {
+						"id": id
+					}
+				},
+				"columns": [
+					{ "data": "id", "searchable": false, "responsivePriority": 8 },
+					{ "data": "requested_by", "responsivePriority": 7 },
+					{ "data": "deliver_to", "responsivePriority": 1, "render": function (data, type, row) { return "<a href=\"service-log.php?id=" + row.id + "\" target=\"_blank\" title=\"<?= $_SESSION["SERVICE_DETAILS"] ?>\">" + data + "</a>";} },
+					{ "data": "deliver_address", "responsivePriority": 2 },
+					{ "data": "payment_value", "sClass": "text-center", "responsivePriority": 3, "render": function (data, type, row) { return FormatNumber(data,2); } },
+					{ "data": "payed_on", "sClass": "text-center", "responsivePriority": 5 },
+					{ "data": "user_id", "sClass": "text-center", "responsivePriority": 6 },
+					{ "data": "service_state_name", "responsivePriority": 4,
+							"render": function ( data, type, item ) {
+								var text = "<button type='button' class='btn btn-light btn-block text-left' title='" + data + "'><i class='fa " + item.icon + "'></i>&nbsp;" + data + "</button>";
+								return text;
+							}  
+					}
+				],				
+				"autoWidth": false,
+				"processing": true,
+				"serverSide": false,
+				"responsive": true,
+				"pageLength": 50,
+				"order": [[ 2, 'asc' ]],
+				"columnDefs": [{
+					"targets": 0,
+					"orderable": false 
+				}],
+				"select": {
+					style:    'os',
+					selector: 'td:first-child'
+				}
+<?
+	if($_SESSION["LANGUAGE"] != "1") {
+?>
+				, language: {
+					url: 'plugins/datatables/lang/<?= $_SESSION["LANGUAGE"] ?>.json'
+				}
+<?
+	}
+?>
+			}).columns.adjust().responsive.recalc();
+		});		
+		$("#divTableModal").modal("toggle");			
+	}
+	
 	function payment(id, amont) {
 		var noty;
 		var title = "<?= $_SESSION["GO_TO_PAY"] ?>";

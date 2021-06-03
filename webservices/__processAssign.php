@@ -190,11 +190,15 @@
 		if($service->nerror > 0) {
 			$result["continue"] = false;
 			$result["message"] .= "<br/>" . $_SESSION["NO_SERVICE_UPDATED"];
+			error_log("SQL No service Updated " . $service->sql . " -> " . $service->error);
 		}
 		else {
 			//Obtiene la informacion del vehiculo
 			$vehicle = new vehicle();
 			$vehicle->getInformationByUserId($user);
+			if($vehicle->nerror > 0) {
+				error_log("SQL No vehicle found " . $vehicle->sql . " -> " . $vehicle->error);
+			}
 			//Instancia nuevo log
 			$sLog = new service_log();
 			//Log
@@ -203,11 +207,14 @@
 			$sLog->getLastLog();
 			//Limpia los campos no requeridos
 			//$sLog->ID = "UUID()";
+			$employee = new employee();
+			$employee->USER_ID = $usua->ID;
+			$employee->getInformationByOtherInfo("USER_ID");
 			//Asigna el ultimo estado
 			$sLog->setInitialState($curState);
 			$sLog->setFinalState($service->STATE_ID);
 			$sLog->EMPLOYEE_INITIAL_ID = $sLog->EMPLOYEE_FINAL_ID;
-			$sLog->setFinalEmployee($datas->cbEmployee);
+			$sLog->setFinalEmployee($employee->ID);
 			$sLog->VEHICLE_INITIAL_ID = $sLog->VEHICLE_FINAL_ID;
 			if($vehicle->nerror > 0)
 				$sLog->VEHICLE_FINAL_ID = "NULL";
@@ -225,6 +232,7 @@
 			else {
 				$result["message"] .= "<br/>" . $_SESSION["SERVICE_ASSIGNED"];
 			}
+			error_log("Log update " . $sLog->sql);
 		}
 	}
 	

@@ -1,3 +1,7 @@
+<?
+	if(!isset($loadScripts))
+		$loadScripts = true;
+?>
 		<footer class="main-footer">
 			<strong><a href="http://www.vtapp.com" target="_blank">Vtapp</a> - v.2.5 - Copyright &copy; 2019-<a href="javascript: showVariables();"><?= date("Y") ?></a></strong>
 			<!--
@@ -7,7 +11,10 @@
 		</footer>
 	</div>
 	<!-- ./wrapper -->
-
+	
+<?
+	if($loadScripts) {
+?>
 	<!-- jQuery -->
 	<script src="plugins/jquery/jquery.min.js"></script>
 	<!-- jQuery UI 1.11.4 -->
@@ -43,3 +50,6 @@
 	<script src="js/adminlte.js"></script>
 	<!-- AdminLTE for demo purposes -->
 	<script src="js/demo.js"></script>
+<?
+	}
+?>

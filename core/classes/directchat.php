@@ -18,7 +18,7 @@ class directchat extends table {
 		//Llamado al constructor padre
 		parent::tabla("TBL_DIRECT_CHAT");
 		//Inicializa los atributos
-		$this->IP_SENDER = $_SERVER['REMOTE_ADDR'];
+		$this->IP_SENDER = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		$this->SENDER = $_SESSION['vtappcorp_userid'];
 		$this->DESTINY = $destiny;
 		$this->MESSAGE = $message;

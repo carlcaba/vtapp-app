@@ -76,7 +76,7 @@
 		//Asigna la informacion
 		$datas = json_decode($strmodel);
 		
-		$ip = $_SERVER['REMOTE_ADDR'];
+		$ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 
 		// post request to server
 		$data = array('secret' => $secretKey, 'response' => $datas->gReCaptchaToken);

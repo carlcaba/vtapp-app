@@ -128,7 +128,7 @@
 			}
 		}
 		
-		$result["messages"] = "Counter: $count -> Errors: $errs";
+		$result["message"] = $_SESSION["PROCESS_COMPLETED"] . "<br/>Counter: $count -> Errors: $errs";
 		$result["success"] = true;
 		$result["objPay"] = $datas->services;
 	}

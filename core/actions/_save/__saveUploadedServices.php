@@ -160,7 +160,7 @@
 							$serv->REQUESTED_EMAIL = $usua->EMAIL;
 							$serv->REQUESTED_PHONE = $usua->PHONE;
 							$serv->REQUESTED_CELLPHONE = $usua->CELLPHONE;
-							$serv->REQUESTED_IP = $_SERVER['REMOTE_ADDR'];
+							$serv->REQUESTED_IP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 							$serv->REQUESTED_ADDRESS = $objWorksheet->getCellByColumnAndRow(1,$i)->getValue() . ", " . $objWorksheet->getCellByColumnAndRow(0,$i)->getValue() . ", Colombia";
 							//Verifica la zona por default
 							$serv->request_zone->ZONE_NAME = "NO DEFINIDA";

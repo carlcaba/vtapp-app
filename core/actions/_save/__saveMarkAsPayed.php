@@ -104,7 +104,7 @@
 		$payment->TRANSACTION_ID = "123456";
 		$payment->GATEWAY = "Automatic";
 		$payment->URL_GATEWAY = "";
-		$payment->IP_CLIENT = $_SERVER['REMOTE_ADDR'];
+		$payment->IP_CLIENT = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		$payment->RISK = "";
 		$payment->RESPONSE = "";
 		$payment->RESPONSE_TRACE = "";

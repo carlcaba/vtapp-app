@@ -166,6 +166,26 @@ class user_notification extends table {
 		$this->executeQuery();
 	}
 	
+	function getServicesAutoBid() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT * FROM VIE_AUTO_START_BID_SUMMARY WHERE ACTIVATED = 'TRUE' AND MINUTOS >= MINUTES";
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$data = array("id" => $row[0],
+							"time_elapsed" => intval($row[1]),
+							"time_to_notify" => intval($row[3]),
+							"partner_id" => $row[4],
+							"partner_name" => $row[5]);
+			array_push($return, $data);
+		}
+		//Retorna
+		return $return;
+	
+
+	}
+	
 }	
 
 ?>

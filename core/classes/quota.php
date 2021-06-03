@@ -14,6 +14,7 @@ class quota extends table {
 	var $client;
 	var $payment;
 	var $view;
+	var $vie2;
 	
 	//Constructor
 	function __constructor($quota = "") {
@@ -36,6 +37,7 @@ class quota extends table {
 		$this->client = new client();
 		$this->payment = new payment();
 		$this->view = "VIE_QUOTA_SUMMARY";		
+		$this->vie2 = "VIE_QUOTA_USED";		
 	}
 	
 	//Funcion para Set el tipo
@@ -305,7 +307,7 @@ class quota extends table {
 							$pay = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["PAY"] . "\" onclick=\"payment('" . $aRow[$i] . "','" . $aRow[2] . "');\"><i class=\"fa fa-credit-card-alt\"></i></button>";
 						else
 							$pay = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["PAYED"] . "\" ><i class=\"fa fa-check-circle\"></i></button>";
-						$list = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["LIST_SERVICES"] . "\" onclick=\"list('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-list-alt\"></i></button>";
+						$list = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["LIST_SERVICES"] . "\" onclick=\"list('" . $aRow[$i] . "');\"><i class=\"fa fa-list-alt\"></i></button>";
 												
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $pay . $list . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -415,6 +417,33 @@ class quota extends table {
 		$return .= "$stabs</form>\n";
 		//Retorna
 		return $return;
+	}
+	
+	//Funcion para mostrar los servicios usados
+	function showQuotaUsed($id) {
+		//Define el resultado
+		$result = array();
+		//Arma la sentencia SQL
+		$this->sql = "SELECT SERVICE_ID, REQUESTED_BY, DELIVER_TO, DELIVER_ADDRESS, SERVICE_PRICE, REGISTERED_ON, " .
+					"SERVICE_STATE_NAME, ICON, PAYMENT_VALUE, PAYED_ON, QUOTA_ACTUAL_BALANCE, USER_ID, USER_FULL_NAME " .
+					"FROM $this->vie2 WHERE QUOTA_ID = '$id' ORDER BY SERVICE_ID, REGISTERED_ON DESC";
+		foreach($this->__getAllData() as $row) {					
+			$data = array("id" => $row[0],
+							"requested_by" => $row[1],
+							"deliver_to" => $row[2],
+							"deliver_address" => $row[3],
+							"service_price" => $row[4],
+							"registered_on" => $row[5],
+							"service_state_name" => $row[6],
+							"icon" => $row[7],
+							"payment_value" => $row[8],
+							"payed_on" => $row[9],
+							"actual_balance" => $row[10],
+							"user_id" => $row[11],
+							"user_name" => $row[12]);
+			array_push($result,$data);
+		}
+		return $result;
 	}
 }
 ?>

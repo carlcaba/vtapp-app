@@ -8,6 +8,7 @@ require_once("table.php");
 class logs extends table {
 	var $view;
 	var $table2;
+	var $vie2;
 	
 	//Constructor
 	function __constructor($trx = "") {
@@ -19,12 +20,13 @@ class logs extends table {
 		//Llamado al constructor padre
 		parent::tabla("TBL_SYSTEM_LOG");
 		//Inicializa los atributos
-		$this->USER_IP = $_SERVER['REMOTE_ADDR'];
+		$this->USER_IP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		$this->USER_ID = ($_SESSION['vtappcorp_userid'] === NULL) ? "visitante" : $_SESSION['vtappcorp_userid'];
 		$this->LOGDATE = "NOW()";
 		$this->TEXT_TRANSACTION = $trx;
 		$this->view = "VIE_LOG_SUMMARY";
 		$this->table2 = "TBL_SYSTEM_TRACE";
+		$this->vie2 = "VIE_LOGIN_SUMMARY";
 	}
 	
 	function Login($data = "") {
@@ -33,11 +35,32 @@ class logs extends table {
 		//Verifica los datos
 		if($data != "") {
 			//Decodifica el valores
-			//$decode = json_decode($data);
+			$decode = json_decode($data);
 			//Arma la sentencia de insercion
-			$this->sql = "INSERT INTO $this->table2 (ID,LOG_ID,OLD_RECORD) VALUES (0," . $this->_checkDataType("ID") . ",'" . $data . "')";
+			$this->sql = "INSERT INTO $this->table2 (ID,LOG_ID,TABLE_ORIGIN,RECORD_ID,OLD_RECORD,NEW_RECORD) " .
+					"VALUES (0," . $this->_checkDataType("ID") . ",'LOGIN','LOCALIZATION','$data','" . ($decode->lat ."," . $decode->lon) . "')";
+			error_log("SQL " . $this->sql);
 			//La ejecuta
 			$this->executeQuery();
+		}
+	}
+	
+	function LoginStats($arr) {
+		//Arma el SQL
+		$this->sql = "SELECT SUBSTRING(PREFIX_ID,1,2), PROFILE_NAME, SUM(LOGINS) " .
+					"FROM $this->vie2 " .
+					"WHERE PREFIX_ID IN ('" . implode("','", $arr) . "') " .
+					"GROUP BY SUBSTRING(PREFIX_ID,1,2)";
+		//Obtiene los resultados
+		$row = $this->__getData();
+		//Valida el resultado
+		if(!$row) {
+			//Retorna
+			return 0;
+		}
+		else {
+			//Retorna
+			return $row[2];
 		}
 	}
 	

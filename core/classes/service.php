@@ -35,7 +35,7 @@ class service extends table {
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
-		$this->REQUESTED_IP = $_SERVER['REMOTE_ADDR'];
+		$this->REQUESTED_IP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		$this->QUANTITY = 1;
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
@@ -293,7 +293,7 @@ class service extends table {
 	//Funcion para contar los asociados
 	function getTotalCount() {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT COUNT(ID) FROM $this->table WHERE IS_BLOCKED = FALSE";
+		$this->sql = "SELECT COUNT(SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE";
         //Obtiene los resultados
         $row = $this->__getData();
 		//Numero a retornar
@@ -583,7 +583,7 @@ class service extends table {
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
 		$fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ID_STATE"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE"];
 		//Agrega la clausula WHERE personalizada
 		if($sWhere != "")
 			$sWhere .= " AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"];
@@ -966,6 +966,54 @@ class service extends table {
 		$replacements = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "%", "#", "[", "]", " ", '"', "<", ">", "%", "|");
 		return str_replace($replacements, $entities, $string);
 	}	
+	
+	function DashboardGraphData($month, $year) {
+		$this->sql = "SELECT CONCAT(MONTHNAME(REGISTERED_ON),'/',YEAR(REGISTERED_ON)) MONTH_, COUNT(SERVICE_ID) TOTAL, " .
+					"SUM(CASE WHEN ID_STATE < 6 THEN 1 ELSE 0 END) PROCESO, " .
+					"SUM(CASE WHEN ID_STATE > 5 AND ID_STATE < 11 THEN 1 ELSE 0 END) EN_CAMINO, " .
+					"SUM(CASE WHEN ID_STATE > 10 THEN 1 ELSE 0 END) TERMINADO " .
+					"FROM $this->view " .
+					"WHERE MONTH(REGISTERED_ON) = $month AND YEAR(REGISTERED_ON) = $year " .
+					"GROUP BY CONCAT(MONTHNAME(REGISTERED_ON),'/',YEAR(REGISTERED_ON))";
+		//Valor a retornar
+		$return = array("month" => date("F", mktime(0, 0, 0, $month, 1, $year)),
+						"year" => $year,
+						"month_num" => $month,
+						"month_name" => date("F/Y", mktime(0, 0, 0, $month, 1, $year)),
+						"total" => 0,
+						"process" => 0,
+						"on_road" => 0,
+						"finish" => 0);
+		//Obtiene los resultados
+        $row = $this->__getData();
+        //Registro existe
+        if($row) {
+			$return["total"] = $row[1];
+			$return["process"] = $row[2];
+			$return["on_road"] = $row[3];
+			$return["finish"] = $row[4];
+		}
+		return $return;	
+	}
+	
+	function DashboardSummaryGraph() {
+		//Valor a retornar
+		$return = "";
+		$this->sql = "SELECT SERVICE_STATE_NAME, (SELECT COUNT(*) FROM VIE_SERVICE_SUMMARY) TOTAL, BACKGROUND_COLOR, COUNT(SERVICE_ID) ".
+					"FROM $this->view GROUP BY SERVICE_STATE_NAME LIMIT 4";
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$return .= "<div class=\"progress-group\">\n";
+			$return .= $row[0] . "\n";
+			$return .= "<span class=\"float-right\"><b>$row[3]</b>/$row[1]</span>\n";
+			$return .= "<div class=\"progress progress-sm\">\n";
+			$perc = intval((intval($row[3]) / intval($row[1])) * 100);
+			$return .= "<div class=\"progress-bar $row[2]\" style=\"width: " . $perc . "%\"></div>\n";
+			$return .= "</div>\n";
+			$return .= "</div>\n";
+		}
+		return $return;
+	}
 }
 
 ?>

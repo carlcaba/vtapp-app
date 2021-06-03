@@ -135,7 +135,7 @@
 										</div>		
 										<input type="hidden" name="hfIdUser" id="hfIdUser" value="<?= $idUsr ?>" />
 									</form>
-									<h3 class="profile-username text-center"><?= $usua->NAME . " " . $usua->LASTNAME ?></h3>
+									<h3 class="profile-username text-center"><?= $usua->FIRST_NAME . " " . $usua->LAST_NAME ?></h3>
 									<p class="text-muted text-center"><?= $usua->access->getResource() ?></p>
 									<ul class="list-group list-group-unbordered mb-3">
 										<li class="list-group-item">

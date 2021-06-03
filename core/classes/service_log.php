@@ -390,6 +390,7 @@ class service_log extends table {
 			$return["success"] = false;
 			$return["message"] = $_SESSION["NO_DATA"];
 		}
+		$return["sql"] = $this->sql;
 		return $return;
 	}
 	

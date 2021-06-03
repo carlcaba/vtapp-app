@@ -11,7 +11,8 @@
 	ini_set("log_errors", TRUE);  
 	ini_set('error_log', $log_file); 
 
-	error_reporting(E_ALL | E_STRICT);	
+	//error_reporting(E_ALL | E_STRICT);	
+	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
 	
 	//Incluye las clases requeridas
     require_once("connector_db.php");
@@ -71,6 +72,10 @@
 				//Cierra la conexion a la BD
 				$this->conx->close_it();
         }
+
+		public static function getTableName() {
+			return $this->table;
+		}
 
         //Funcion que conecta a la BD
         private function connectIt() {
@@ -1033,7 +1038,32 @@
 	if (!function_exists("Encriptar")) {
 		function Encriptar($cadena) {
 			$key = "logicaestudio.com";
-			$encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $cadena, MCRYPT_MODE_CBC, md5(md5($key))));
+			// # return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
+			//   return openssl_encrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv);
+			/*if(function_exists("mcrypt_encrypt"))
+				$encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $cadena, MCRYPT_MODE_CBC, md5(md5($key))));
+			else
+			*/				
+				if(function_exists("openssl_encrypt")) {
+				if(!function_exists("secured_encrypt")) {
+					function secured_encrypt($data) {
+						if(!defined('FIRSTKEY'))
+							define('FIRSTKEY','Lk5Uz3slx3BrAghS1aaW5AYgWZRV0tIX5eI0yPchFz4=');			
+						if(!defined("SECONDKEY")) 
+							define('SECONDKEY','EZ44mFi3TlAey1b2w4Y7lVDuqO+SRxGXsa7nctnr/JmMrA2vN6EJhrvdVZbxaQs5jpSe34X3ejFK/o9+Y5c83w==');
+						$first_key = base64_decode(FIRSTKEY);
+						$second_key = base64_decode(SECONDKEY);   
+						$method = "aes-256-cbc";   
+						$iv_length = openssl_cipher_iv_length($method);
+						$iv = openssl_random_pseudo_bytes($iv_length);
+						$first_encrypted = openssl_encrypt($data,$method,$first_key, OPENSSL_RAW_DATA ,$iv);   
+						$second_encrypted = hash_hmac('sha512', $first_encrypted, $second_key, TRUE);
+						$output = base64_encode($iv.$second_encrypted.$first_encrypted);   
+						return $output;       
+					}
+				}
+				$encrypted = secured_encrypt($cadena);
+			}
 			return $encrypted;
 		}
 	}
@@ -1041,11 +1071,40 @@
 	if (!function_exists("Desencriptar")) {
 		function Desencriptar($cadena) {
 			$key = "logicaestudio.com";
-			$decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($cadena), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+			//# return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
+			//  return openssl_decrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv);
+			/*if(function_exists("mcrypt_decrypt"))
+				$decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($cadena), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+			else 
+			*/
+			if(function_exists("openssl_decrypt")) {
+				if(!function_exists("secured_decrypt")) {
+					function secured_decrypt($input) {
+						if(!defined('FIRSTKEY'))
+							define('FIRSTKEY','Lk5Uz3slx3BrAghS1aaW5AYgWZRV0tIX5eI0yPchFz4=');			
+						if(!defined("SECONDKEY")) 
+							define('SECONDKEY','EZ44mFi3TlAey1b2w4Y7lVDuqO+SRxGXsa7nctnr/JmMrA2vN6EJhrvdVZbxaQs5jpSe34X3ejFK/o9+Y5c83w==');
+						$first_key = base64_decode(FIRSTKEY);
+						$second_key = base64_decode(SECONDKEY);           
+						$mix = base64_decode($input);
+						$method = "aes-256-cbc";   
+						$iv_length = openssl_cipher_iv_length($method);
+						$iv = substr($mix,0,$iv_length);
+						$second_encrypted = substr($mix,$iv_length,64);
+						$first_encrypted = substr($mix,$iv_length+64);
+						$data = openssl_decrypt($first_encrypted,$method,$first_key,OPENSSL_RAW_DATA,$iv);
+						$second_encrypted_new = hash_hmac('sha512', $first_encrypted, $second_key, TRUE);
+						if (hash_equals($second_encrypted,$second_encrypted_new))
+							return $data;
+						return false;
+					}
+				}
+				$decrypted = secured_decrypt($cadena);
+			}
 			return $decrypted;
 		}	
 	}
-
+	
     if (!function_exists('http_response_code')) {
         //Funcion que obtiene o modifica el codigo de respuesta
         function http_response_code($code = NULL) {

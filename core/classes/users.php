@@ -1364,7 +1364,7 @@ class users extends table {
     //Funcion que verifica usuarios enlinea
     function getOnline($value) {
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID, GOOGLE_USER FROM " . $this->table . " WHERE ON_LINE AND ACCESS_ID = 70";
+        $this->sql = "SELECT ID, GOOGLE_USER, REFERENCE FROM " . $this->table . " WHERE ON_LINE AND ACCESS_ID = 70";
 		//Verify value
 		if($value != "") {
 			$this->sql .= " AND REFERENCE = '$value'";
@@ -1375,7 +1375,8 @@ class users extends table {
 		foreach($this->__getAllData() as $row) {
 			//Arma la respuesta
 			$data = array("uid" => $row[0],
-							"fbid" => $row[1]);
+							"fbid" => $row[1],
+							"partner_id" => $row[2] );
 			array_push($return,$data);
 		}
 		return $return;
@@ -1445,6 +1446,29 @@ class users extends table {
 		}
 		return $result;
 	}	
+	
+	function countByAccessId($acc) {
+		$iTotal = 0;
+		$this->sql = "SELECT COUNT(USER_ID) FROM $this->view WHERE "; 
+		if(is_numeric($acc)) 
+			$this->sql .= "ACCESS_ID = $acc";
+		else {
+			$this->sql .= "PREFIX ";
+			if($acc != "ADM")
+				 $this->sql .= "LIKE '" . substr($acc,0,2) . "%'";
+			 else
+				 $this->sql .= "IN ('$acc','GOD')";
+		}
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if($row) {
+			$iTotal = $row[0];
+        }
+		if($acc == "ADM")
+			$iTotal++;
+		return $iTotal;
+	}
 	
 }
 ?>

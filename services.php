@@ -139,6 +139,7 @@
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_9"] ?></th>
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_10"] ?></th>
 											<th width="10%"><?= $_SESSION["SERVICE_TABLE_TITLE_11"] ?></th>
+											<th width="1%">Icon</th>
 											<th width="1%">Notif</th>
 											<th width="1%">Payed</th>
 											<th width="10%"><?= $_SESSION["ACTIONS_TABLE_TITLE"] ?></th>
@@ -189,7 +190,7 @@
 	
     <script>
 	var fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ID_STATE"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE"];
 	$(document).ready(function() {
 		$('#divActivateModal').on('shown.bs.modal', function (e) {
 			if($("#hfTextButton").val() != "")
@@ -212,7 +213,13 @@
 				{ "data": "REQUESTED_BY", "responsivePriority": 2 },
 				{ "data": "REQUESTED_ADDRESS", "responsivePriority": 3 },
 				{ "data": "ZONE_NAME_REQUEST", "responsivePriority": 11 },
-				{ "data": "DELIVER_TO", "responsivePriority": 4 },
+				{ "data": 	"DELIVER_TO", 
+							"responsivePriority": 4, 
+							"render": function ( data, type, item ) {
+								var text = "<button type='button' class='btn btn-light btn-block text-left' title='" + item.SERVICE_STATE_NAME + "'><i class='fa " + item.ICON_STATE + "'></i>&nbsp;" + data + "</button>";
+								return text;
+							}  
+				},
 				{ "data": "DELIVER_ADDRESS", "responsivePriority": 5 },
 				{ "data": "ZONE_NAME_DELIVERY", "responsivePriority": 10 },
 				{ "data": "DELIVERY_TYPE_NAME", "responsivePriority": 6 },
@@ -220,6 +227,7 @@
 				{ "data": "SERVICE_STATE_NAME", "responsivePriority": 8 },
 				{ "data": "NOTIFIED", "searchable": false, "responsivePriority": 12, "sortable": false, visible: false },
 				{ "data": "PAYED", "searchable": false, "responsivePriority": 13, "sortable": false, visible: false },
+				{ "data": "ICON_STATE", "searchable": false, "responsivePriority": 4, "sortable": false, visible: false },
 				{ "data": "ID_STATE", "searchable": false, "responsivePriority": 1, "sortable": false }
 			],
 			"autoWidth": false,
