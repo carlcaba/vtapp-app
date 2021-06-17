@@ -49,7 +49,7 @@
 		$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 		$service->REQUESTED_IP = $_SERVER["REMOTE_ADDR"];
 		$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
-		$service->setRequestZone($datas->cbZoneRequestSub);
+		$service->setRequestZone($datas->cbZoneRequestSub, true);
 		$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
 		$service->OBSERVATION = $datas->txtOBSERVATION;
 		$service->DELIVER_TO = $datas->txtDELIVER_TO;
@@ -59,7 +59,7 @@
 		$service->DELIVER_ADDRESS = $datas->txtDELIVER_ADDRESS;
 		$service->REQUESTED_COORDINATES = $datas->hfLATITUDE_REQUESTED_ADDRESS . "," . $datas->hfLONGITUDE_REQUESTED_ADDRESS;
 		$service->DELIVER_COORDINATES = $datas->hfLATITUDE_DELIVER_ADDRESS . "," . $datas->hfLONGITUDE_DELIVER_ADDRESS;
-		$service->setDeliverZone($datas->cbZoneDeliverSub);
+		$service->setDeliverZone($datas->cbZoneDeliverSub, true);
 		$service->setDeliveryType($datas->cbDeliverType);
 		$service->PRICE = $datas->hfPRICE;
 		$service->setState($state->ID);
@@ -242,6 +242,8 @@
 				$stpAss = true;
 			}
 			
+			
+			
 			/*
 			//Agrega la asignación en el log
 			$sLog = new service_log();
@@ -264,10 +266,18 @@
 			require_once("../../classes/partner.php");
 			require_once("../../classes/configuration.php");
 			require_once("../../classes/users.php");
+			require_once("../../classes/assign_service.php");
 
 			$part = new partner();
 			$part->ID = $datas->hfPartnerId;
 			$part->__getInformation();
+
+			$assi = new assign_service();
+			
+			$assi->setService($service->ID);
+			$assi->setPartner($part->ID);
+			
+			$assi->_add();
 			
 			$usua = new users();
 			
@@ -306,4 +316,5 @@
     $result = utf8_converter($result);
     //Termina
     exit(json_encode($result));
+	
 ?>

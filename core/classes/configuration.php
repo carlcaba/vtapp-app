@@ -95,20 +95,19 @@ class configuration extends table {
 			//Verifica el tipo de dato
 			/*	0: numerico
 				1: texto
-				3: booleano */
+				2: booleano */
 			switch($row[3]) {
 				case 0: {
 					$result = intval($row[2]);
 					break;
 				}
-				case 1:
-				case 2:	{
+				case 1: {
 					//Verifica que no esté encriptado
 					$result = $row[2];
 					break;
 				}
-				case 3: {
-					$result = (strtolower($row[2]) == "true") ? 1 : 0;
+				case 2: {
+					$result = (strtolower($row[2]) == "true") ? true : false;
 					break;
 				}
 			}

@@ -1,9 +1,8 @@
 <?
     //Inicio de sesion
     session_name('vtappcorp_session');
-	if (session_status() == PHP_SESSION_NONE) {
-		session_start();
-	}
+	session_start();
+
     date_default_timezone_set('America/Bogota');
 
 	$log_file = "./my-errors.log"; 
@@ -11,7 +10,7 @@
 	ini_set("log_errors", TRUE);  
 	ini_set('error_log', $log_file); 
 
-	error_log("Starting job " . date("Ymd H:i:s"));
+	error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
 	$_SESSION["vtappcorp_userid"] = "admin";
 	
@@ -30,7 +29,7 @@
 	$conf = new configuration("AUTOBID_ACTIVATED");
 	$active = $conf->verifyValue();
 	
-	if($active == 0) {
+	if(!boolval($active)) {
 		error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
 		$result["message"] = "AUTOBID_ACTIVATED disabled $active";
 		exit(json_encode($result));
@@ -125,6 +124,14 @@
 				$users = $usersTotal;
 			
 			foreach($users as $usr) {
+				//Si usuario tiene mas notificaciones de las que debería tener
+				if($usr["max"] >= $usr["active_notifications"]) {
+					$log = new logs("Service " . $srv["id"] . " User " . $usr["uid"] . " Notifications active: " . $usr["active_notifications"] . " / " . $usr["max"]);
+					$log->USER_ID = "admin";
+					$log->_add();
+					error_log($log->TEXT_TRANSACTION);
+					continue;
+				}
 				$usrcount++;
 				//Asigna la informacion
 				$usnot->ID = 0;

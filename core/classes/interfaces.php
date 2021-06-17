@@ -58,13 +58,16 @@ class interfaces extends table {
 				$result = true;
 			}
 			else {
+				error_log("max time " . $max_time);				
 				//Verifica el ultimo acceso registrado (en la sesion)
 				$lastDate = $_SESSION['vtappcorp_lastAccess'];
+				error_log("last date " . $lastDate);				
 				//Toma el dateStamp del servidor
 				$now = date("Y-n-j H:i:s");
 				//Calcula la diferencia
 				$time = (strtotime($now)-strtotime($lastDate));
 				$this->error = $time;
+				error_log("time " . $time);				
 				//Si ya expiro la sesion
 				if($time >= $max_time) {
 					//Registra en el log

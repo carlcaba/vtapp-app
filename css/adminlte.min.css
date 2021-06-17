@@ -347,3 +347,20 @@ label .glyphicon {
 .not-required-field-label {
 	font-weight: normal !important;
 }
+
+.add-service {
+	padding: 0 !important;
+}
+
+@keyframes highlight {
+	0% {
+		background: #C0D731;
+	}
+	100% {
+		background: none;
+	}
+}
+
+.highlight {
+	animation: highlight 1s;
+}

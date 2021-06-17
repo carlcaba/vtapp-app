@@ -182,8 +182,13 @@ class user_notification extends table {
 		}
 		//Retorna
 		return $return;
+	}
 	
-
+	function disableNotifications() {
+		//Arma la sentencia sql
+		$this->sql = "UPDATE " . $this->table . " SET IS_BLOCKED = TRUE, STEP = 999, IS_READ = 1 WHERE SERVICE_ID = " . $this->_checkDataType("SERVICE_ID") . " AND IS_BLOCKED = FALSE";
+		//Ejecuta la sentencia
+		$this->executeQuery();
 	}
 	
 }	

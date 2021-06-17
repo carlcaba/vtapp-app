@@ -61,8 +61,8 @@
 		$valor = floatval($datas->price);
 
 		//Asigna la informacion enviada
-		$service->setRequestZone($datas->zone_req);
-		$service->setDeliverZone($datas->zone_del);
+		$service->setRequestZone($datas->zone_req, true);
+		$service->setDeliverZone($datas->zone_del, true);
 		$service->PRICE = $valor;
 		$service->MODIFIED_BY = $_SESSION["vtappcorp_userid"];
 		

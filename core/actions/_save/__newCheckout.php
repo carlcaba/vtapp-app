@@ -75,7 +75,7 @@
 	$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 	$service->REQUESTED_IP = $datas->txtREQUESTED_IP;
 	$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
-	$service->setRequestZone($datas->cbZoneRequestSub);
+	$service->setRequestZone($datas->cbZoneRequestSub, true);
 	$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
 	$service->OBSERVATION = $datas->txtOBSERVATION;
 	$service->DELIVER_TO = $datas->txtDELIVER_TO;
@@ -85,7 +85,7 @@
 	$service->DELIVER_ADDRESS = $datas->txtDELIVER_ADDRESS;
 	$service->REQUESTED_COORDINATES = $datas->hfLATITUDE_REQUESTED_ADDRESS . "," . $datas->hfLONGITUDE_REQUESTED_ADDRESS;
 	$service->DELIVER_COORDINATES = $datas->hfLATITUDE_DELIVER_ADDRESS . "," . $datas->hfLONGITUDE_DELIVER_ADDRESS;
-	$service->setDeliverZone($datas->cbZoneDeliverSub);
+	$service->setDeliverZone($datas->cbZoneDeliverSub, true);
 	$service->setDeliveryType($datas->cbDeliverType);
 	$service->ROUND_TRIP = $datas->cbRoundTrip;
 	$service->PRICE = $service->ROUND_TRIP == "true" ? $rate->ROUND_TRIP : $rate->RATE;

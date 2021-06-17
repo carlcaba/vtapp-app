@@ -33,6 +33,9 @@
 	$token = "";
 	$user = "";
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -120,11 +123,12 @@
 	$limit = $conf->verifyValue();
 	
 	//Obtiene la informacion
-	$datos = $serv->listServices($sid,$usid,"",true,$limit);
+	$datos = $serv->listServices($sid,$usid,"",true,$limit,$debug);
 	
 	if(isset($datos["success"])) {
 		$result["message"] = $datos["message"];
-		$result["sql"] = $serv->sql;
+		if(boolval($debug)) 
+			$result["sql"] = $serv->sql;
 	}
 	else {
 		$result["success"] = true;

@@ -1,9 +1,7 @@
 <?
     //Inicio de sesion
     session_name('vtappcorp_session');
-	if (session_status() == PHP_SESSION_NONE) {
-		session_start();
-	}
+	session_start();
 
 	//Incluye las clases requeridas
 	include_once("classes/configuration.php");
@@ -34,8 +32,13 @@
 		if(!$check)
 			$inter->updateLastAccess();
 		
+		error_log("Verifying session " . basename(__FILE__));
+		error_log("Session exp " . $sesexp . " " . basename(__FILE__));
+		error_log("Session name " . session_id());
+		
 		if($inter->verifySession($sesexp)) {
 			if(!isset($_SESSION)) {
+				error_log("Session not found " . basename(__FILE__));
 				include("__getLastUser.php");
 				include("__load-resources.php");
 			}

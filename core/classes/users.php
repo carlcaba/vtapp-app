@@ -18,6 +18,7 @@ class users extends table {
 	var $conf;
 	var $adminMail;
 	var $view;
+	var $vieol;
 	var $city;
 	
 	//Constructor
@@ -44,6 +45,7 @@ class users extends table {
 		$this->city = new city();
 		$this->adminMail = "carlos.cabrera@vtapp.logicaestudio.com";
 		$this->view = "VIE_USER_SUMMARY";
+		$this->vieol = "VIE_USERS_ONLINE_SUMMARY";
 		if($user != "")
 			$this->__getInformation();
 	}
@@ -1362,12 +1364,12 @@ class users extends table {
     }
 
     //Funcion que verifica usuarios enlinea
-    function getOnline($value) {
+    function getOnline($value = "") {
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID, GOOGLE_USER, REFERENCE FROM " . $this->table . " WHERE ON_LINE AND ACCESS_ID = 70";
+        $this->sql = "SELECT * FROM " . $this->vieol;
 		//Verify value
 		if($value != "") {
-			$this->sql .= " AND REFERENCE = '$value'";
+			$this->sql .= " WHERE REFERENCE = '$value'";
 		}
 		//Variable a devolver
 		$return = array();
@@ -1375,8 +1377,10 @@ class users extends table {
 		foreach($this->__getAllData() as $row) {
 			//Arma la respuesta
 			$data = array("uid" => $row[0],
-							"fbid" => $row[1],
-							"partner_id" => $row[2] );
+							"fbid" => $row[2],
+							"partner_id" => $row[3],
+							"max" => intval($row[4]),
+							"active_notifications" => intval($row[5]));
 			array_push($return,$data);
 		}
 		return $return;
@@ -1385,7 +1389,7 @@ class users extends table {
 	//Enviar notification a firebase
 	function sendGCM($message) {
 		$id = $this->GOOGLE_USER;
-		if(!$this->conf->verifyValue("PUSHSAFER_ACTIVE")) {
+		if(!boolval($this->conf->verifyValue("PUSHSAFER_ACTIVE"))) {
 			$url = $this->conf->verifyValue("FIREBASE_SERVER");
 			$fields = array ('registration_ids' => array ($id),
 							'data' => array ("message" => $message)

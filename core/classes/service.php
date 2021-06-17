@@ -21,6 +21,7 @@ class service extends table {
 	var $state;
 	var $type;
 	var $vehicle;
+	var $vie2;
 	
 	//Constructor
 	function __constructor($service = "") {
@@ -48,6 +49,7 @@ class service extends table {
 		$this->type = new delivery_type();
 		$this->vehicle = new vehicle_type();
 		$this->view = "VIE_SERVICE_SUMMARY";		
+		$this->vie2 = "VIE_NOT_BIDDED_SUMMARY";		
 	}
 
     //Funcion para Set el usuario
@@ -113,7 +115,7 @@ class service extends table {
     }
 	
     //Funcion para Set la zona de recogida
-    function setRequestZone($zone) {
+    function setRequestZone($zone, $default = false) {
         //Asigna la informacion
         $this->request_zone->ID = $zone;
         //Verifica la informacion
@@ -127,11 +129,16 @@ class service extends table {
             $this->error = "";
         }
         else {
-            //Asigna valor por defecto
-            $this->REQUESTED_ZONE = "";
-            //Genera error
-            $this->nerror = 20;
-            $this->error = "Zona de recogida " . $_SESSION["NOT_REGISTERED"];
+			if($default)
+				//Asigna valor por defecto
+				$this->REQUESTED_ZONE = $this->request_zone->getDefaultZone();
+			else {
+				//Asigna valor por defecto
+				$this->REQUESTED_ZONE = "";
+				//Genera error
+				$this->nerror = 20;
+				$this->error = "Zona de recogida " . $_SESSION["NOT_REGISTERED"];
+			}
         }
     }
 	
@@ -144,7 +151,7 @@ class service extends table {
     }
 
     //Funcion para Set la zona de entrega
-    function setDeliverZone($zone) {
+    function setDeliverZone($zone, $default = false) {
         //Asigna la informacion
         $this->deliver_zone->ID = $zone;
         //Verifica la informacion
@@ -158,11 +165,16 @@ class service extends table {
             $this->error = "";
         }
         else {
-            //Asigna valor por defecto
-            $this->DELIVER_ZONE = "";
-            //Genera error
-            $this->nerror = 20;
-            $this->error = "Zona de entrega " . $_SESSION["NOT_REGISTERED"];
+			if($default)
+				//Asigna valor por defecto
+				$this->DELIVER_ZONE = $this->deliver_zone->getDefaultZone();
+			else {
+				//Asigna valor por defecto
+				$this->DELIVER_ZONE = "";
+				//Genera error
+				$this->nerror = 20;
+				$this->error = "Zona de entrega " . $_SESSION["NOT_REGISTERED"];
+			}
         }
     }
 	
@@ -1014,6 +1026,29 @@ class service extends table {
 		}
 		return $return;
 	}
+
+    //Funcion que verifica servicios que no estan en subasta
+    function getNotBidded() {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT * FROM " . $this->vie2;
+		//Variable a devolver
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			//Arma la respuesta
+			$data = array("sid" => $row[0],
+							"stateid" => $row[1],
+							"service_state" => $row[2],
+							"registered_on" => $row[3],
+							"notified_on" => $row[4],
+							"minutes" => intval($row[5]),
+							"new_stateid" => $row[6],
+							"notification_id" => $row[7]);
+			array_push($return,$data);
+		}
+		return $return;
+    }
+
 }
 
 ?>

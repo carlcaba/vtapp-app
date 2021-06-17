@@ -35,6 +35,9 @@
 	$pos = "";
 	$id = "";
 	$dbg = "";
+
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -110,12 +113,12 @@
 	if(gettype($estado) == "string")
 		$estado = ($estado === "true");
 
-	/*
-	if(is_bool($estado) === false)
-		$result["warning"] = "$estado No es bool";
-	else if(is_bool($estado) === true)
-		$result["warning"] = "$estado es bool";
-	*/	
+	if(boolval($debug)) {
+		if(is_bool($estado) === false)
+			$result["warning"] = "$estado No es bool";
+		else if(is_bool($estado) === true)
+			$result["warning"] = "$estado es bool";
+	}
 	
 	$usua->updatePosition($estado,$pos,$id);
 	
@@ -130,7 +133,8 @@
 	else {
 		$result["message"] = $usua->error;
 	}
-	$result["sql"] = $usua->sql;
+	if(boolval($debug)) 
+		$result["sql"] = $usua->sql;
 	
 	//Termina
 	exit(json_encode($result));

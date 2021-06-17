@@ -34,12 +34,19 @@
 	$user = "";
 	$pass = "";
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
+				header("HTTP/1.1 400 Bad Request " . $result["message"]);
+				exit;		
+				/*
 				//Termina
 				exit(json_encode($result));
+				*/
 			}
 			else {
 				$user = $_GET['user'];
@@ -60,16 +67,24 @@
 	
 	//Verifica la informacion
 	if(empty($user)) {
+		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
+		exit;		
+		/*
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
 		exit(json_encode($result));
+		*/
 	}
 	if(empty($pass)) {
+		header("HTTP/1.1 400 Bad Request " . $_SESSION["PASSWORD_EMPTY"]);
+		exit;		
+		/*
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["PASSWORD_EMPTY"];
 		//Termina
 		exit(json_encode($result));
+		*/
 	}
 
 	//Instancia la clase usuario
@@ -86,10 +101,14 @@
 	
 	//Si hay error
 	if($usua->nerror > 0) {
+		header("HTTP/1.1 401 Unauthorized " . $usua->error);
+		exit;		
+		/*
 		//Confirma mensaje al usuario
 		$result['message'] = $usua->error;
 		//Termina
 		exit(json_encode($result));
+		*/
 	}
 	
 	//Crea el nuevo LOG

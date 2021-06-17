@@ -4,7 +4,6 @@
 
 //Incluye las clases dependientes
 require_once("table.php");
-require_once("logs.php");
 require_once("service.php");
 require_once("partner.php");
 require_once("employee.php");
@@ -21,6 +20,8 @@ class assign_service extends table {
 	function __constructor() {
 		//Llamado al constructor padre
 		parent::tabla("TBL_ASSIGN_SERVICE");
+		$this->REGISTERED_ON = "NOW()";
+		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		$this->service = new service();
@@ -116,12 +117,42 @@ class assign_service extends table {
     }
 	
     //Funcion para Get el partner
-    function setEmployee() {
+    function getEmployee() {
         //Asigna el valor del escenario
         $this->EMPLOYEE_ID = $this->employee->ID;
         //Busca la informacion
         $this->employee->__getInformation();
     }
 
+    //Funcion para Set del vehiculo
+    function setVehicle($vehi) {
+        //Asigna la informacion
+        $this->vehicle->ID = $vehi;
+        //Verifica la informacion
+        $this->vehicle->__getInformation();
+        //Si no hubo error
+        if($this->vehicle->nerror == 0) {
+            //Asigna el valor
+            $this->VEHICLE_ID = $vehi;
+            //Genera error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+        else {
+            //Asigna valor por defecto
+            $this->VEHICLE_ID = "NULL";
+            //Genera error
+            $this->nerror = 20;
+            $this->error = "Empleado " . $_SESSION["NOT_REGISTERED"];
+        }
+    }
+	
+    //Funcion para Get el partner
+    function getVehicle() {
+        //Asigna el valor del escenario
+        $this->VEHICLE_ID = $this->vehicle->ID;
+        //Busca la informacion
+        $this->vehicle->__getInformation();
+    }
 }
 ?>

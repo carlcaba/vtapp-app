@@ -82,6 +82,21 @@ class zone extends table {
 		}
 	}
 	
+	//Funcion para obtener la zona por default
+	function getDefaultZone() {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT ID FROM $this->table WHERE ZONE_NAME = 'NO DEFINIDA' AND IS_BLOCKED = FALSE";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+			return $this->ceroState;
+        }
+        else {
+            return $row[0];
+        }
+	}
+	
 	//Funcion que retorna JSON para autocomplete
 	function showAutocompleteOptionList($term, $lang = 0) {
 		//Verifica el lenguaje

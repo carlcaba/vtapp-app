@@ -1,9 +1,7 @@
 <?
     //Inicio de sesion
     session_name('vtappcorp_session');
-	if (session_status() == PHP_SESSION_NONE) {
-		session_start();
-	}	
+	session_start();
 
     include_once("classes/interfaces.php");
     include_once("classes/resources.php");

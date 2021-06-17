@@ -341,7 +341,7 @@ class service_log extends table {
 
 	
 	//Funcion para listar los servicios de acuerdo al estado
-	function listServices($state, $id, $usr = "", $history = false, $limit = 0) {
+	function listServices($state, $id, $usr = "", $history = false, $limit = 0, $debug = false) {
 		//Define las columnas
 		$columns = ["SERVICE_ID", "CLIENT_ID", "CLIENT_NAME", "CLIENT_IDENTIFICATION", "CLIENT_ADDRESS", "CLIENT_PHONE", "CLIENT_CELLPHONE", 
 					"REQUESTED_BY", "REQUESTED_EMAIL", "REQUESTED_ADDRESS", "REQUESTED_PHONE", "REQUESTED_CELLPHONE", "REQUEST_CITY_ID", "REQUEST_CITY_NAME", "REQUEST_COUNTRY", 
@@ -390,7 +390,8 @@ class service_log extends table {
 			$return["success"] = false;
 			$return["message"] = $_SESSION["NO_DATA"];
 		}
-		$return["sql"] = $this->sql;
+		if($debug)
+			$return["sql"] = $this->sql;
 		return $return;
 	}
 	

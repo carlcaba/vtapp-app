@@ -10,6 +10,7 @@ class service_state extends table {
 	var $resources;
 	var $view;
 	var $ceroState;
+	var $dueState;
 	
 	//Constructor
 	function __constructor($service_state = "") {
@@ -31,6 +32,7 @@ class service_state extends table {
 		$this->resources = new resources();
 		$this->view = "VIE_SERVICE_STATE_SUMMARY";
 		$this->ceroState = "SERVICE_STATE_0";
+		$this->dueState = 16;
 	}
 
 	//Funcion que muestra el texto del resource
@@ -212,6 +214,25 @@ class service_state extends table {
             return $row[0];
         }
 	}
+
+	//Funcion para buscar el estado vencido
+	function getDueState($step = false) {
+		$field = "ID";
+		if($step)
+			$field = "STEP_ID";
+        //Arma la sentencia SQL
+        $this->sql = "SELECT $field FROM $this->table WHERE IS_BLOCKED = FALSE ORDER BY STEP_ID DESC LIMIT 1";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+			return $this->dueState;
+        }
+        else {
+            return $row[0];
+        }
+	}
+
 	
 	//Funcion para buscar el primer estado
 	function getFirstState($second = false) {

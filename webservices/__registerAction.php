@@ -36,6 +36,9 @@
 	$det = "";
 	$note = "";
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -222,7 +225,8 @@
 	}
 	else {
 		$result["message"] = $class->error;
-		$result["data"] = $class->sql;
+		if(boolval($debug)) 
+			$result["data"] = $class->sql;
 	}
 	//Termina
 	exit(json_encode($result));

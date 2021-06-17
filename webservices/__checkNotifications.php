@@ -32,6 +32,9 @@
 	$user = "";
 	$token = "";
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -103,10 +106,8 @@
 	$result["notifications"] = $usnot->getUnread();
 	$result["data"] = $usnot->getDataUnread();
 
-	/*
-	*** TESTING
-	$result["notifications"] = rand(5, 75);
-	*/
+	if(boolval($debug))
+		$result["notifications"] = rand(5, 75);
 	
 	//Realiza la accion
 	$result["success"] = $usua->error == 0;

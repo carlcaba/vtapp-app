@@ -38,6 +38,9 @@
 	$id = "";
 	$cancel = false;
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -206,7 +209,6 @@
 			//Busca el ultimo log
 			$sLog->getLastLog();
 			//Limpia los campos no requeridos
-			//$sLog->ID = "UUID()";
 			$employee = new employee();
 			$employee->USER_ID = $usua->ID;
 			$employee->getInformationByOtherInfo("USER_ID");
@@ -227,7 +229,8 @@
 			//Si se genera error
 			if($sLog->nerror > 0) {
 				$result["message"] .= "<br/>" . $_SESSION["ERROR"] . " " . $_SESSION["SERVICES"] . ": " . $sLog->error;
-				$result["sql_DEBUGGER"] = $sLog->sql; 
+				if(boolval($debug))
+					$result["sql_DEBUGGER"] = $sLog->sql; 
 			}
 			else {
 				$result["message"] .= "<br/>" . $_SESSION["SERVICE_ASSIGNED"];

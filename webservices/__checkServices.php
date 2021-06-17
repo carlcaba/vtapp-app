@@ -32,6 +32,9 @@
 	$token = "";
 	$user = "";
 	
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -124,7 +127,8 @@
 		$result["success"] = true;
 		$result["message"] = $datos;
 	}
-	$result["sql"] = $serv->sql;
+	if (boolval($debug))
+		$result["sql"] = $serv->sql;
 	//Termina
 	exit(json_encode($result));
 ?>

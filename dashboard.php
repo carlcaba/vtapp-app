@@ -13,7 +13,7 @@
 	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
 	
 	require_once("core/__check-session.php");
-	
+
 	$result = checkSession("dashboard.php",true);
 	
 	if($result["success"] !== true) 
