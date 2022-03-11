@@ -26,11 +26,13 @@
 					message: message,
 					icon: icon
 				};
+				var delay = _return ? 0 : 5000; 
 				var url = window.location.pathname;
 				var filename = url.substring(url.lastIndexOf('/')+1);				
 				var set = {
 					z_index: 999999,
 					type: type,
+					delay: delay,
 					allow_dismiss: dismiss,						
 					placement: {
 						from: from,

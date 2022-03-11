@@ -57,7 +57,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->quota->useQuota($amount);
 				if($quota->quota->nerror > 0) {
-					error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql . " " . print_r(debug_backtrace(2), true)); 
 					$errs++;
 					continue;
 				}
@@ -67,7 +67,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->useQuota($amount);
 				if($quota->nerror > 0) {
-					error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
 					$errs++;
 					continue;
 				}
@@ -100,7 +100,7 @@
 				$pymt->OBSERVATION = "Service by Quota. UID " . $datas->id;
 				$pymt->_add();
 				if($pymt->nerror > 0) {
-					error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql . " " . print_r(debug_backtrace(2), true)); 
 					$errs++;
 				}
 				else {

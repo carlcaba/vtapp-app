@@ -23,7 +23,9 @@
 	
 	<title><?= APP_NAME ?></title>
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="js/plugins/fontawesome.6/css/all.css">
+	<link rel="stylesheet" href="js/plugins/fontawesome.6/css/v4-shims.css">
+	
 	<!-- Ionicons -->
 	<link rel="stylesheet" href="css/ionicons.min.css">
 	<!-- Theme style -->

@@ -36,12 +36,14 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
@@ -65,13 +67,13 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	include_once("__validateSession.php");
@@ -83,7 +85,7 @@
 		//Asigna el mensaje
 		$result["message"] = $check["message"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Instancia la clase usuario
@@ -100,7 +102,7 @@
 		//Asigna el mensaje
 		$result["message"] = "Employee: " . $empl->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	$usid = $empl->ID;
 	
@@ -112,7 +114,7 @@
 		//Asigna el mensaje
 		$result["message"] = "State: " . $_SESSION["NOT_REGISTERED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Asigna la informacion
@@ -132,8 +134,17 @@
 	}
 	else {
 		$result["success"] = true;
-		$result["message"] = $datos;
+		$result["message"] = array();
+		foreach($datos as $dat)
+			array_push($result["message"],$dat);
+		$result["payment_data"] = array("ACCUMULATED_money-bill-1" => rand(1000,1000000),
+										"ACCUMULATED_POINTS" => rand(1,1000),
+										"REDEEMED_money-bill-1" => rand(1000,1000000), 
+										"REDEEMED_POINTS" => rand(1,1000)); 
 	}
+	
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
-?>
+ ?>

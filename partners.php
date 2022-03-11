@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 	
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -59,7 +59,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-handshake-o"></i> <?= $_SESSION["PARTNERS"] ?></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-handshake"></i> <?= $_SESSION["PARTNERS"] ?></h1>
 						</div>
 						<!-- /.col -->
 <?
@@ -121,7 +121,7 @@
 
 <?
 	$title = $_SESSION["PARTNERS"];
-	$icon = "<i class=\"fa fa-handshake-o\"></i>";
+	$icon = "<i class=\"fa fa-handshake\"></i>";
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
 ?>
@@ -149,6 +149,9 @@
 					"field": fields.join()
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "PARTNER_ID", "searchable": false, "visible": false, "responsivePriority": 10 },
 				{ "data": "PARTNER_NAME", "responsivePriority": 2 },

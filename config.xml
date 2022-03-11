@@ -1,0 +1,14 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+	<!--Appender logs message to a file-->
+	<appender name="default-appender" class="LoggerAppenderFile">
+		<layout class="LoggerLayoutPattern">
+			<param name="conversionPattern" value="%date %logger %-5level %msg%n" />
+		</layout>
+		<param name="file" value="myLog.log" /> <!-- This is the log file-->
+		<param name="append" value="true" />
+	</appender>
+	<logger name="VTAPPLogger">
+		<level value="debug" /> <!--Severity level-->
+		<appender_ref ref="default-appender" /> <!--Reference to the Appender-->
+	</logger>
+</configuration>

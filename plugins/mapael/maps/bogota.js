@@ -8,35 +8,16 @@
  * @author LE
  
 // Datas for getCoords()
-1- 17.42, 150.69
-1- 4.837797398670366, -74.07619489658654
-2- 228.63, 14.99
-2- 4.837209257021738, -74.075531344997
+x1 = 150.6918.
+y1 = 18.17
+x2 = 742.08
+y2 = 351.35
 
-1- 741.72,351.12
-1- 4.484492903912731, -74.09708991007646
-2- 28.77, 739.06
-2- 4.487644582030136, -74.11692297171815 
- */
+lat1 = 4.837102799235133
+lon1 = -74.07538462423334
 
-
-/*
-x1
-228.37
-long1
--74.075427249666
-x2
-28.91
-long2
--74.12696128911375
-y1
-15.26
-lat1
-4.837046853290499
-y2
-739.71
-lat2
-4.463069164164483
+lat2 = 4.507966651849399
+lon2 = -74.15457545170041
 */
 
 (function (factory) {
@@ -61,71 +42,13 @@ lat2
                     width : 757.37952,
                     height : 377.85733,
                     getCoords : function (lat, lon) {
-						/*
-                        var xfactor = -4842.2837147781;
-                        var xoffset = -358544.04909541;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -2072.0057025711;
-                        var yoffset = 10040.145165079;
-                        var y = (lat * yfactor) + yoffset;
-                        var xfactor = 4828.5128136284;
-                        var xoffset = 357871.2627;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -2071.3477413511;
-                        var yoffset = 9789.453916;
-                        var y = (lat * yfactor) + yoffset;
-                        var xfactor = -1937.147645607;
-                        var xoffset = 9385.3339235423;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = 3870.451494536;
-                        var yoffset = 286933.71810686;
-                        var y = (lat * yfactor) + yoffset;						
-						var xfactor = -14052.459457099;
-                        var xoffset = -1040924.2681933;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -536.9036866056;
-                        var yoffset = 2747.7582878157;
-                        var y = (lat * yfactor) + yoffset;
-
-                        var xfactor = -14052.459457099;
-                        var xoffset = 1041366.69849145;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -536.9036866056;
-                        var yoffset = -2725.86259245022;
-                        var y = (lat * yfactor) + yoffset;
-                        var xfactor = -14046.4904547888;
-                        var xoffset = -1040924.2681933;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -541.566271075243;
-                        var yoffset = 2747.7582878157;
-                        var y = (lat * yfactor) + yoffset;
-                        var xfactor = -10156.964080399;
-                        var xoffset = -752361.10936632;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -1449.2880424926;
-                        var yoffset = 6717.6273215598;
-                        var y = (lat * yfactor) + yoffset;						
-                        var xfactor = -4673.7802009604;
-                        var xoffset = -346185.3398142;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -3149.5632992592;
-                        var yoffset = 14560.441700128;
-                        var y = (lat * yfactor) + yoffset;						
-						
-                        var xfactor = -1449.2880424926;
-                        var xoffset = 6717.6273215598;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -10156.964080399;
-                        var yoffset = -752361.10936632;
-                        var y = (lat * yfactor) + yoffset;						
-						*/
-                        var xfactor = -10156.964080399;
-                        var xoffset = -752361.10936632;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -1449.2880424926;
-                        var yoffset = 6717.6273215598;
-                        var y = (lat * yfactor) + yoffset;						
-						
+						//close work
+						var xfactor = -7467.9103491613;
+						var xoffset = -553037.64145341;
+						var x = (lon * xfactor) + xoffset;
+						var yfactor = -1012.286261009;
+						var yoffset = 4914.7027067537;
+						var y = (lat * yfactor) + yoffset;
 						
 						console.log('x ' + x + ' y ' + y);
 						return {'x' : x, 'y' : y};
@@ -175,14 +98,6 @@ lat2
                     width : 377.85733,
                     height : 757.37952,
                     getCoords : function (lat, lon) {
-						/*
-                        var xfactor = 4828.5128136284;
-                        var xoffset = 357903.28227565;
-                        var x = (lon * xfactor) + xoffset;
-                        var yfactor = -2071.3477413511;
-                        var yoffset = 10034.532468975;
-                        var y = (lat * yfactor) + yoffset;
-						*/
                         var xfactor = 3870.451494536;
                         var xoffset = 286933.71810686;
                         var x = (lon * xfactor) + xoffset;

@@ -34,7 +34,7 @@
 	}
 		
 	//Si es un acceso autorizado
-	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
+	//if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
 		if($client == "") {
 			$result = utf8_converter($result);
 			exit(json_encode($result));
@@ -81,11 +81,12 @@
 		$result["quota_id"] = $quota->ID;
 		$result["message"] = "";
 		$result["success"] = true;
+		/*
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];
 	}
-	
+	*/
 	$result = utf8_converter($result);
 	//Termina
 	exit(json_encode($result));

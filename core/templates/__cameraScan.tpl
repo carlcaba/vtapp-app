@@ -28,23 +28,23 @@
 							if(data.factor != 1) {
 								notify("", 'warning', "", msg7, "");
 							}
-							if(data.factormoney != 1) {
+							if(data.factormoney-bill-1 != 1) {
 								notify("", 'warning', "", msg8, "");
 							}
 							$("#btnSave").attr("disabled", data.productQuantity == 0);
-							$("#moneyTypePrice").html(data.productMoneytype);
-							$("#moneyTypeTotal").html(data.factormoneyconversion);
+							$("#money-bill-1TypePrice").html(data.productmoney-bill-1type);
+							$("#money-bill-1TypeTotal").html(data.factormoney-bill-1conversion);
 							$("#unitDiv").html(data.unit);
 							$("#txtPRICE").val(data.productPrice);
 							$("#txtEXISTENCE").val(data.productQuantity);
 							$("#hfCODE").val(data.code);
 							$("#hfID").val(content);
 							$("#hfFactor").val(data.factor);
-							$("#hfMoneyFactor").val(data.factormoney);
+							$("#hfmoney-bill-1Factor").val(data.factormoney-bill-1);
 							$("#hfUNIT").val(data.unit);
 							$('#txtQUANTITY').val("");
 							$("#txtQUANTITY").css("background-color", (data.factor != 1 ? "LightYellow" : ""));
-							$("#txtTOTAL").val(0 * data.productPrice * data.factormoney);
+							$("#txtTOTAL").val(0 * data.productPrice * data.factormoney-bill-1);
 							$('#' + focus).focus();
 						}
 						catch(e) {

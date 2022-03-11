@@ -35,12 +35,14 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
@@ -67,19 +69,19 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($type)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["DATA_TYPE_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	include_once("__validateSession.php");
@@ -91,7 +93,7 @@
 		//Asigna el mensaje
 		$result["message"] = $check["message"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	$conf = $reso->getResourceByName("DATA_TYPE_WEBSERVICE");
@@ -111,7 +113,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["NO_VALID_DATA_TYPE"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	if(strpos($className,"%") !== false) {
@@ -140,6 +142,9 @@
 		if(boolval($debug))
 			$result["data"] = $class->sql;
 	}
+
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

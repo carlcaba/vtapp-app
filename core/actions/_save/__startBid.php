@@ -55,6 +55,7 @@
 		$usnot = new user_notification();
 		$cont = 0;
 		$err = 0;
+		$result["errors"] = "";
 		
 		foreach($datas as $value) {
 			//Asigna la informacion
@@ -65,7 +66,17 @@
 			$usnot->STEP = 1;
 			$usnot->IS_READ = "FALSE";
 			//Envia la notificacion a Firebase
-			$usnot->user->sendGCM($_SESSION["NEW_NOTIFICATION"] . " ID:" . $id); 
+			$notify = $usnot->user->sendGCM($_SESSION["NEW_NOTIFICATION"] . " ID:" . $id, $id); 
+			//Verifica la informacion del firebase
+			if(is_object($notify)) {
+				if(property_exists($notify,"multicast_id")) {
+					$usnot->MULTICAST_ID = $notify->multicast_id;
+					$usnot->MESSAGE_ID = $notify->results[0]->message_id;
+				}
+			}
+			
+			_error_log(print_r($notify,true));
+			
 			$usnot->IS_BLOCKED = ($usnot->user->nerror == 0 ? "FALSE" : "TRUE");
 			//Agrega la notificacion
 			$usnot->_add();
@@ -74,12 +85,14 @@
 				$log = new logs($usnot->user->error);
 				$log->_add();
 				$err++;
-				error_log("Notification error: " . $usnot->user->error . " -> SQL: " . $usnot->user->sql);
+				_error_log("Notification error: " . $usnot->user->error, $usnot->user->sql);
+				$result["errors"] .= "Notification error: " . $usnot->user->error . "\nSQL: " . $usnot->user->sql . "\n";
 			}
 			else {
 				//Si hay error
 				if($usnot->nerror > 0) {
-					error_log("Error add notification: " . $usnot->error . " -> SQL: " . $usnot->sql);
+					_error_log("Error add notification: " . $usnot->error, $usnot->sql);
+					$result["errors"] .= "Error add notification: " . $usnot->error . "\nSQL: " . $usnot->sql . "\n";
 					$err++;
 				}
 			}

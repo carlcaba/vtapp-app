@@ -42,7 +42,7 @@
 	//Variable del codigo
 	$result = array('success' => false,
                     'message' => $_SESSION["NO_DATA_FOR_VALIDATE"],
-                    'link' => 'users.php');
+                    'link' => 'users-manager.php?src=');
 	
 	//Captura las variables
 	if(empty($_POST['strModel'])) {
@@ -142,7 +142,7 @@
 		//Cambia el resultado
 		$result['success'] = true;
 		$result['message'] = ($error) ? $_SESSION["USER_REGISTERED"] . "<br />" . $result['message'] : $_SESSION["USER_REGISTERED"];
-		$result["link"] = $link;
+		$result["link"] = $link . "?src=" . $datas->src;
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];

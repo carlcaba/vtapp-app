@@ -1,3 +1,4 @@
+
 <?
 	//Inicio de sesion
 	session_name('vtappcorp_session');
@@ -10,7 +11,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 

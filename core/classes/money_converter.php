@@ -6,25 +6,25 @@
 require_once("table.php");
 require_once("resources.php");
 
-class money_converter extends table {
+class money-bill-1_converter extends table {
 	var $view;
 	
 	//Constructor
 	function __constructor() {
-		$this->money_converter();
+		$this->money-bill-1_converter();
 	}
 	
 	//Constructor anterior
-	function money_converter() {
+	function money-bill-1_converter() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_MONEY_CONVERTER");
+		parent::tabla("TBL_money-bill-1_CONVERTER");
 		//Inicializa los atributos
 		$this->DATERATE = "CURDATE()";
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
-		$this->view = "VIE_MONEY_CONVERTER_SUMMARY";
+		$this->view = "VIE_money-bill-1_CONVERTER_SUMMARY";
 	}
 
 	//Funcion para obtener la informacion de la conversion
@@ -35,8 +35,8 @@ class money_converter extends table {
 		if($this->ID == 0)
 			//Termina la sentencia sql
 			$this->sql .= "DATERATE = " . $this->_checkDataType("DATERATE") . 
-						" AND MONEY_FROM = " . $this->_checkDataType("MONEY_FROM") . 
-						" AND MONEY_TO = " . $this->_checkDataType("MONEY_TO");
+						" AND money-bill-1_FROM = " . $this->_checkDataType("money-bill-1_FROM") . 
+						" AND money-bill-1_TO = " . $this->_checkDataType("money-bill-1_TO");
 		else
 			//Termina la sentencia sql
 			$this->sql .= "ID = " . $this->_checkDataType("ID");
@@ -53,8 +53,8 @@ class money_converter extends table {
         else {
             //Asigna los valores
             $this->ID = $row[0];
-			$this->MONEY_FROM = $row[1];
-			$this->MONEY_TO = $row[2];
+			$this->money-bill-1_FROM = $row[1];
+			$this->money-bill-1_TO = $row[2];
 			$this->VALUE_TO = $row[3];
 			$this->DATERATE = $row[4];
 			$this->REGISTERED_ON = $row[5];
@@ -68,9 +68,9 @@ class money_converter extends table {
 	
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
-		//	var fields = ["MONEY_ID", "MONEY_FROM", "MONEY_TO", "VALUE_TO", "DATERATE", "REGISTERED_ON", "REGISTERED_BY", "IS_BLOCKED", "LANGUAGE_ID"];
+		//	var fields = ["money-bill-1_ID", "money-bill-1_FROM", "money-bill-1_TO", "VALUE_TO", "DATERATE", "REGISTERED_ON", "REGISTERED_BY", "IS_BLOCKED", "LANGUAGE_ID"];
 		//Cuenta el total de filas
-		$this->sql = "SELECT COUNT(MONEY_ID) FROM $this->view $sWhere";
+		$this->sql = "SELECT COUNT(money-bill-1_ID) FROM $this->view $sWhere";
         //Obtiene los resultados
         $row = $this->__getData();
         //Registro no existe
@@ -92,17 +92,17 @@ class money_converter extends table {
 			$row = array_fill_keys($aColumnsBD,'');
 			for($i = 0;$i < count($aColumnsBD)-1;$i++) {
 				if(strpos($aColumnsBD[$i],"_ID") !== false) {
-					if($aColumnsBD[$i] == "MONEY_ID") {
+					if($aColumnsBD[$i] == "money-bill-1_ID") {
 						//Verifica el estado para activar o desactivar
 					$title = $aRow[1] . "-" . $aRow[2] . " - " . $aRow[4];
 						if($aRow[7])
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate(" . $aRow[$i] . ",true,'" . $title . "');\"><i class=\"fa fa-unlock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate(" . $aRow[$i] . ",true,'" . $title . "');\"><i class=\"fa fa-unlock\"></i></button>";
 						else 
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate(" . $aRow[$i] . ",false,'" . $title . "');\"><i class=\"fa fa-lock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate(" . $aRow[$i] . ",false,'" . $title . "');\"><i class=\"fa fa-lock\"></i></button>";
 						
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show(" . $aRow[$i] . ",'view');\"><i class=\"fa fa-eye\"></i></button>";
-						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show(" . $aRow[$i] . ",'edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-						$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show(" . $aRow[$i] . ",'delete');\"><i class=\"fa fa-trash\"></i></button>";
+						$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show(" . $aRow[$i] . ",'view');\"><i class=\"fa fa-eye\"></i></button>";
+						$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show(" . $aRow[$i] . ",'edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+						$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show(" . $aRow[$i] . ",'delete');\"><i class=\"fa fa-trash\"></i></button>";
 												
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $activate . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -168,8 +168,8 @@ class money_converter extends table {
 			$return .= "$stabs\t\t\t\t<input type=\"hidden\" name=\"txtID\" id=\"txtID\" value=\"" . $this->ID . "\" required=\"required\" />\n";
 			$cont++;
 		}
-		$return .= $this->showField("MONEY_FROM", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
-		$return .= $this->showField("MONEY_TO", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
+		$return .= $this->showField("money-bill-1_FROM", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
+		$return .= $this->showField("money-bill-1_TO", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("VALUE_TO", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("DATERATE", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		

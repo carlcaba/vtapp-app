@@ -108,7 +108,7 @@
 		$payment->RISK = "";
 		$payment->RESPONSE = "";
 		$payment->RESPONSE_TRACE = "";
-		$payment->PAYMENT_METHOD = "AutoMoney";
+		$payment->PAYMENT_METHOD = "Automoney-bill-1";
 		$payment->PAYMENT_METHOD_TYPE = "Auto";
 		$payment->PAYMENT_REQUESTED = $serv->PRICE;
 		$payment->PAYMENT_VALUE = $serv->PRICE;

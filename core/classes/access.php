@@ -66,6 +66,7 @@ class access extends table {
 	
 	//Funcion que despliega los valores en un option
 	function showOptionList($tabs = 8,$selected = 0, $lang = 0, $source = "") {
+		$stabs = "";
 		//Verifica el lenguaje
 		if($lang == 0) {
 			//Lenguaje establecido

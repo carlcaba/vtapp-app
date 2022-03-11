@@ -39,7 +39,21 @@ class logs extends table {
 			//Arma la sentencia de insercion
 			$this->sql = "INSERT INTO $this->table2 (ID,LOG_ID,TABLE_ORIGIN,RECORD_ID,OLD_RECORD,NEW_RECORD) " .
 					"VALUES (0," . $this->_checkDataType("ID") . ",'LOGIN','LOCALIZATION','$data','" . ($decode->lat ."," . $decode->lon) . "')";
-			error_log("SQL " . $this->sql);
+			//La ejecuta
+			$this->executeQuery();
+		}
+	}
+
+	function Logout($data = "") {
+		//Llama al add parent
+		parent::_add(false,true);
+		//Verifica los datos
+		if($data != "") {
+			//Decodifica el valores
+			$decode = json_decode($data);
+			//Arma la sentencia de insercion
+			$this->sql = "INSERT INTO $this->table2 (ID,LOG_ID,TABLE_ORIGIN,RECORD_ID,OLD_RECORD,NEW_RECORD) " .
+					"VALUES (0," . $this->_checkDataType("ID") . ",'LOGOUT','LOCALIZATION','$data','" . ($decode->lat ."," . $decode->lon) . "')";
 			//La ejecuta
 			$this->executeQuery();
 		}

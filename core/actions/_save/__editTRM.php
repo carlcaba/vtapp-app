@@ -33,37 +33,37 @@
         $datas = json_decode($strmodel);
 		
 		//Realiza la operacion
-		require_once("../../classes/money_converter.php");
+		require_once("../../classes/money-bill-1_converter.php");
 		
 		//Asigna la informacion
-		$money = new money_converter();
-		$money->ID = $datas->txtID;
+		$money-bill-1 = new money-bill-1_converter();
+		$money-bill-1->ID = $datas->txtID;
 		//Consulta la informacion
-		$money->__getInformation();
+		$money-bill-1->__getInformation();
 		//Si hay error
-		if($money->nerror > 0) {
-			$result["message"] = $money->error;
-			$result["sql"] = $money->sql;
+		if($money-bill-1->nerror > 0) {
+			$result["message"] = $money-bill-1->error;
+			$result["sql"] = $money-bill-1->sql;
 			$result = utf8_converter($result);
 			exit(json_encode($result));
 		}
 		
 		//Actualiza la información
 		//Agrega la conversion
-		$money->MONEY_FROM = $datas->txtMONEY_FROM;
-		$money->MONEY_TO = $datas->txtMONEY_TO;
-		$money->VALUE_TO = $datas->txtVALUE_TO;
-		$money->DATERATE = $datas->txtDATERATE;
-		$money->BLOCKED = $datas->cbBlocked;
+		$money-bill-1->money-bill-1_FROM = $datas->txtmoney-bill-1_FROM;
+		$money-bill-1->money-bill-1_TO = $datas->txtmoney-bill-1_TO;
+		$money-bill-1->VALUE_TO = $datas->txtVALUE_TO;
+		$money-bill-1->DATERATE = $datas->txtDATERATE;
+		$money-bill-1->BLOCKED = $datas->cbBlocked;
 		
 		//Lo Modifica
-		$money->_modify();
+		$money-bill-1->_modify();
 		
 		//Si hay error
-		if($money->nerror > 0) {
+		if($money-bill-1->nerror > 0) {
 			//Confirma mensaje al usuario
-			$result['message'] = $money->error;
-			$result["sql"] = $money->sql;
+			$result['message'] = $money-bill-1->error;
+			$result["sql"] = $money-bill-1->sql;
 			//Termina
 			$result = utf8_converter($result);
 			exit(json_encode($result));

@@ -39,19 +39,22 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
 				$estado = $_GET['state'];
 				$token = $_GET['token'];
 				$pos = $_GET['pos'];
-				$id = $_GET['id'];				
+				$id = $_GET['id'];
+				_error_log(print_r($_GET,true));
 			}
 		}
 		else {
@@ -60,6 +63,7 @@
 			$token = $_POST['token'];
 			$pos = $_POST['pos'];
 			$id = $_POST['id'];				
+			_error_log(print_r($_POST,true));
 		}
 	} 
 	else {
@@ -70,6 +74,7 @@
 		$estado = $vars['state'];
 		$pos = $vars['pos'];
 		$id = $vars['id'];
+		_error_log(print_r($vars,true));
 	}
 	
 	//Verifica la informacion
@@ -77,14 +82,14 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Verifica la sesion
@@ -97,7 +102,7 @@
 		//Asigna el mensaje
 		$result["message"] = $check["message"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	$usua = new users($user);
@@ -107,7 +112,7 @@
 		//Asigna el mensaje
 		$result["message"] = $usua->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	if(gettype($estado) == "string")
@@ -136,6 +141,8 @@
 	if(boolval($debug)) 
 		$result["sql"] = $usua->sql;
 	
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

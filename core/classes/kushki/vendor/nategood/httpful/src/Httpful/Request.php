@@ -632,7 +632,7 @@ class Request
 
     /**
      * Callback called to handle HTTP errors. When nothing is set, defaults
-     * to logging via `error_log`
+     * to logging via `_error_log`
      * @param \Closure $callback (string $error)
      * @return Request
      */
@@ -790,7 +790,7 @@ class Request
         if (isset($this->error_callback)) {
             $this->error_callback->__invoke($error);
         } else {
-            error_log($error);
+            _error_log($error);
         }
     }
 

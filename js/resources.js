@@ -114,3 +114,19 @@ function getResourceValue(value, msg) {
 		}
 	});
 }
+
+function showVariables() {
+	var noty;
+	$.ajax({
+		url: 'core/actions/_load/__showSessionVars.php',
+		dataType: "json",
+		beforeSend: function (xhrObj) {
+			var message = "<i class=\"fa fa-refresh fa-spin\"></i> Loading...";
+			noty = notify("", "dark", "", message, "", false);												
+		},
+		success:function(data){
+			noty.close();
+			console.log(data);												
+		}
+	});
+}

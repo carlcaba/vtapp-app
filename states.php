@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -146,6 +146,9 @@
 					"field": fields.join()
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "ORDER_STATE_ID", "searchable": false, "visible": false },
 				{ "data": "STATE_NAME", "responsivePriority": 2 },

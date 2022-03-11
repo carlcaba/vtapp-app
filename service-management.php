@@ -52,7 +52,7 @@
 	
 	require_once("core/classes/service.php");
 	$service = new service();
-	
+
 	if($id != "") {
 		//Asigna la informacion
 		$service->ID = $id;
@@ -63,6 +63,10 @@
 			$id = "";
 		}
 	}
+
+	//Verifica si tiene servicio asignado
+	require_once("core/classes/assign_service.php");
+	$assi = new assign_service();
 	
 	switch($action) {
 		case "new": {
@@ -83,6 +87,12 @@
 		case "view": {
 			$titlepage = $_SESSION["VIEW"];
 			$text_title =  $_SESSION["INFORMATION"];
+			
+			$assi->setService($id);
+			$assi->getInformationByService();
+			if($assi->nerror > 0)
+				$assi = new assign_service();
+				
 			break;
 		}
 	}
@@ -132,6 +142,12 @@
 		}
 	}
 
+	if($uscli->PHONE == "" && $uscli->CELLPHONE != "")
+		$uscli->PHONE = $uscli->CELLPHONE;
+	
+	$max_size = $conf->verifyValue("MAXIMUM_SIZE");
+	$max_weight = $conf->verifyValue("MAXIMUM_WEIGHT");
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -254,8 +270,9 @@
 											<div class="col-md-6">
 												<label><?= $service->arrColComments["REQUESTED_ZONE"] ?></label>
 												<select class="form-control" id="cbZoneRequest" name="cbZoneRequest" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $service->request_zone->showOptionList(9,$service->request_zone->ID) ?>
+													<?= $service->request_zone->showOptionList(9,$service->request_zone->PARENT_ZONE) ?>
 												</select>
+												<input type="hidden" value="<?= $service->request_zone->PARENT_ZONE ?>" name="hfZoneReqSel" id="hfZoneReqSel" />
 											</div>
 											<div class="col-md-6">
 <?
@@ -265,13 +282,14 @@
 ?>												
 												<label><?= $ctrltitle ?></label>												
 												<select class="form-control" id="cbZoneRequestSub" name="cbZoneRequestSub" disabled>
-													<?= $service->request_zone->showOptionList(9,"",0,false) ?>
+													<?= $service->request_zone->showOptionList(9,$service->request_zone->ID,0,false) ?>
 												</select>
+												<input type="hidden" value="<?= $service->request_zone->ID ?>" name="hfSubZoneReqSel" id="hfSubZoneReqSel" />
 											</div>
 										</div>
 									</div>
 									<div class="panel-footer">
-										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn float-right">
 											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
 											<i class="fa fa-arrow-circle-right"></i>
 										</button>
@@ -293,10 +311,10 @@
 										</div>
 										<div class="row">
 											<div class="col-md-6">
-												<?= $service->showField("DELIVER_PHONE", $dataForm["tabs"], "fa fa-phone", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+												<?= $service->showField("DELIVER_PHONE", $dataForm["tabs"], "fa fa-mobile", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 											</div>
 											<div class="col-md-6">
-												<?= $service->showField("DELIVER_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>				
+												<?= $service->showField("DELIVER_CELLPHONE", $dataForm["tabs"], "fa fa-mobile", "", $dataForm["showvalue"], "", false, "9,9,12", "", null, false, true, $dataForm["readonly"][$cont++], "data-compare=\"true\" data-compareto=\"txtDELIVER_PHONE\"") ?>				
 											</div>
 										</div>
 										<div class="row">
@@ -316,8 +334,9 @@
 											<div class="col-md-6">
 												<label><?= $service->arrColComments["DELIVER_ZONE"] ?></label>
 												<select class="form-control" id="cbZoneDeliver" name="cbZoneDeliver" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $service->deliver_zone->showOptionList(9,$service->deliver_zone->ID) ?>
+													<?= $service->deliver_zone->showOptionList(9,$service->deliver_zone->PARENT_ZONE) ?>
 												</select>
+												<input type="hidden" value="<?= $service->deliver_zone->PARENT_ZONE ?>" name="hfZoneDelSel" id="hfZoneDelSel" />
 											</div>
 											<div class="col-md-6">
 <?
@@ -327,13 +346,14 @@
 ?>												
 												<label><?= $ctrltitle ?></label>
 												<select class="form-control" id="cbZoneDeliverSub" name="cbZoneDeliverSub" disabled>
-													<?= $service->deliver_zone->showOptionList(9,"",0,false) ?>
+													<?= $service->deliver_zone->showOptionList(9,$service->deliver_zone->ID,0,false) ?>
 												</select>
+												<input type="hidden" value="<?= $service->deliver_zone->ID ?>" name="hfSubZoneDelSel" id="hfSubZoneDelSel" />
 											</div>
 										</div>
 									</div>
 									<div class="panel-footer">
-										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn float-right">
 											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
 											<i class="fa fa-arrow-circle-right"></i>
 										</button>
@@ -386,16 +406,16 @@
 												</select>
 											</div>
 											<div class="col-md-2">
-												<?= $service->showField("TOTAL_WIDTH", $dataForm["tabs"], "fa fa-arrows-h", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+												<?= $service->showField("TOTAL_WIDTH", $dataForm["tabs"], "fa fa-arrows-h", "", $dataForm["showvalue"], "0", false, "9,9,12", "", null, false, true, true, "data-maximum=\"$max_size\"") ?>
 											</div>
 											<div class="col-md-2">
-												<?= $service->showField("TOTAL_HEIGHT", $dataForm["tabs"], "fa fa-arrows-v", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+												<?= $service->showField("TOTAL_HEIGHT", $dataForm["tabs"], "fa fa-arrows-v", "", $dataForm["showvalue"], "0", false, "9,9,12", "", null, false, true, true, "data-maximum=\"$max_size\"") ?>
 											</div>
 											<div class="col-md-2">
-												<?= $service->showField("TOTAL_LENGTH", $dataForm["tabs"], "fa fa-expand", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+												<?= $service->showField("TOTAL_LENGTH", $dataForm["tabs"], "fa fa-expand", "", $dataForm["showvalue"], "0", false, "9,9,12", "", null, false, true, true, "data-maximum=\"$max_size\"") ?>
 											</div>
 											<div class="col-md-2">
-												<?= $service->showField("TOTAL_WEIGHT", $dataForm["tabs"], "fa fa-balance-scale", "", $dataForm["showvalue"], "0", false, "9,9,12", "") ?>
+												<?= $service->showField("TOTAL_WEIGHT", $dataForm["tabs"], "fa fa-balance-scale", "", $dataForm["showvalue"], "0", false, "9,9,12", "", null, false, true, true, "data-maximumw=\"$max_weight\"") ?>
 											</div>
 											<div class="col-md-2">
 												<?= $service->showField("PRICE", $dataForm["tabs"], "fa fa-usd", "", $dataForm["showvalue"], "0", false, "9,9,12", "disabled") ?>
@@ -414,7 +434,7 @@
 										<div class="float-left">
 											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
 										</div>
-										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn pull-right">
+										<button type="button" title="<?= $_SESSION["NEXT"] ?>" class="btn btn-primary nextBtn float-right">
 											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["NEXT"] ?> </span>
 											<i class="fa fa-arrow-circle-right"></i>
 										</button>
@@ -448,40 +468,28 @@
 										<div class="float-left">
 											<p><small><?= $_SESSION["PRICE_CALCULATED_MESSAGE"] ?></small></p>
 										</div>
-										<div class="btn-group float-right">
-<?
-	if($service->client->CLIENT_PAYMENT_TYPE_ID != 1) {
-?>
-											<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();" disabled>
-												<i class="fa fa-money"></i>
-												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
-											</button>
-<?
-	}
-?>
-											<button type="button" title="<?= $_SESSION["SAVE"] ?>" id="btnSave" name="btnSave" class="btn btn-success pull-right" disabled>
-												<i class="fa fa-floppy-o"></i>
-												<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"> <?= $_SESSION["SAVE"] ?></span>
-											</button>
-											<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
-											<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
-											<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
-											<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
-											<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
-											<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
-											<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
-											<input type="hidden" name="hfState" id="hfState" value="1" />
-											<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
-											<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
-											<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
-											<input type="hidden" name="hfRateId" id="hfRateId" value="" />
-											<input type="hidden" name="hfPartnerName" id="hfPartnerName" value="" />
-											<input type="hidden" name="cbVehicleType" id="cbVehicleType" value="" />
-											<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="" />
-											<input type="hidden" name="hfAssignedPartner" id="hfAssignedPartner" value="" />
-											<input type="hidden" name="hfAssignedEmployee" id="hfAssignedEmployee" value="" />
-											<input type="hidden" name="hfGateWay" id="hfGateWay" value="<?= $gate ?>" />
-										</div>
+										<div class="btn-group float-right" id="grpButtons"></div>
+										<input type="hidden" name="hfAction" id="hfAction" value="<?= $action ?>" />
+										<input type="hidden" name="hfPRICE" id="hfPRICE" value="0" />
+										<input type="hidden" name="hfQUOTAID" id="hfQUOTAID" value="" />
+										<input type="hidden" name="hfUSERID" id="hfUSERID" value="<?= $userId ?>" />
+										<input type="hidden" name="hfOBJPAY" id="hfOBJPAY" value="" />
+										<input type="hidden" name="hfMERCH_ID" id="hfMERCH_ID" value="<?= $merchId ?>" />
+										<input type="hidden" name="hfDISTANCE" id="hfDISTANCE" value="" />
+										<input type="hidden" name="hfIsMarco" id="hfIsMarco" value="" />
+										<input type="hidden" name="hfState" id="hfState" value="1" />
+										<input type="hidden" name="hfTimeStart" id="hfTimeStart" value="" />
+										<input type="hidden" name="hfTimeEnd" id="hfTimeEnd" value="" />
+										<input type="hidden" name="hfPayed" id="hfPayed" value="false" />
+										<input type="hidden" name="hfRateId" id="hfRateId" value="" />
+										<input type="hidden" name="hfPartnerName" id="hfPartnerName" value="<?= $assi->partner->PARTNER_NAME ?>" />
+										<input type="hidden" name="cbVehicleType" id="cbVehicleType" value="" />
+										<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="<?= $assi->PARTNER_ID ?>" />
+										<input type="hidden" name="hfAssignedPartner" id="hfAssignedPartner" value="" />
+										<input type="hidden" name="hfAssignedEmployee" id="hfAssignedEmployee" value="" />
+										<input type="hidden" name="hfGateWay" id="hfGateWay" value="<?= $gate ?>" />
+										<input type="hidden" name="hfContinueStep" id="hfContinueStep" value="false" />
+										<input type="hidden" name="hfPayOnDeliver" id="hfPayOnDeliver" value="false" />
 									</div>
 								</div>
 							</form>
@@ -516,7 +524,6 @@
 	$parameters = "?class=service&link=services.php&file=service";
 	$saveUpload = "core/actions/_save/__saveUploadedServices.php";
 	include("core/templates/__modalUpload.tpl");
-
 ?>
 	<!-- /.content-wrapper -->
 
@@ -540,6 +547,31 @@
 	var zones = null;
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
+		$('[data-compare="true"]').change(function() {
+			var ctrl = $(this).data("compareto");
+			var value = "true";
+			console.log($("#hfAction").val());
+			if($("#hfAction").val() != "view") {
+				if ($(this).val() != $("#" + ctrl).val()) {
+					notify("", 'danger', "", "<?= $_SESSION["PHONE_NO_MATCH"] ?>", "");
+					value = "false";
+					$("#" + ctrl).focus();
+				}
+			}
+			$("#hfContinueStep").val(value);
+		});
+		$('[data-maximum="<?= $max_size ?>"]').change(function() {
+			var maxim = $(this).data("maximum");
+			if (parseFloat($(this).val()) >= parseFloat(maxim) && !$(this).is('[disabled=disabled]')) {
+				notify("", 'warning', "", "<?= $_SESSION["OVERSIZED"] ?>", "");
+			}
+		});
+		$('[data-maximumw="<?= $max_weight ?>"]').change(function() {
+			var maxim = $(this).data("maximumw");
+			if (parseFloat($(this).val()) >= parseFloat(maxim) && !$(this).is('[disabled=disabled]')) {
+				notify("", 'warning', "", "<?= $_SESSION["OVERWEIGHTED"] ?>", "");
+			}
+		});
 		$.getJSON( "core/actions/_load/__loadZonesNew.php", { q: "all" } ).done(function( data ) {
 			var items = [];
 			zones = data;
@@ -549,10 +581,10 @@
 				}
 			});
 			$("#cbZoneRequest").find('option').remove().end().append(items.join(""));
-			$("#cbZoneRequest").val($("#cbZoneRequest option:first").val());
+			$("#cbZoneRequest").val($("#hfZoneReqSel").val());
 			$("#cbZoneRequest").trigger('change');
 			$("#cbZoneDeliver").find('option').remove().end().append(items.join(""));
-			$("#cbZoneDeliver").val($("#cbZoneDeliver option:first").val());
+			$("#cbZoneDeliver").val($("#hfZoneDelSel").val());
 			$("#cbZoneDeliver").trigger('change');
 			$("#cbZone").find('option').remove().end().append(items.join(""));
 			$("#cbZone").val($("#cbZone option:first").val());
@@ -688,7 +720,9 @@
 					data: { 
 						distance: distance,
 						client: $("#cbClient").val(),
-						round: $("#cbRoundTrip").is(':checked')
+						round: $("#cbRoundTrip").is(':checked'),
+						action: $("#hfAction").val(),
+						pid: $("#hfPartnerId").val()
 					},
 					dataType: "json",
 					beforeSend: function (xhrObj) {
@@ -697,19 +731,24 @@
 					},
 					success:function(data){
 						noty.close();
-						$("#hfPRICE").val("");
-						$("#txtPRICE").val("");
-						$("#hfRateId").val("");
-						$("#hfPartnerName").val("");
-						$("#hfPartnerId").val("");
-						$("#btnPayment").attr("disabled",true);
-						$("#btnSave").attr("disabled",true);
-						$("#panelBodyPartners").data("state", 0);
-						$("[id^='spanSelected_']" ).hide();
+						if($("#hfAction").val() != "view") {
+							$("#hfPRICE").val("");
+							$("#txtPRICE").val("");
+							$("#hfRateId").val("");
+							$("#hfPartnerName").val("");
+							$("#hfPartnerId").val("");
+							$("#btnPayment").attr("disabled",true);
+							$("#btnSave").attr("disabled",true);
+							$("#panelBodyPartners").data("state", 0);
+							$("[id^='spanSelected_']" ).hide();
+						}
 						if(data.success) {
 							$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
 							$("#panelBodyPartners").html(data.message);
 							$("#panelBodyPartners").data("state", 1);
+							$("#grpButtons").html(data.buttons);
+							if(data.change)
+								$("#hfQUOTAID").val = "";
 							if(data.filtered && data.filter != "") {
 								$("#spanSelected_" + data.filter).show();
 								$("#hfAssignedPartner").val(data.filter);
@@ -727,6 +766,18 @@
 								$("#btnPayment").attr("disabled",false);
 								$("#btnSave").attr("disabled",false);
 							});
+							if($("#hfAction").val() == "view") {
+								var datas = $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").data();
+								console.log(datas);
+								$("#hfRateId").val($(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val());
+								$("#hfPRICE").val(datas.rate);
+								$("#txtPRICE").val(FormatNumber(datas.rate,2));
+								$("#hfPartnerName").val(datas.partner);
+								$("#cbVehicleType").val(datas.vehicle);
+								$("#hfPartnerId").val(datas.partnerid);
+								$("[id^='spanSelected_']" ).hide();
+								$("#spanSelected_" + $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val()).show();
+							}
 						}
 						else 
 							notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
@@ -755,55 +806,77 @@
 		$("[id$=_ADDRESS]").on('input', function () { checkAddressChange(this) });
 		$("[id$=_ADDRESS]").on('change', function () { checkAddressChange(this) });
 		$("[id$=_ADDRESS]").focusout(function () { checkAddressChange(this) });
-		$("#btnSave").on("click", function(e) {
-			if($("#txtPRICE").val() == "0") {
-				$('#cbDeliverType').trigger("change");
-			}
-			var form = document.getElementById('frmService');
-			var noty;
-			if (form.checkValidity() === false) {
-				window.event.preventDefault();
-				window.event.stopPropagation();
-				notify("", "danger", "", "<?= $_SESSION["ERRORS_ON_INFORMATION"] ?>", "");
-				return false;
-			}
-			var title = "<?= $_SESSION["SAVE_SERVICE"] ?>";
-			var url = "core/actions/_save/__newService.php";
-			var $frm = $("#frmService");
-			var datasObj = $frm.serializeObject();
-			datasObj = checkSerializedObject(datasObj);
-			var datas = JSON.stringify(datasObj);
-			$("#spanTitle").html(title);
-			$("#spanTitleName").html("");
-			$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
-			$("#btnActivate").unbind("click");
-			$("#btnActivate").bind("click", function() {
-				var noty;
-				$.ajax({
-					url: url,
-					data: { strModel: datas },
-					dataType: "json",
-					method: "POST",
-					beforeSend: function (xhrObj) {
-						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-						noty = notify("", "dark", "", message, "", false);												
-					},
-					success:function(data){
-						noty.close();
-						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-						if(data.success)
-							location.href = data.link;
-					}
-				});
-			});
-			$("#divActivateModal").modal("toggle");			
-		});
 		$('#cbDeliverType').trigger("change");
 		$("#cbClient").trigger("change");
 		if($("#hfLATITUDE_REQUESTED_ADDRESS").val() != "" && $("#hfLONGITUDE_REQUESTED_ADDRESS").val() != "")
 			$("#ZoneREQUESTED").fadeOut();
 
+		if($("#hfSubZoneReqSel").val() != "") {
+			$("#cbZoneRequest").trigger("change");
+			$("#cbZoneRequestSub option[value=" + $("#hfSubZoneReqSel").val() + "]").attr('selected','selected').change();
+		}
+		if($("#hfSubZoneDelSel").val() != "") {
+			$("#cbZoneDeliver").trigger("change");
+			$("#cbZoneDeliverSub option[value=" + $("#hfSubZoneDelSel").val() + "]").attr('selected','selected').change();
+		}
+		if($("#hfAction").val() == "view") {
+			$("#cbDeliverType").trigger("change");
+		}
 	});
+	function onDeliver() {
+		$("#hfPayOnDeliver").val("true");
+		Save();
+	}
+	function Save() {
+		if($("#txtPRICE").val() == "0") {
+			$('#cbDeliverType').trigger("change");
+		}
+		if($("#hfQUOTAID").val() == "") {
+			$('#cbClient').trigger("change");
+		}
+		var form = document.getElementById('frmService');
+		var noty;
+		if (form.checkValidity() === false) {
+			window.event.preventDefault();
+			window.event.stopPropagation();
+			notify("", "danger", "", "<?= $_SESSION["ERRORS_ON_INFORMATION"] ?>", "");
+			return false;
+		}
+		var title = "<?= $_SESSION["SAVE_SERVICE"] ?>";
+		var url = "core/actions/_save/__newService.php";
+		var $frm = $("#frmService");
+		var datasObj = $frm.serializeObject();
+		datasObj = checkSerializedObject(datasObj);
+		var datas = JSON.stringify(datasObj);
+		$("#spanTitle").html(title);
+		$("#spanTitleName").html("");
+		$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
+		$("#btnActivate").unbind("click");
+		$("#btnActivate").bind("click", function() {
+			var noty;
+			$.ajax({
+				url: url,
+				data: { strModel: datas },
+				dataType: "json",
+				method: "POST",
+				beforeSend: function (xhrObj) {
+					var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+					noty = notify("", "dark", "", message, "", false);												
+				},
+				error: function( jqxhr, textStatus, error ) {
+					var err = textStatus + ", " + error;
+					notify("", 'danger', "", "Request Failed: " + err , "");
+				},
+				success:function(data){
+					noty.close();
+					notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+					if(data.success)
+						location.href = data.link;
+				}
+			});
+		});
+		$("#divActivateModal").modal("toggle");			
+	}
 	function setDistance() {
 		var distance;
 		var orig = {
@@ -1008,6 +1081,18 @@
 		});
 	}
 	function checkSerializedObject(datasObj) {
+		if(!datasObj.hasOwnProperty("hfTimeStart") || datasObj["hfTimeStart"] == "") {
+			if($("#hfTimeStart").val() == "")
+				$('#cbDeliverTime').trigger("change");
+			datasObj["hfTimeStart"] = $("#hfTimeStart").val();
+			datasObj["hfTimeEnd"] = $("#hfTimeEnd").val();
+		}
+		if(!datasObj.hasOwnProperty("hfTimeEnd") || datasObj["hfTimeEnd"] == "") {
+			if($("#hfTimeEnd").val() == "")
+				$('#cbDeliverTime').trigger("change");
+			datasObj["hfTimeStart"] = $("#hfTimeStart").val();
+			datasObj["hfTimeEnd"] = $("#hfTimeEnd").val();
+		}
 		if(!datasObj.hasOwnProperty("txtREQUESTED_ADDRESS")) {
 			datasObj["txtREQUESTED_ADDRESS"] = $("#txtREQUESTED_ADDRESS").val();
 		}
@@ -1038,6 +1123,9 @@
 		if(!datasObj.hasOwnProperty("hfPayed")) {
 			datasObj["hfPayed"] = $("#hfPayed").val();
 		}
+		if(!datasObj.hasOwnProperty("hfPayOnDeliver")) {
+			datasObj["hfPayOnDeliver"] = $("#hfPayOnDeliver").val();
+		}
 		if(!datasObj.hasOwnProperty("hfRateId")) {
 			datasObj["hfRateId"] = $("#hfRateId").val();
 		}
@@ -1055,6 +1143,9 @@
 		}
 		if(!datasObj.hasOwnProperty("txtTOTAL_WEIGHT")) {
 			datasObj["txtTOTAL_WEIGHT"] = $("#txtTOTAL_WEIGHT").val();
+		}
+		if(!datasObj.hasOwnProperty("txtTOTAL_WIDTH")) {
+			datasObj["txtTOTAL_WIDTH"] = $("#txtTOTAL_WIDTH").val();
 		}
 		if(!datasObj.hasOwnProperty("txtTOTAL_WIDTH")) {
 			datasObj["txtTOTAL_WIDTH"] = $("#txtTOTAL_WIDTH").val();

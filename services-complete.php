@@ -164,7 +164,7 @@
 								</div>
 								<div class="btn-group float-right">
 									<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["GO_TO_PAY"] ?>" id="btnPayment" name="btnPayment" class="btn btn-warning pull-right" onclick="payment();">
-										<i class="fa fa-money"></i>
+										<i class="fa fa-money-bill-1"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["GO_TO_PAY"] ?></span>
 									</button>
 									<input type="hidden" name="hfTtl2Py" id="hfTtl2Py" value="0" />

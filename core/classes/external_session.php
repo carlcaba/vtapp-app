@@ -148,15 +148,30 @@ class external_session extends table {
 			$this->nerror = 20;
 		}
 		else {
-			//Asigna la informacion
-			$this->setAccess($this->ACCESS_ID);
-			$this->setClient($this->CLIENT_ID);
-			$this->setPartner($this->PARTNER_ID);
-			//Limpia el error
-			$this->error = "";
-			$this->nerror = 0;
+			if(!boolval($this->IS_BLOCKED)) {
+				//Asigna la informacion
+				$this->setAccess($this->ACCESS_ID);
+				$this->setClient($this->CLIENT_ID);
+				$this->setPartner($this->PARTNER_ID);
+				//Limpia el error
+				$this->error = "";
+				$this->nerror = 0;
+			}
+			else {
+				//Asigna el error
+				$this->error = $_SESSION["NOT_REGISTERED"] . " o " . $_SESSION["BLOCKED"];
+				$this->nerror = 30;
+			}
 		}
 	}		
+	
+	//Funcion para logout
+	function logOut() {
+        //Arma la sentencia SQL
+        $this->sql = "UPDATE " . $this->table . " SET IS_BLOCKED = TRUE WHERE ID = " . $this->_checkDataType("ID");
+        //Verifica que no se presenten errores
+        $this->executeQuery();
+    }	
 	
 }
 ?>

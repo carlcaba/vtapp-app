@@ -349,23 +349,26 @@ class service_log extends table {
 					"LAT_REQUEST_INI", "LON_REQUEST_INI", "LAT_REQUEST_END", "LON_REQUEST_END", "REQUESTED_ZONE", "ZONE_NAME_REQUEST",
 					"LAT_DELIVERY_INI", "LON_DELIVERY_INI", "LAT_DELIVERY_END", "LON_DELIVERY_END", "DELIVER_ZONE", "ZONE_NAME_DELIVERY",
 					"STATE_ID", "SERVICE_STATE_NAME", "ROUND_TRIP", "FRAGILE", "VEHICLE_TYPE_ID", "VEHICLE_TYPE_NAME", "TIME_START_TO_DELIVER", "TIME_FINISH_TO_DELIVER", "ID_STATE", 
-					"EMPLOYEE_INITIAL_ID", "EMPLOYEE_INITIAL_NAME", "PARTNER_INITIAL_ID", " EMPLOYEE_FINAL_ID", "EMPLOYEE_FINAL_NAME", "PARTNER_FINAL_ID"];
+					"EMPLOYEE_INITIAL_ID", "EMPLOYEE_INITIAL_NAME", "PARTNER_INITIAL_ID", " EMPLOYEE_FINAL_ID", "EMPLOYEE_FINAL_NAME", "PARTNER_FINAL_ID",
+					"TOTAL_HEIGHT", "TOTAL_WIDTH", "TOTAL_LENGTH", "TOTAL_WEIGHT", "IS_DELAYED", "TIME_DELAYED", "PRICE"];
 		if($history) {
 			$columns = ["SERVICE_ID", "REGISTERED_ON", "PRICE", "REQUESTED_ADDRESS", "DELIVER_ADDRESS", "REQUESTED_COORDINATES", "DELIVER_COORDINATES"];
 		}
 		//Arma la sentencia SQL
 		$this->sql = "SELECT DISTINCT " . implode(",", $columns) .
-					" FROM $this->view WHERE STATE_ID = '$state' ";
+					" FROM $this->view WHERE ID_STATE BETWEEN 7 AND 10 AND "; 	// = '$state' AND ";
 					
 		if($history)			
-			$this->sql .= "AND EMPLOYEE_FINAL_ID = '$id' ";
+			$this->sql .= " EMPLOYEE_FINAL_ID = '$id' ";
 		else 
-			$this->sql .= "AND NOTIFIED_EMPLOYEE = '$id' ";
+			$this->sql .= " NOTIFIED_EMPLOYEE = '$id' ";
 		
 		if($usr != "")
 			$this->sql .= "AND USER_NOTIFICATION = '$usr' AND NOTIFICATION_BLOCKED = FALSE ";
 		
 		$this->sql .= "ORDER BY SERVICE_ID";
+
+		$this->sql = "SELECT T.* FROM (" . $this->sql . ") T GROUP BY T.SERVICE_ID";
 		
 		if($history && $limit > 0)
 			$this->sql .= " LIMIT $limit";
@@ -375,6 +378,7 @@ class service_log extends table {
 		$isThereData = false;
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
+			$data = array();
 			for($i = 0; $i < count($row); $i++) {
 				$data[$columns[$i]] = $row[$i];
 			}
@@ -390,6 +394,14 @@ class service_log extends table {
 			$return["success"] = false;
 			$return["message"] = $_SESSION["NO_DATA"];
 		}
+		/*
+		else {
+			$return["ACCUMULATED_money-bill-1"] = rand(1000,1000000);
+			$return["ACCUMULATED_POINTS"] = rand(1,1000); 
+			$return["REDEEMED_money-bill-1"] = rand(1000,1000000);
+			$return["REDEEMED_POINTS"] = rand(1,1000); 
+		}
+		*/
 		if($debug)
 			$return["sql"] = $this->sql;
 		return $return;
@@ -425,7 +437,10 @@ class service_log extends table {
 			//Llama la agregada 
 			parent::_modify();
 		}
-		
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> 9 )";
+		}
 		//Retorna
 		return $this->nerror == 0;
 	}
@@ -459,6 +474,10 @@ class service_log extends table {
 			//Llama la agregada 
 			parent::_modify();
 		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
 		
 		//Retorna
 		return $this->nerror == 0;
@@ -478,12 +497,16 @@ class service_log extends table {
 			//Actualiza el estado del servicio
 			$this->service->updateState($this->service->state->getIdByStep($object->state));
 		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
 		
 		//Retorna
 		return $this->nerror == 0;
 	}
 	
-	function finished($object) {
+	function payed($object) {
 		//Asigna el servicio
 		$this->setService($object->id);
 		//Si hay error
@@ -497,11 +520,153 @@ class service_log extends table {
 			//Actualiza el estado del servicio
 			$this->service->updateState($this->service->state->getIdByStep($object->state));
 		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
+
+		if($this->nerror == 0 && $this->service->nerror == 0) {
+			//Modifica el objeto enviado
+			$object->action = 11;
+			$object->class = "payment";
+			$object->method = "makePayment";
+			$object->state = 0;
+			$object->require_position = false;
+			$object->id = "";
+			$object->token = "";
+			$object->position = array("CLIENT_ID" => $this->service->CLIENT_ID,
+										"REFERENCE_ID" =>  $this->service->ID,
+										"PAYMENT_TYPE_ID" => 2,
+										"PAYMENT_STATE_ID" => 1053,
+										"TRANSACTION_ID" => "UUID()",
+										"GATEWAY" => "Efectivo",
+										"URL_GATEWAY" => $_SERVER["PHP_SELF"],
+										"IP_CLIENT" => $_SERVER["REMOTE_ADDR"],
+										"RESPONSE" => "APPROVED",
+										"PAYMENT_METHOD" => "CASH",
+										"PAYMENT_REQUESTED" => $this->service->PRICE,
+										"PAYMENT_VALUE" => $this->service->PRICE,
+										"PAYMENT_TAX_PERCENT" => 0,
+										"PAYMENT_TAX" => 0,
+										"PAYMENT_VALUE_ADD" => 0,
+										"PAYER_EMAIL" => $this->service->DELIVER_EMAIL,
+										"PAYER_NAME" => $this->service->DELIVER_TO,
+										"PAYER_IDENTIFICATION" => "PH" . $this->service->DELIVER_PHONE,
+										"PAYER_PHONE" => $this->service->DELIVER_CELLPHONE,
+										"OBSERVATION" => "Cash Collected by {{USER-ID}}");
+		}
+		//Retorna
+		return $this->nerror == 0;
+	}
+
+	function finished($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		if($this->service->STATE_ID != $this->service->state->getIdByStep($object->state) && $this->service->state->STEP_ID < $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+			//Obtiene el ultimo registro
+			$this->getLastLog();
+			//Modifica la observacion
+			$this->OBSERVATION .= "<br />RECEIVED BY: " . $object->details . "<br />" . $object->notes;
+			//Arma la sentencia sql
+			$this->sql = "UPDATE " . $this->table . " SET OBSERVATION = " . $this->_checkDataType("OBSERVATION") . " WHERE ID = " . $this->_checkDataType("ID");
+			//Ejecuta la sentencia
+			$this->executeQuery();
+			//Log de errores
+			_error_log("Update Service Log: ", $this->sql);
+		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
 		
 		//Retorna
 		return $this->nerror == 0;
 	}	
 	
+	function cancelled($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		if($this->service->STATE_ID != $this->service->state->getIdByStep($object->state) && $this->service->state->STEP_ID < $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+			//Obtiene el ultimo registro
+			$this->getLastLog();
+			//Modifica la observacion
+			$this->OBSERVATION .= "<br />" . $object->details . "<br />" . $object->notes;
+			//Arma la sentencia sql
+			$this->sql = "UPDATE " . $this->table . " SET OBSERVATION = " . $this->_checkDataType("OBSERVATION") . " WHERE ID = " . $this->_checkDataType("ID");
+			//Ejecuta la sentencia
+			$this->executeQuery();
+			//Log de errores
+			_error_log("Update Service Log: ", $this->sql);
+			
+			//Arma la sentencia sql del procedimiento almacenado
+			$this->sql = "CALL PRC_CANCELLED_SERVICE('" . $this->service->ID . "')";
+			//Ejecuta la sentencia
+			$this->executeQuery();
+			//Log de errores
+			_error_log("Procedure cancelled Service: ", $this->sql);
+			
+		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
+		
+		//Retorna
+		return $this->nerror == 0;
+	}	
+	
+	function delayed($object) {
+		//Asigna el servicio
+		$this->setService($object->id);
+		//Si hay error
+		if($this->nerror > 0) {
+			return false;
+		}
+		//Obtiene el ultimo registro
+		$this->getLastLog();
+		
+		if($this->service->state->STEP_ID <= $object->state) {
+			//Actualiza el estado del servicio
+			$this->service->updateState($this->service->state->getIdByStep($object->state));
+			//Obtiene el ultimo registro
+			$this->getLastLog();
+			//Modifica la observacion
+			$this->OBSERVATION .= "<br />DELAYED:" . $object->details . ":<br />" . $object->notes;
+			//Modifica la posicion
+			$this->LAST_POSITION = $object->position;
+			//Arma la sentencia sql
+			$this->sql = "UPDATE " . $this->table . " SET OBSERVATION = " . $this->_checkDataType("OBSERVATION") . ", LAST_POSITION = " .  $this->_checkDataType("LAST_POSITION") . " WHERE ID = " . $this->_checkDataType("ID");
+			_error_log("Update Service Log on Delay: ", $this->sql);
+			//Ejecuta la sentencia
+			$this->executeQuery();
+		}
+		else {
+			$this->nerror = 20;
+			$this->error = $_SESSION["SERVICE_STATE_BAD"] . " (" . $this->service->state->STEP_ID . " <> " . $object->state . ")";
+		}
+		
+		//Retorna
+		return $this->nerror == 0;
+	}	
+
 	function updateProcess($object) {
 		//Asigna el servicio
 		$this->setService($object->id);

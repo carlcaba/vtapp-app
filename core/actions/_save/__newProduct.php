@@ -75,7 +75,7 @@
 		$product->TRADE = $datas->txtTRADE;
 		$product->QUANTITY = $datas->txtQUANTITY;
 		$product->PRICE = $datas->txtPRICE;
-		$product->MONEYTYPE = $datas->txtMONEYTYPE;
+		$product->money-bill-1TYPE = $datas->txtmoney-bill-1TYPE;
 		$product->OBSERVATION = $datas->txtOBSERVATION;
 		$product->FIELD = $datas->txtFIELD;
 		$product->setArea($datas->cbArea);

@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -173,6 +173,9 @@
 					"options": "<?= $uscli->REFERENCE ?>"
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "POSITION_ID", "searchable": false, "visible": false },
 				{ "data": "POSITION_NAME", "responsivePriority": 2 },

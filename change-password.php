@@ -9,7 +9,7 @@
     $inter = new interfaces();
 
     //Define el menu
-    $_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+    $_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	//Incluye verificar la sesion
 	include("core/__check-session.php");

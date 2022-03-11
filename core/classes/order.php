@@ -198,10 +198,10 @@ class order extends table {
 				if(strpos($aColumnsBD[$i],"_ID") !== false) {
 					if($aColumnsBD[$i] == $fields[0]) {
 						$state = intval($aRow[9]);
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view-order.php');\"><i class=\"fa fa-eye\"></i></button>";
+						$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view-order.php');\"><i class=\"fa fa-eye\"></i></button>";
 						//Verifica si puede editarla o no
 						if($state < 3)
-							$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','editorder.php');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
+							$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','editorder.php');\"><i class=\"fa fa-pen-to-square\"></i></button>";
 						else 
 							$edit = "";
 						//Verifica si puede procesarla o no
@@ -284,7 +284,7 @@ class order extends table {
 			//Arma la sentencia sql para mostrar los items
 			$this->sql = "SELECT ID_ORDER, INTERNAL_NUMBER, REGISTERED_ON, DETAIL_ORDER_ID, COMPANY_NAME, PRODUCT_ID, PRODUCT_NAME, " . //0-6
 						"QUANTITY, PRICE, FACTOR, ID_ORDER_ROW, CODE, UNIT, TOTAL, " . //7-13
-						"MONEY_FACTOR, MONEYTYPE, QTY_DELIVERED, QTY_PROCESSED, ID_STATE, STATE_NAME, BADGE " . //14-20
+						"money-bill-1_FACTOR, money-bill-1TYPE, QTY_DELIVERED, QTY_PROCESSED, ID_STATE, STATE_NAME, BADGE " . //14-20
 						"FROM $this->view2 " .
 						"WHERE ID_ORDER = '" . $this->ID . "' AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . " ORDER BY ID_ORDER_ROW";
 
@@ -338,9 +338,9 @@ class order extends table {
 				$result .= "<td>$ " . number_format($total,2,",",".") . "</td>\n";
 				$result .= "<td><div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">\n";
 				//Botones
-				$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show($row[10],'view');\"><i class=\"fa fa-eye\"></i></button>";
-				$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($row[10],'edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-				$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"deleteItem($row[10]);\"><i class=\"fa fa-trash\"></i></button>";
+				$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show($row[10],'view');\"><i class=\"fa fa-eye\"></i></button>";
+				$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($row[10],'edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+				$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"deleteItem($row[10]);\"><i class=\"fa fa-trash\"></i></button>";
 				//Data
 				$data = array("cbProduct"=> $row[8],
 								"hfID"=> $row[8],
@@ -350,7 +350,7 @@ class order extends table {
 								"txtPRICE"=> $row[11],
 								"txtTOTAL"=> $total,
 								"hfFactor"=> $row[12],
-								"hfMoneyFactor"=> $row[16],
+								"hfmoney-bill-1Factor"=> $row[16],
 								"hfIdOrder" => $row[0],
 								"hfIdOrderDetail" => $row[3]);
 				$result .= $view . $edit . $delete . "\n<input type=\"hidden\" name=\"hfRow_$row[13]\" id=\"hfRow_$row[13]\" value='" . json_encode($data) . "'>\n";

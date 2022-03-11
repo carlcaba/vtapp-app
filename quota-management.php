@@ -223,7 +223,7 @@
 											<?= $quota->showField("DIFERRED_TO", $dataForm["tabs"], "fa fa-calendar", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 										<div class="col-md-3">
-											<?= $quota->showField("PAYMENT_ID", $dataForm["tabs"], "fa fa-money", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("PAYMENT_ID", $dataForm["tabs"], "fa fa-money-bill-1", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 									</div>
 <?
@@ -259,7 +259,7 @@
 		if($action != "delete") {
 ?>
 									<button type="button" class="btn btn-warning" id="btnPay" name="btnPay" title="<?= $buttonText ?>" onclick="pay();">
-										<i class="fa fa-money"></i>
+										<i class="fa fa-money-bill-1"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $buttonText ?></span>
 									</button>
 <?
@@ -388,6 +388,9 @@
 			if(!datasObj.hasOwnProperty("txtAMOUNT")) {
 				datasObj["txtAMOUNT"] = $("#txtAMOUNT").val();
 			}
+			if(!datasObj.hasOwnProperty("cbClient")) {
+				datasObj["cbClient"] = $("#cbClient option:selected").val();
+			}
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);
 			$("#spanTitleName").html("");
@@ -447,6 +450,9 @@
 		}
 		if(!datasObj.hasOwnProperty("txtAMOUNT")) {
 			datasObj["txtAMOUNT"] = $("#txtAMOUNT").val();
+		}
+		if(!datasObj.hasOwnProperty("cbClient")) {
+			datasObj["cbClient"] = $("#cbClient option:selected").val();
 		}
 		var datas = JSON.stringify(datasObj);
 		$("#spanTitle").html(title);

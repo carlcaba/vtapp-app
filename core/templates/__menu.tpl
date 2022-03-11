@@ -16,8 +16,9 @@
 	$menuinfo = $inter->getMenuInformation($_SESSION["menu_id"]);
 	$filename = $menuinfo["link"];
 	$parent = $menuinfo["parent"];
-	
+
 	foreach($menu as $menuitem) {
+		
 		//Verifica el link
 		if(strpos($menuitem["link"],"#") !== false && strlen($menuitem["link"]) > 1) {
 			$datatarget = $menuitem["link"];
@@ -38,7 +39,6 @@
 			$activo = "active";
 			$openmenu = "menu-open";
 		}
-		
 		
 		//Si hay submenu
 		if(isset($menuitem["child"])) {
@@ -86,7 +86,7 @@
 				if($innerChild["icon"] != "") 
 					$submenusChild .= "<i class=\"" . $innerChild["icon"] . " nav-icon\"></i>\n";
 				else 
-					$submenusChild .= "<i class=\"fa fa-circle-o nav-icon\"></i>\n";
+					$submenusChild .= "<i class=\"fa fa-caret-right nav-icon\"></i>\n";
 				//Termina la GUI
 				$submenusChild .= "<p>" . $innerChild["title"] . "</p>\n" .
 							"</a>\n</li>\n";

@@ -10,10 +10,10 @@ class connector_db {
 	var $user;
 	var $password;
 	var $port;
-	var $datas = array("prod" => array("db" => "prd-vtapp-db",
-										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
+	var $datas = array("prod" => array("db" => "vtappcorp",
+										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "vtappcorp_user",
+										"user" => "vtapp_user",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 						"test" => array("db" => "logicaad_vtapp",
 										"host" => "162.215.248.225",
@@ -65,15 +65,15 @@ class connector_db {
 										"user" => "logicaad_vtapp_5",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 	//PRODUCTION ALTERNATE CONNECTIONS
-						"prod0" => array("db" => "prd-vtapp-db",
-										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
+						"prod0" => array("db" => "vtappcorp",
+										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "vtappcorp_user_2",
+										"user" => "vtapp_user",
 										"pass" => "Vt4ppC0rp0r1t3$"),
-						"prod1" => array("db" => "prd-vtapp-db",
-										"host" => "prd-vtapp-mysql-server.mysql.database.azure.com",
+						"prod1" => array("db" => "vtappcorp",
+										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "vtappcorp_user_3",
+										"user" => "vtapp_user",
 										"pass" => "Vt4ppC0rp0r1t3$")
 						);
 
@@ -148,7 +148,16 @@ class connector_db {
 			$doIt = $doIt || @!mysqli_ping($this->conex_id);
 		if($doIt) {
 			// Conectamos al server
-			$this->conex_id = mysqli_connect($this->server, $this->user, $this->password, $this->database, $this->port);
+			/*
+			if($this->env == "prod") {
+				$this->conex_id = mysqli_init();
+				mysqli_ssl_set($this->conex_id,NULL,NULL, "/app/work/cert.pem", NULL, NULL);
+				mysqli_real_connect($this->conex_id, $this->server, $this->user, $this->password, $this->database, $this->port, MYSQLI_CLIENT_SSL);
+			}
+			else {
+				*/
+				$this->conex_id = mysqli_connect($this->server, $this->user, $this->password, $this->database, $this->port);
+			//}
 			$this->Errno = mysqli_connect_errno();
 			if($this->Errno == 1040) {
 				//Suspender la ejecución 5 segundos
@@ -161,7 +170,16 @@ class connector_db {
 							break;
 						$this->changeConnection($cant);
 						$cant++;
-						$this->conex_id = mysqli_connect($this->server, $this->user, $this->password, $this->database, $this->port);
+						/*
+						if(strpos($this->env,"prod") !== false) {
+							$this->conex_id = mysqli_init();
+							mysqli_ssl_set($this->conex_id,NULL,NULL, "/app/work/cert.pem", NULL, NULL);
+							mysqli_real_connect($this->conex_id, $this->server, $this->user, $this->password, $this->database, $this->port, MYSQLI_CLIENT_SSL);
+						}
+						else { 
+						*/
+							$this->conex_id = mysqli_connect($this->server, $this->user, $this->password, $this->database, $this->port);
+						//}
 					}
 					if(!$this->conex_id) {
 						$this->Error = "Ha fallado la conexi&oacute;n a la base de datos -> " . mysqli_connect_error();

@@ -34,7 +34,7 @@
 		$labels = array();
 		
 		$step1 = array("label" => $_SESSION["SERVICE_STATE_GRAPH_1"],
-						"backgroundColor" => 'rgba(60,141,188,0.9)',
+						"backgroundColor" => 'rgba(60,141,188,0.4)',
 						"borderColor" => 'rgba(60,141,188,0.8)',
 						"pointRadius" => false,
 						"pointColor" => '#3b8bba',
@@ -60,8 +60,10 @@
 						"pointHighlightFill" => '#fff',
 						"pointHighlightStroke" => 'rgba(234, 213, 20, 1)',
 						"data" => array());
+		setlocale(LC_TIME, "es_ES.UTF-8");
+		$months = ["", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 		while($month <= $end) {
-			array_push($labels,date('F/Y', $month));
+			array_push($labels,$months[intval(date("m",$month))] . date('/Y', $month));  //strftime("%B/%Y", $moonth));
 			$datas = $service->DashboardGraphData(intval(date("m",$month)),intval(date("Y",$month)));
 			array_push($step1["data"],intval($datas["process"]));
 			array_push($step2["data"],intval($datas["on_road"]));

@@ -101,7 +101,7 @@
 									<label><?= $_SESSION["TOTAL_ORDER"] ?></label>						
 									<div class="input-group mb-2">
 										<div class="input-group-prepend">
-											<div class="input-group-text"><i class="fa fa-money"></i></div>
+											<div class="input-group-text"><i class="fa fa-money-bill-1"></i></div>
 										</div>
 										<input id="txtTOTALORDER" class="form-control" type="text" name="txtTOTALORDER" readonly="readonly" value="$ 0">
 									</div>
@@ -196,11 +196,11 @@
 							<label><?= $_SESSION["PRODUCT_TABLE_TITLE_7"] ?></label>
 							<div class="input-group mb-2">
 								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="fa fa-money"></i></span>
+									<span class="input-group-text"><i class="fa fa-money-bill-1"></i></span>
 								</div>
 								<input id="txtPRICE" class="form-control" placeholder="<?= $_SESSION["PRODUCT_TABLE_TITLE_7"] ?>" type="text" name="txtPRICE" readonly="readonly" value="">
 								<div class="input-group-append">
-									<span class="input-group-text" id="moneyTypePrice"></span>
+									<span class="input-group-text" id="money-bill-1TypePrice"></span>
 								</div>
 							</div>
 						</div>						
@@ -208,16 +208,16 @@
 							<label><?= $_SESSION["MOVEMENT_DETAIL_TABLE_TITLE_6"] ?></label>
 							<div class="input-group mb-2">
 								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="fa fa-money"></i></span>
+									<span class="input-group-text"><i class="fa fa-money-bill-1"></i></span>
 								</div>
 								<input id="txtTOTAL" class="form-control" placeholder="<?= $_SESSION["MOVEMENT_DETAIL_TABLE_TITLE_6"] ?>" type="text" name="txtTOTAL" readonly="readonly" value="">
 								<div class="input-group-append">
-									<span class="input-group-text" id="moneyTypeTotal"></span>
+									<span class="input-group-text" id="money-bill-1TypeTotal"></span>
 								</div>
 							</div>
 						</div>						
 						<input type="hidden" name="hfFactor" id="hfFactor" value="">
-						<input type="hidden" name="hfMoneyFactor" id="hfMoneyFactor" value="">
+						<input type="hidden" name="hfmoney-bill-1Factor" id="hfmoney-bill-1Factor" value="">
 					</form>				
 				</div>
 				<div class="modal-footer">
@@ -308,7 +308,7 @@
 		msg5 = "<?= $_SESSION["NOT_ENOUGH_EXISTENCE"] ?>",
 		msg6 = "<?= $_SESSION["CAMERAS"] ?>",
 		msg7 = "<?= $_SESSION["CONVERSION_FACTOR_ENABLED"] ?>",
-		msg8 = "<?= $_SESSION["MONEY_CONVERT_REQUIRED"] ?>",
+		msg8 = "<?= $_SESSION["money-bill-1_CONVERT_REQUIRED"] ?>",
 		msg9 = "<?= $_SESSION["PRIZE_NOT_REGISTERED"] ?>";
 	
 	
@@ -384,13 +384,13 @@
 				var ids = ($("#hfAction").val() == "new") ? counter : parseInt($("#hfRow").val());
 				buttons += "<div class=\"btn-group\">";
 				buttons += "<button type=\"button\" class=\"btn btn-default\" title=\"<?= $_SESSION["VIEW"] ?>\" onclick=\"show(" + ids + ",'view');\"><i class=\"fa fa-eye\"></i></button>";
-				buttons += "<button type=\"button\" class=\"btn btn-default\" title=\"<?= $_SESSION["EDIT"] ?>\" onclick=\"show(" + ids + ",'edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
+				buttons += "<button type=\"button\" class=\"btn btn-default\" title=\"<?= $_SESSION["EDIT"] ?>\" onclick=\"show(" + ids + ",'edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
 				buttons += "<button type=\"button\" class=\"btn btn-default\" title=\"<?= $_SESSION["DELETE"] ?>\" onclick=\"deleteItem(" + ids  + ");\"><i class=\"fa fa-trash\"></i></button>";
 				buttons += "<input type=\"hidden\" name=\"hfRow_" + ids + "\" id=\"hfRow_" + ids + "\" value='" + datas + "' />";
 				buttons += "</div></div>";
 				if(!isNaN(parseFloat($("#hfFactor").val())) && parseFloat($("#hfFactor").val()) != 1)
 					bagdeSpan = " <span class=\"badge bg-warning\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"<?= $_SESSION["CONVERSION_MSG"] ?>\"><?= $_SESSION["CONVERSION_ABBRV"]?></span>";
-				if(!isNaN(parseFloat($("#hfMoneyFactor").val())) && parseFloat($("#hfMoneyFactor").val()) != 1)
+				if(!isNaN(parseFloat($("#hfmoney-bill-1Factor").val())) && parseFloat($("#hfmoney-bill-1Factor").val()) != 1)
 					bagdeSpan = " <span class=\"badge bg-primary\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"<?= $_SESSION["TRM_MSG"] ?>\"><?= $_SESSION["TRM_ABBRV"]?></span>";
 				var text = $("#cbProduct option:selected").text() + bagdeSpan + badgeSpan2;
 				if(($("#hfAction").val() == "new")) {
@@ -460,7 +460,7 @@
 					Price: data.txtPRICE,
 					Total: data.txtTOTAL,
 					Factor: data.hfFactor,
-					MoneyFactor: data.hfMoneyFactor,
+					money-bill-1Factor: data.hfmoney-bill-1Factor,
 					Counter: (count + 1)
 				};
 				obj.push(objData);
@@ -517,7 +517,7 @@
 			var selected = e.params.data;
 			var data = $('#cbProduct option[value="' + selected.id + '"]').data();
 			data.productPrice = parseFloat(data.productPrice);
-			data.factormoney = parseFloat(data.factormoney);
+			data.factormoney-bill-1 = parseFloat(data.factormoney-bill-1);
 			var focus = "txtQUANTITY";
 			$("#txtQUANTITY").attr("disabled", (data.productQuantity == 0 || data.productPrice == 0)) ;
 			if (data.productQuantity == 0) {
@@ -527,26 +527,26 @@
 			if(data.factor != 1) {
 				notify("", 'warning', "", msg7, "");
 			}
-			if(data.factormoney != 1) {
+			if(data.factormoney-bill-1 != 1) {
 				notify("", 'warning', "", msg8, "");
 			}
 			if(data.productPrice == 0) {
 				notify("", 'danger', "", msg9, "");
 			}
 			$("#btnSave").attr("disabled", data.productQuantity == 0);
-			$("#moneyTypePrice").html(data.productMoneytype);
-			$("#moneyTypeTotal").html(data.factormoneyconversion);
+			$("#money-bill-1TypePrice").html(data.productmoney-bill-1type);
+			$("#money-bill-1TypeTotal").html(data.factormoney-bill-1conversion);
 			$("#unitDiv").html(data.unit);
 			$("#txtPRICE").val(data.productPrice);
 			$("#txtEXISTENCE").val(data.productQuantity);
 			$("#hfCODE").val(data.code);
 			$("#hfID").val($(this).val());
 			$("#hfFactor").val(data.factor);
-			$("#hfMoneyFactor").val(data.factormoney);
+			$("#hfmoney-bill-1Factor").val(data.factormoney-bill-1);
 			$("#txtQUANTITY").css("background-color", (data.factor != 1 ? "LightYellow" : ""));
 			$("#hfUNIT").val(data.unit);
 			$('#txtQUANTITY').val("");
-			$("#txtTOTAL").val(0 * data.productPrice * data.factormoney);
+			$("#txtTOTAL").val(0 * data.productPrice * data.factormoney-bill-1);
 			$('#' + focus).focus();
 		});		
 		$('#txtQUANTITY').on('input',function(e){
@@ -554,10 +554,10 @@
 			var existence = parseFloat($("#txtEXISTENCE").val());
 			var quant = parseFloat($(this).val());
 			var factor = parseFloat($("#hfFactor").val());
-			var factorMoney = parseFloat($("#hfMoneyFactor").val());
+			var factormoney-bill-1 = parseFloat($("#hfmoney-bill-1Factor").val());
 			if(isNaN(prize)) { prize = 0; }
 			if(isNaN(factor)) { factor = 1; }
-			if(isNaN(factorMoney)) { factorMoney = 1; }
+			if(isNaN(factormoney-bill-1)) { factormoney-bill-1 = 1; }
 			if(isNaN(existence)) { existence = 0; }
 			
 			if((quant * factor) > existence) {
@@ -565,12 +565,12 @@
 				$("#txtQUANTITY").val(existence);
 				quant = existence;
 			}
-			$("#txtTOTAL").val(quant * factor * prize * factorMoney);
+			$("#txtTOTAL").val(quant * factor * prize * factormoney-bill-1);
 		});		
 	}
 	function clearItems() {
-		$("#moneyTypePrice").html("");
-		$("#moneyTypeTotal").html("");
+		$("#money-bill-1TypePrice").html("");
+		$("#money-bill-1TypeTotal").html("");
 		$("#txtPRICE").val(0);
 		$("#txtEXISTENCE").val(0);
 		$("#txtQUANTITY").val(0);
@@ -579,7 +579,7 @@
 		$("#hfCODE").val("");
 		$("#hfID").val("");
 		$("#hfFactor").val("");
-		$("#hfMoneyFactor").val("");
+		$("#hfmoney-bill-1Factor").val("");
 		$("#txtQUANTITY").css("background-color", "");
 		$("#hfUNIT").val("");
 		$('#cbProduct').val("");
@@ -661,23 +661,23 @@
 							if(data.factor != 1) {
 								notify("", 'warning', "", msg7, "");
 							}
-							if(data.factormoney != 1) {
+							if(data.factormoney-bill-1 != 1) {
 								notify("", 'warning', "", msg8, "");
 							}
 							$("#btnSave").attr("disabled", data.productQuantity == 0);
-							$("#moneyTypePrice").html(data.productMoneytype);
-							$("#moneyTypeTotal").html(data.factormoneyconversion);
+							$("#money-bill-1TypePrice").html(data.productmoney-bill-1type);
+							$("#money-bill-1TypeTotal").html(data.factormoney-bill-1conversion);
 							$("#unitDiv").html(data.unit);
 							$("#txtPRICE").val(data.productPrice);
 							$("#txtEXISTENCE").val(data.productQuantity);
 							$("#hfCODE").val(data.code);
 							$("#hfID").val(content);
 							$("#hfFactor").val(data.factor);
-							$("#hfMoneyFactor").val(data.factormoney);
+							$("#hfmoney-bill-1Factor").val(data.factormoney-bill-1);
 							$("#hfUNIT").val(data.unit);
 							$('#txtQUANTITY').val("");
 							$("#txtQUANTITY").css("background-color", (data.factor != 1 ? "LightYellow" : ""));
-							$("#txtTOTAL").val(0 * data.productPrice * data.factormoney);
+							$("#txtTOTAL").val(0 * data.productPrice * data.factormoney-bill-1);
 							$('#' + focus).focus();
 						}
 						catch(e) {

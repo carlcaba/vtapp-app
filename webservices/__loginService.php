@@ -37,6 +37,8 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
@@ -101,7 +103,7 @@
 	
 	//Si hay error
 	if($usua->nerror > 0) {
-		header("HTTP/1.1 401 Unauthorized " . $usua->error);
+		header("HTTP/1.1 403 Forbidden " . $usua->error);
 		exit;		
 		/*
 		//Confirma mensaje al usuario
@@ -164,6 +166,7 @@
 								 "image" => $website . $siteroot . $usua->getUserPicture(true),
 								 "vehicles" => $dataV);
 	
+	$idws = updateTraceWS($idws, json_encode($result));
 	//Termina
 	exit(json_encode($result));
 ?>

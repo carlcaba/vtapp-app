@@ -186,7 +186,7 @@ class notification extends table {
 			$title = $row[2] == 1 ? $_SESSION["WARNING"] : $_SESSION["ERROR"];
 			$class = $row[2] == 1 ? "text-warning" : "text-danger";
 			$time = strtotime($row[7]);
-			$elap = explode(" ", $this->elapsedTime($time));
+			$elap = explode(" ", $this->elapsedTime($time,3));
 			$notis .= "<tr>\n";
 			//$notis .= "<td><input type=\"checkbox\"></td>\n";
 			$notis .= "<td class=\"mailbox-star\" width=\"5%\"><a href=\"#\"><i class=\"$row[4] $class\"></i></a></td>\n";

@@ -134,7 +134,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-handshake-o"></i> <?= $titlepage ?> <?= $_SESSION["PARTNER"] ?></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-handshake"></i> <?= $titlepage ?> <?= $_SESSION["PARTNER"] ?></h1>
 						</div>
 						<!-- /.col -->
 <?

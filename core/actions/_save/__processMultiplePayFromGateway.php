@@ -126,7 +126,7 @@
 				$result["success"] = true;
 			}
 		}
-		error_log(print_r($errors, true) . " " . print_r(debug_backtrace(2), true));
+		_error_log(print_r($errors, true) . " " . print_r(debug_backtrace(2), true));
 		//Cambia el resultado
 		$result["message"] = ($result["success"] ? $_SESSION["PAYMENT_SUCCESSFUL"] : $_SESSION["ERROR_ON_PAYMENT"] . " GATEWAY:$gate<br>" . $result["message"]);
 	}

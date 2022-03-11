@@ -103,7 +103,7 @@ class order_detail extends table {
 	//Funcion para calcular el total
 	function getTotalOrder() {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT SUM(QUANTITY*PRICE*FACTOR*MONEY_FACTOR) FROM $this->view";
+		$this->sql = "SELECT SUM(QUANTITY*PRICE*FACTOR*money-bill-1_FACTOR) FROM $this->view";
 		//Obtiene los resultados
         $row = $this->__getData();
 		//Total a retornar
@@ -193,7 +193,7 @@ class order_detail extends table {
 		}
 		//Arma la sentencia SQL
 		$this->sql = "SELECT MOVEMENT_ID, INTERNAL_NUMBER, MOVE_DATE, DETAIL_ID, MOVEMENT_TYPE_ID, RESOURCE_TEXT, EMPLOYEE_ID, APPLIED, IS_BLOCKED, EMPLOYEE_NAME, PRODUCT_ID, FACTOR, ID_ORDER, CODE, PRODUCT_NAME, UNIT, " .
-			"QUANTITY, PRICE, FACTOR, QUANTITY*PRICE*FACTOR*MONEY_FACTOR, MONEY_FACTOR FROM $this->view WHERE LANGUAGE_ID = $lang AND MOVEMENT_ID = " . $this->_checkDataType("ID_MOVEMENT") . " ORDER BY ID_ORDER";
+			"QUANTITY, PRICE, FACTOR, QUANTITY*PRICE*FACTOR*money-bill-1_FACTOR, money-bill-1_FACTOR FROM $this->view WHERE LANGUAGE_ID = $lang AND MOVEMENT_ID = " . $this->_checkDataType("ID_MOVEMENT") . " ORDER BY ID_ORDER";
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -207,12 +207,12 @@ class order_detail extends table {
 						"txtPRICE" => $row[17],
 						"txtTOTAL" => $row[19],
 						"hfFactor" => $row[18],
-						"hfMoneyFactor" => $row[20]);			
+						"hfmoney-bill-1Factor" => $row[20]);			
 			$ids = $row[12];
 			$buttons = "<div class=\"btn-toolbar\" role=\"toolbar\">";			
 			$buttons .= "<div class=\"btn-group notika-group-btn\">";
 			$buttons .= "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show($ids,'view');\"><i class=\"fa fa-eye\"></i></button>";
-			$buttons .= "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($ids,'edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
+			$buttons .= "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($ids,'edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
 			$buttons .= "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"delete($ids);\"><i class=\"fa fa-trash\"></i></button>";
 			$buttons .= "<input type=\"hidden\" name=\"hfRow_$ids\" id=\"hfRow_$ids\" value='" . json_encode($data) . "'/>";
 			$buttons .= "</div></div>";
@@ -233,7 +233,7 @@ class order_detail extends table {
 		//Arma la sentencia SQL
 		$this->sql = "SELECT ID_ORDER, INTERNAL_NUMBER, REGISTERED_ON, DETAIL_ORDER_ID, APPLIED, IS_BLOCKED, PRODUCT_ID, FACTOR, " . //0-7
 					"ID_ORDER_ROW, CODE, PRODUCT_NAME, UNIT, QUANTITY, PRICE, FACTOR <> 1 AS FCH, " . //8-14
-					"TOTAL, (MONEY_FACTOR <> 1) MONEY_FACTOR, MONEYTYPE " . //15-17
+					"TOTAL, (money-bill-1_FACTOR <> 1) money-bill-1_FACTOR, money-bill-1TYPE " . //15-17
 					"FROM $this->view " .
 					"WHERE LANGUAGE_ID = $lang AND ID_ORDER = " . $this->_checkDataType("ID_ORDER") . 
 					" ORDER BY ID_ORDER_ROW";
@@ -310,7 +310,7 @@ class order_detail extends table {
 		$return .= "$stabs\t</div>\n";
 		
 		$return .= $this->showField("QUANTITY", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++], $reso);
-		$return .= $this->showField("PRICE", "$stabs\t", "fa fa-money", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
+		$return .= $this->showField("PRICE", "$stabs\t", "fa fa-money-bill-1", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		
 		$return .= "$stabs\t<p>" . $_SESSION["REQUIRED_FIELDS"] . "</p>\n";
 		$return .= "$stabs\t<input type=\"hidden\" id=\"hfAction\" name=\"hfAction\" value=\"$action\" >\n";
@@ -408,7 +408,7 @@ class order_detail extends table {
 		}
 		//Genera la sentencia SQL
 		$this->sql = "SELECT MONTH(MOVE_DATE) MONTH_NUMBER, YEAR(MOVE_DATE) YEAR, MONTHNAME(MOVE_DATE) MONTH_NAME, TITLE, " .
-					"SUM(QUANTITY*PRICE*FACTOR*MONEY_FACTOR) TOTAL, CONCAT(YEAR(MOVE_DATE),LPAD(MONTH(MOVE_DATE),2,'0')) YEARMONTH ".
+					"SUM(QUANTITY*PRICE*FACTOR*money-bill-1_FACTOR) TOTAL, CONCAT(YEAR(MOVE_DATE),LPAD(MONTH(MOVE_DATE),2,'0')) YEARMONTH ".
 				"FROM $this->view WHERE MOVE_DATE > DATE_SUB(NOW(), INTERVAL $back MONTH) AND LANGUAGE_ID = $lang " . 
 				"GROUP BY MONTH(MOVE_DATE), YEAR(MOVE_DATE), MONTHNAME(MOVE_DATE), TITLE, CONCAT(YEAR(MOVE_DATE),LPAD(MONTH(MOVE_DATE),2,'0')) " .
 				"ORDER BY YEAR(MOVE_DATE), MONTH(MOVE_DATE), TITLE";

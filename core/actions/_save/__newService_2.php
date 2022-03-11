@@ -128,7 +128,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->quota->useQuota($amount);
 				if($quota->quota->nerror > 0) {
-					error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql);
+					_error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql);
 				}
 				$datas->hfPayed = "true";
 			}
@@ -136,7 +136,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->useQuota($amount);
 				if($quota->nerror > 0) {
-					error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql); 
+					_error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql); 
 				}
 				$datas->hfPayed = "true";
 			}
@@ -163,7 +163,7 @@
 				$pymt->OBSERVATION = "Service by Quota";
 				$pymt->_add();
 				if($pymt->nerror > 0) {
-					error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql); 
+					_error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql); 
 				}
 			}
 		}
@@ -198,7 +198,7 @@
 			//Si se genera error
 			if($sLog->nerror > 0) {
 				$result["errorlog"] .= $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql;
-				error_log("Error creating service log: " . $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql);
+				_error_log("Error creating service log: " . $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql);
 			}
 		}
 

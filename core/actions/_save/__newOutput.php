@@ -78,7 +78,7 @@
 			//Asigna la cantidad
 			$mdet->QUANTITY = $value["Quantity"];
 			$mdet->FACTOR = $value["Factor"];
-			$mdet->MONEY_FACTOR = $value["MoneyFactor"];
+			$mdet->money-bill-1_FACTOR = $value["money-bill-1Factor"];
 			$mdet->APPLIED = "TRUE";
 			$mdet->ID_ORDER = $total;
 			$mdet->UNIT = $value["Unit"];

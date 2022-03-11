@@ -100,7 +100,7 @@
 	//Valida la contrase�a
 	$usua->check();
 	
-	error_log("Validate user ok");
+	_error_log("Validate user ok " . $usua->conf->sql);
 	
 	//Si hay error
 	if($usua->nerror > 0) {
@@ -131,12 +131,12 @@
 	$_SESSION["LANGUAGE"] = 2;
 	$link = ($link != "") ? $link : $usua->access->LINK_TO;
 
-	error_log("Trying to validate last access " . basename(__FILE__));
+	_error_log("Trying to validate last access " . basename(__FILE__));
 
 	//Actualiza la hora de acceso
 	$inter->updateLastAccess();
 	
-	error_log("Last access validated ok " . basename(__FILE__));	
+	_error_log("Last access validated ok " . basename(__FILE__));	
 	
 	//Verifica el acceso del usuario
 	if ($usua->REFERENCE != "") {
@@ -196,7 +196,7 @@
 		$result['link'] = $site_root . $link;
 	}
 
-	error_log("Session name " . session_id());
+	_error_log("Session name " . session_id());
 
 	//Termina
 	exit(json_encode($result));

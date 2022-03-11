@@ -34,13 +34,15 @@
 	
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
+
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
@@ -64,13 +66,13 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	include_once("__validateSession.php");
@@ -82,7 +84,7 @@
 		//Asigna el mensaje
 		$result["message"] = $check["message"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Instancia la clase usuario
@@ -99,36 +101,42 @@
 		//Asigna el mensaje
 		$result["message"] = "Employee: " . $empl->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	$usid = $empl->ID;
 	
 	//Busca el estado de asignacion
 	$state = new service_state();
-	$sid = $state->getIdByStep(5);
+	$sid = $state->getIdByStep(7);
 	//Verifica si existe
 	if($sid == "") {
 		//Asigna el mensaje
 		$result["message"] = "State: " . $_SESSION["NOT_REGISTERED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Asigna la informacion
 	$serv->setFinalEmployee($usid);
 	
 	//Obtiene la informacion
-	$datos = $serv->listServices($sid,$usid,$user);
+	$datos = $serv->listServices($sid,$usid,$user,false,0,$debug);
+	$result["data"] = array();
 	
 	if(isset($datos["success"])) {
 		$result["message"] = $datos["message"];
 	}
 	else {
 		$result["success"] = true;
-		$result["message"] = $datos;
+		$result["message"] = $_SESSION["WEBSERVICE_SUCCESS"];
+		foreach($datos as $dat)
+			array_push($result["data"],$dat);
 	}
 	if (boolval($debug))
 		$result["sql"] = $serv->sql;
+
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

@@ -3,7 +3,7 @@
 	session_name('vtappcorp_session');
 	session_start();
 	
-	require_once("../../classes/money_converter.php");
+	require_once("../../classes/money-bill-1_converter.php");
 
 	//Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
@@ -34,27 +34,27 @@
         $datas = json_decode($strmodel);
 		
 		//Asigna la informacion
-		$money = new money_converter();
+		$money-bill-1 = new money-bill-1_converter();
 		//Asigna la informacion
-		$money->ID = $datas->txtID;
+		$money-bill-1->ID = $datas->txtID;
 		//Consulta la informacion
-		$money->__getInformation();
+		$money-bill-1->__getInformation();
 		//Si hay error
-		if($money->nerror > 0) {
-			$result["message"] = $money->error;
-			$result["sql"] = $money->sql;
+		if($money-bill-1->nerror > 0) {
+			$result["message"] = $money-bill-1->error;
+			$result["sql"] = $money-bill-1->sql;
 			$result = utf8_converter($result);
 			exit(json_encode($result));
 		}
 		
 		//Lo Modifica
-		$money->_delete();
+		$money-bill-1->_delete();
 		
 		//Si hay error
-		if($money->nerror > 0) {
+		if($money-bill-1->nerror > 0) {
 			//Confirma mensaje al usuario
-			$result['message'] = $money->error;
-			$result["sql"] = $money->sql;
+			$result['message'] = $money-bill-1->error;
+			$result["sql"] = $money-bill-1->sql;
 			$result = utf8_converter($result);
 			//Termina
 			exit(json_encode($result));

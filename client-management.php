@@ -22,7 +22,11 @@
 		$inter->redirect($result["link"]);
 	
 	require_once("core/classes/configuration.php");
-	$conf = new configuration("INIT_PASSWORD");
+	$conf = new configuration("CLIENT_PAYMENT_TYPES");
+	
+	$pymtype = $conf->verifyValue();
+
+	$conf->KEY_NAME = "INIT_PASSWORD";
 
 	$action = "";
 	$id = "";
@@ -322,6 +326,7 @@
 	<script src="js/resources.js"></script>	
 	
     <script>
+	var pymtype = JSON.parse('<?= $pymtype ?>');
 	$(document).ready(function() {
 		$("#cbClientType").trigger("change");
 		$('[data-toggle="tooltip"]').tooltip();
@@ -331,6 +336,18 @@
 			$("#cbPaymentType").find("option[data-client-type='" + value + "']").removeAttr("disabled");
 			$("#cbPaymentType").find("option[data-client-type!='" + value + "']").attr("disabled","disabled");
 			$('#cbPaymentType option:not([disabled]):first').attr('selected', 'selected');
+			$("#cbPaymentType").trigger("change");
+		});
+		$("#cbPaymentType").on("change", function () {
+			var value = $(this).val();
+			var datatype = $("#cbPaymentType option:selected").data("clientType");
+			var pyytype = pymtype.find((o) => { return (o["payment"] == value && o["client"] == datatype); });
+			if (typeof(pyytype) != "undefined") {
+				$("#cbClientPaymentType").removeAttr("disabled");
+				$("#cbClientPaymentType").find("option[value='" + pyytype["type"] + "']").removeAttr("disabled");
+				$("#cbClientPaymentType").find("option[value!='" + pyytype["type"] + "']").attr("disabled","disabled");
+				$('#cbClientPaymentType option:not([disabled]):first').attr('selected', 'selected');
+			}
 		});
 		$("#btnSave").on("click", function(e) {
 			var form = document.getElementById('frmClient');

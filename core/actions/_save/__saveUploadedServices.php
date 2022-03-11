@@ -248,8 +248,8 @@
 								$serv->DELIVER_COORDINATES = $dvCoord->results[0]->geometry->location->lat . "," . $dvCoord->results[0]->geometry->location->lng;
 							}
 							
-							error_log(print_r($rqCoord,true) . " " . print_r(debug_backtrace(2), true));
-							error_log(print_r($dvCoord,true) . " " . print_r(debug_backtrace(2), true));
+							_error_log(print_r($rqCoord,true) . " " . print_r(debug_backtrace(2), true));
+							_error_log(print_r($dvCoord,true) . " " . print_r(debug_backtrace(2), true));
 							
 							//Agrega el recurso
 							$serv->_add();

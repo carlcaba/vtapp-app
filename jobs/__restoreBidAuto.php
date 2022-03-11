@@ -8,9 +8,7 @@
 	$log_file = "./my-errors.log"; 
 	ini_set('display_errors', '0');
 	ini_set("log_errors", TRUE);  
-	ini_set('error_log', $log_file); 
-
-	error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+	ini_set('_error_log', $log_file); 
 
 	$_SESSION["vtappcorp_userid"] = "admin";
 	
@@ -20,24 +18,28 @@
     //Variable del codigo
     $result = array('success' => false,
         'message' => "");
-
+	
 	//Realiza la operacion
 	require_once("../core/classes/user_notification.php");
 	require_once("../core/classes/logs.php");
 	require_once("../core/classes/configuration.php");
 
+	ini_set('display_errors', '1');
+	
+	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+
 	$conf = new configuration("AUTOBID_ACTIVATED");
 	$active = $conf->verifyValue();
 	
 	if(!boolval($active)) {
-		error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
+		_error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
 		$result["message"] = "AUTOBID_ACTIVATED disabled $active";
 		exit(json_encode($result));
 	}
 
 	$serv = new service();
 
-	error_log("Getting services not bidded " . date("Ymd H:i:s"));
+	_error_log("Getting services not bidded " . date("Ymd H:i:s"));
 
 	//Obtiene la informacion de los servicios por notificar
 	$services = $serv->getNotBidded();
@@ -47,7 +49,7 @@
 		$log = new logs("No services not bidded");
 		$log->USER_ID = "admin";
 		$log->_add();
-		error_log($log->TEXT_TRANSACTION . " -> SQL: " . $serv->sql);
+		_error_log($log->TEXT_TRANSACTION, $serv->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
@@ -56,7 +58,7 @@
 	$err = 0;
 	$reso = new resources();
 	
-	error_log("Processing " . count($services) . " record(s) " . date("Ymd H:i:s"));
+	_error_log("Processing " . count($services) . " record(s) " . date("Ymd H:i:s"));
 	
 	foreach($services as $srv) {
 		$count++;
@@ -69,7 +71,7 @@
 			$log = new logs("Service " . $srv["sid"] . " not found -> " . $service->error);
 			$log->USER_ID = "admin";
 			$log->_add();
-			error_log($log->TEXT_TRANSACTION . " -> SQL: " . $service->sql);
+			_error_log($log->TEXT_TRANSACTION, $service->sql);
 			$err++;
 			//continua
 			continue;
@@ -79,7 +81,7 @@
 			$log = new logs("Service " . $srv["id"] . " wrong state -> " . $service->STATE_ID . " <> " . $srv["stateid"]);
 			$log->USER_ID = "admin";
 			$log->_add();
-			error_log($log->TEXT_TRANSACTION);
+			_error_log($log->TEXT_TRANSACTION);
 			$err++;
 			//continua
 			continue;
@@ -93,7 +95,7 @@
 			$log = new logs("Service " . $srv["sid"] . " Error on update -> " . $service->error);
 			$log->USER_ID = "admin";
 			$log->_add();
-			error_log($log->TEXT_TRANSACTION . " -> SQL: " . $service->sql);
+			_error_log($log->TEXT_TRANSACTION, $service->sql);
 			$err++;
 			continue;
 		}
@@ -101,7 +103,7 @@
 			$log = new logs("Service " . $srv["sid"] . " Updated ok  -> State:" . $srv["service_state"] . " Reg:" . $srv["registered_on"] . " Not: " . $srv["notified_on"] . " Mins: " . $srv["minutes"]);
 			$log->USER_ID = "admin";
 			$log->_add();
-			error_log($log->TEXT_TRANSACTION . " -> SQL: " . $service->sql);
+			_error_log($log->TEXT_TRANSACTION, $service->sql);
 		}
 		
 		//Verifica 
@@ -113,13 +115,13 @@
 			$log = new logs("User notification service -> " . $srv["sid"] . " error disabling -> " . $usnot->error);
 			$log->USER_ID = "admin";
 			$log->_add();
-			error_log($log->TEXT_TRANSACTION . " -> SQL: " . $usnot->sql);
+			_error_log($log->TEXT_TRANSACTION, $usnot->sql);
 			$err++;
 		}
 	}
 	$reso->RESOURCE_NAME = "PROCESS_COMPLETED";
 
-	error_log($reso->getResourceByName() . "(" . $count . "/" . $err . ") at " . date("Ymd H:i:s"));
+	_error_log($reso->getResourceByName() . "(" . $count . "/" . $err . ") at " . date("Ymd H:i:s"));
 
 	//Cambia el resultado
 	$result['success'] = true;

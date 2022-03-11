@@ -11,7 +11,7 @@
         'message' => $_SESSION["NO_DATA_FOR_VALIDATE"]);
 
 	//Realiza la operacion
-	require_once("../../classes/money_converter.php");
+	require_once("../../classes/money-bill-1_converter.php");
 
 	//Captura las variables
     if(empty($_POST['strModel'])) {
@@ -33,19 +33,19 @@
         //Asigna la informacion
         $datas = json_decode($strmodel);
 
-		$money = new money_converter();
+		$money-bill-1 = new money-bill-1_converter();
 		//Agrega la conversion
-		$money->MONEY_FROM = $datas->txtMONEY_FROM;
-		$money->MONEY_TO = $datas->txtMONEY_TO;
-		$money->VALUE_TO = $datas->txtVALUE_TO;
-		$money->DATERATE = $datas->txtDATERATE;
-		$money->BLOCKED = $datas->cbBlocked;
+		$money-bill-1->money-bill-1_FROM = $datas->txtmoney-bill-1_FROM;
+		$money-bill-1->money-bill-1_TO = $datas->txtmoney-bill-1_TO;
+		$money-bill-1->VALUE_TO = $datas->txtVALUE_TO;
+		$money-bill-1->DATERATE = $datas->txtDATERATE;
+		$money-bill-1->BLOCKED = $datas->cbBlocked;
 
-		$money->_add();
+		$money-bill-1->_add();
 
 		//Si se genera error
-		if($money->nerror > 0) {
-			$result["message"] = $_SESSION["ERROR"] . " " . $_SESSION["TRM"] . ": " . $money->error . " -> " . $money->sql; 
+		if($money-bill-1->nerror > 0) {
+			$result["message"] = $_SESSION["ERROR"] . " " . $_SESSION["TRM"] . ": " . $money-bill-1->error . " -> " . $money-bill-1->sql; 
 			//Termina
 			$result = utf8_converter($result);
 			exit(json_encode($result));

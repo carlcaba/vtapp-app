@@ -96,9 +96,9 @@ class partner_rate extends table {
     }	
 
 	//Funcion para seleccionar operador
-	function selectPartner($distance, $round, $filter = "") {
+	function selectPartner($distance, $round, $filter = "", $quota = "", $balance = 0, $notification = false, $id = "") {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME " .
+		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME, PRICE_NOTIFICATION " .
 					"FROM $this->view " .
 					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX ";
 		//Si hay un filtro			
@@ -118,11 +118,23 @@ class partner_rate extends table {
 			if($row[2] != "") {
 				$skins = explode(",",$row[2]);
 			}
-			$price = !$round ? $row[5] : $row[8];
-			if($price < $min)
-				$min = $price;
-			if($price > $max)
-				$max = $price;
+			if($quota == "") {
+				$price = !$round ? $row[5] : $row[8];
+				if($price < $min)
+					$min = $price;
+				if($price > $max)
+					$max = $price;
+			}
+			else {
+				if(!$notification)
+					$price = !$round ? $row[13] : $row[13] * 2;
+				else
+					$price = !$round ? $row[5] : $row[8];
+				if($price < $min)
+					$min = $price;
+				if($price > $max)
+					$max = $price;
+			}
 			$timeText = sprintf($_SESSION["TIME_TO_DELIVER"],$row[9],$row[10]);
 			$return .=  "<label class=\"partner-selection btn btn-lg btn-block\">\n";
 			$return .=  "<input type=\"radio\" class=\"optPartner\" name=\"optPartner_$row[0]\" id=\"optPartner_$row[0]\" value=\"$row[0]\" data-rate=\"$price\" data-vehicle=\"$row[11]\" data-partner=\"$row[1]\" data-partnerid=\"$row[6]\">\n";
@@ -134,18 +146,30 @@ class partner_rate extends table {
 			$return .=  "<span class=\"info-box-number\">$row[1]</span>\n";
 			$return .=  "<span class=\"info-box-text\">" . $timeText . "</span>\n";
 			$return .=  "</div>\n";
-			$return .=  "<div class=\"col-md-3\">\n";
-			$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
-			$return .=  "<span class=\"info-box-text\">$ " . number_format($price*1.25,2,".",",") . "</span>\n";
-			$return .=  "</div>\n";
-			$return .=  "<div class=\"col-md-3\">\n";
-			$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
-			$return .=  "<span class=\"info-box-text\">$ " . number_format(800,2,".",",") . "</span>\n";
-			$return .=  "</div>\n";
-			$return .=  "<div class=\"col-md-3\">\n";
-			$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
-			$return .=  "<span class=\"info-box-text\">$ " . number_format($price,2,".",",") . "</span>\n";
-			$return .=  "</div>\n";
+			//Verifica si es cupo o precio
+			if($quota == "") {
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$ " . number_format($price*1.25,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$ " . number_format(800,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$ " . number_format($price,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+			}
+			else {
+				$return .=  "<div class=\"col-md-9\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["NOTIFICATION_TITLE"] . "</span>\n";
+				if(!$notification)
+					$return .=  "<span class=\"info-box-text\"> " . sprintf($_SESSION["NOTIFICATION_TEXT"],$row[13],$balance) . "</span>\n";
+				else 
+					$return .=  "<span class=\"info-box-text\"> " . sprintf($_SESSION["NOTIFICATION_TEXT_2"],number_format($price,2,".",","),number_format($balance,2,".",",")) . "</span>\n";					
+				$return .=  "</div>\n";
+			}
 			$return .=  "</div>\n";
 			$return .=  "</div>\n";
 			$return .=  "<span class=\"info-box-icon\"><i class=\"" . $row[7] . "\" title=\"$row[12]\"></i></span>\n";

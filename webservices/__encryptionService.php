@@ -27,12 +27,14 @@
 	
 	$data = "";
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['data'])) {
 			if(!isset($_GET['data'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$data = $_GET['data'];
@@ -50,12 +52,14 @@
 	
 	//Si no hay datos para validar
 	if($data == "") {
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	$result["message"] = Encriptar($data);
 	$result["success"] = true;
 
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
+	//Termina
 	exit(json_encode($result));
-	
 ?>

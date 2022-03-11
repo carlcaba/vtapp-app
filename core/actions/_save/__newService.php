@@ -87,31 +87,6 @@
 			exit(json_encode($result));
 		}
 
-		/*
-		//Agrega el log del servicio
-		$sLog = new service_log();
-
-		//Log
-		$sLog->setService($service->ID);
-		//Asigna el ultimo estado
-		$sLog->setInitialState($service->state->getFirstState());
-		$sLog->setFinalState($service->STATE_ID);
-		//Limpia los campos no requeridos
-		$sLog->ID = "UUID()";
-		$sLog->EMPLOYEE_INITIAL_ID = "NULL";
-		$sLog->EMPLOYEE_FINAL_ID = "NULL";
-		$sLog->VEHICLE_INITIAL_ID = "";
-		$sLog->VEHICLE_FINAL_ID = "";
-		
-		//Adiciona el log
-		$sLog->__add();
-		
-		//Si se genera error
-		if($sLog->nerror > 0) {
-			$result["errorlog"] .= $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql;
-		}
-		*/
-
 		//Verifica si hay un cupo asociado
 		if($datas->hfQUOTAID != "") {
 			$disc = 0;
@@ -132,7 +107,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->quota->useQuota($amount);
 				if($quota->quota->nerror > 0) {
-					error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error applying quota on Client Quota: " . $quota->quota->error . "\nTrace:" . $quota->quota->sql . " " . print_r(debug_backtrace(2), true)); 
 				}
 				$datas->hfPayed = "true";
 			}
@@ -140,7 +115,7 @@
 				$amount = $quota->quota->type->discountType() ? $amount : 1;
 				$quota->useQuota($amount);
 				if($quota->nerror > 0) {
-					error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error applying quota on Quota Employee: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
 				}
 				$datas->hfPayed = "true";
 			}
@@ -167,7 +142,7 @@
 				$pymt->OBSERVATION = "Service by Quota";
 				$pymt->_add();
 				if($pymt->nerror > 0) {
-					error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql . " " . print_r(debug_backtrace(2), true)); 
+					_error_log("Error creating payment on quota: " . $pymt->error . "\nTrace:" . $pymt->sql . " " . print_r(debug_backtrace(2), true)); 
 				}
 				else {
 					//Pasar estado a Asignacion
@@ -195,28 +170,7 @@
 				}
 				$stpAss = true;
 			}
-			/*
-			//Log
-			$sLog->setService($service->ID);
-			//Asigna el ultimo estado
-			$sLog->setInitialState($state->ID);
-			$sLog->setFinalState($service->state->getNextState());
-			//Limpia los campos no requeridos
-			$sLog->ID = "UUID()";
-			$sLog->EMPLOYEE_INITIAL_ID = "NULL";
-			$sLog->EMPLOYEE_FINAL_ID = "NULL";
-			$sLog->VEHICLE_INITIAL_ID = "";
-			$sLog->VEHICLE_FINAL_ID = "";
-			
-			//Adiciona el log
-			$sLog->__add();
-			
-			//Si se genera error
-			if($sLog->nerror > 0) {
-				$result["errorlog"] .= $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql;
-				error_log("Error creating service log: " . $_SESSION["ERROR"] . " LOG " . $_SESSION["SERVICES"] . ": " . $sLog->error . " -> " . $sLog->sql;
-			}
-			*/
+
 		}
 
 		//Verifica el estado del servicio
@@ -224,6 +178,13 @@
 		if($datas->hfIsMarco == "off") {
 			$state = new service_state($datas->hfState);
 			$state->ID = $state->getIdByStep(2);
+		}
+		
+		//En caso que sea Contra entrega
+		if(boolval($datas->hfPayOnDeliver)) {
+			//Pasar estado a Asignacion
+			$service->updateState($service->state->getNextState(0,3));
+			$stpAss = true;
 		}
 		
 		$msg = "";
@@ -241,27 +202,7 @@
 				}
 				$stpAss = true;
 			}
-			
-			
-			
-			/*
-			//Agrega la asignación en el log
-			$sLog = new service_log();
-			//Log
-			$sLog->setService($service->ID);
-			//Asigna el ultimo estado
-			$sLog->setInitialState($lastState);
-			$sLog->setFinalState($service->STATE_ID);
-			//Limpia los campos no requeridos
-			$sLog->ID = "UUID()";
-			$sLog->EMPLOYEE_INITIAL_ID = "NULL";
-			$sLog->EMPLOYEE_FINAL_ID = "NULL";
-			$sLog->VEHICLE_INITIAL_ID = "";
-			$sLog->VEHICLE_FINAL_ID = "";
-			$sLog->OBSERVATION = "TBL_PARTNER.ID='" . $datas->hfPartnerId . "'";
-			//Adiciona el log
-			$sLog->__add();
-			*/
+
 			
 			require_once("../../classes/partner.php");
 			require_once("../../classes/configuration.php");
@@ -295,7 +236,7 @@
 			
 			$sendemail = $conf->verifyValue("NOTIFICATE_CUSTOMER_NEW_SERVICE");
 			if($sendemail) {
-				$mailBody = sprintf($_SESSION["CUSTOMER_NEW_SERVICE_CREATED"], $service->type->getResource(), $app);
+				$mailBody = sprintf($_SESSION["CUSTOMER_NEW_SERVICE_CREATED"], $service->type->getResource(), $app, $service->DELIVER_ADDRESS);
 				$usua->sendMail($mailBody, $service->DELIVER_EMAIL, sprintf($_SESSION["CUSTOMER_NEW_SERVICE_CREATED_SUBJECT"], $service->REQUESTED_BY, $service->type->getResource()));
 				if($usua->nerror > 0) {
 					$msg = ($msg != "" ? $msg . $usua->error : $usua->error) . "<br />";

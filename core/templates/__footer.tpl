@@ -3,11 +3,33 @@
 		$loadScripts = true;
 ?>
 		<footer class="main-footer">
-			<strong><a href="http://www.vtapp.com" target="_blank">Vtapp</a> - v.2.5 - Copyright &copy; 2019-<a href="javascript: showVariables();"><?= date("Y") ?></a></strong>
+			<div class="row">
+				<div class="col-sm-3" align="center">
+					<a href="#" class="nav-link ">
+						<p><i class="nav-icon fa fa-question-circle"></i> <?= $_SESSION["HELP"] ?></p>
+					</a>
+				</div>
+				<div class="col-sm-3" align="center">
+					<a href="faqs.php" class="nav-link ">
+						<p><i class="nav-icon fa fa-info-circle"></i> <?= $_SESSION["FAQS"] ?></p>
+					</a>
+				</div>
+				<div class="col-sm-3" align="center">
+					<a href="#" class="nav-link ">
+						<p><i class="nav-icon fa fa-book"></i> <?= $_SESSION["TERMS_AND_CONDITIONS"] ?></p>
+					</a>
+				</div>
+				<div class="col-sm-3" align="center">
+					<a href="#" class="nav-link ">
+						<p><i class="nav-icon fa fa-graduation-cap"></i> <?= $_SESSION["TUTORIAL"] ?></p>
+					</a>
+				</div>
+			</div>
+			<strong><a href="http://www.vtapp.com" target="_blank">Vtapp</a> - v.2.8 - Copyright &copy; 2019-<a href="javascript: showVariables();"><?= date("Y") ?></a></strong>
 			<!--
 			<a href="http://www.logicaestudio.com" target="_blank">Lógica Estudio</a>.</strong> All rights reserved.
 			-->
-			<div class="float-right d-none d-sm-inline-block"><b>AdmLTE Version</b> 3.0.8</div>
+			<div class="float-right d-none d-sm-inline-block"><b>AdmLTE Version</b> 3.1.0</div>
 		</footer>
 	</div>
 	<!-- ./wrapper -->

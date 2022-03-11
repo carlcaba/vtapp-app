@@ -40,7 +40,8 @@
 		$empl = new employee();
 		$usua = new users();
 		$conf = new configuration();
-		
+		$resources = new resources();
+				
 		//Verifica el user id
 		$empl->USER_ID = $datas->hfIdUser;
 		//Consulta la informacion

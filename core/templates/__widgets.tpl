@@ -54,7 +54,7 @@
 						<div class="icon">
 							<i class="ion ion-ios-paperplane"></i>
 						</div>
-						<a href="services.php" class="small-box-footer"><?= $_SESSION["MORE_INFO"] ?> <i class="fa fa-arrow-circle-right"></i></a>
+						<a href="my-services.php" class="small-box-footer"><?= $_SESSION["MORE_INFO"] ?> <i class="fa fa-arrow-circle-right"></i></a>
 					</div>
 				</div>
 				<!-- ./col -->

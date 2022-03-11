@@ -39,12 +39,14 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
@@ -83,35 +85,35 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($id)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ID_SERVICE_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	if(empty($tipo)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_TYPE_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Si NO es una de las acciones definidas
-	if(!(intval($tipo) > 0 && intval($tipo) < 10)) {
+	if(!(intval($tipo) > 0 && intval($tipo) < 11)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_NOT_DEFINED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Si no tiene los parametros para la accion
@@ -120,7 +122,7 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["POSITION_REQUIRED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Si no tiene los parametros para la accion
@@ -129,7 +131,7 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["NO_DETAILS_FOR_CANCEL"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Si no tiene los parametros para la accion
@@ -138,7 +140,26 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["POSITION_REQUIRED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
+	}
+
+	/*
+	//Actualizar posicion
+	if(intval($tipo) == 10 && $pos == "") {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["POSITION_REQUIRED"];
+		//Termina
+		goto _Exit;
+	}
+	*/
+	
+	//Si no tiene los parametros para la accion
+	//Cancelar
+	if(intval($tipo) == 10 && $det == "") {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["NO_DETAILS_FOR_DELAY"];
+		//Termina
+		goto _Exit;
 	}
 	
 	//Verifica la sesion
@@ -148,10 +169,8 @@
 
 	//Verifica si hay error
 	if(!$check["success"]) {
-		//Asigna el mensaje
-		$result["message"] = $check["message"];
-		//Termina
-		exit(json_encode($result));
+		header("HTTP/1.1 401 Unauthorized " . $_SESSION["SESSION_ENDED"]);
+		exit;		
 	}
 
 	//Verifica el ID de servicio
@@ -164,7 +183,12 @@
 		//Asigna el mensaje
 		$result["message"] = $service->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
+	}
+	
+	//Verifica quien recibe el paquete
+	if(intval($tipo) == 6 && $det == "") {
+		$det = $service->DELIVER_TO;
 	}
 	
 	$actions = json_decode($reso->getResourceByName("ACTIONS"));
@@ -178,7 +202,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["NO_VALID_ACTION_TYPE"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Verifica si hay error
@@ -186,7 +210,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["NO_VALID_METHOD_TYPE"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	if($action->require_position) {
@@ -194,7 +218,7 @@
 			//Asigna el mensaje
 			$result["message"] = $_SESSION["POSITION_REQUIRED"];
 			//Termina
-			exit(json_encode($result));
+			goto _Exit;
 		}
 		$action->position = $pos;
 	}
@@ -205,10 +229,16 @@
 	$action->user = $user;
 	$action->{"collect"} = false;
 	$action->{"price"} = 0;
+	$action->{"details"} = $det;
+	$action->{"notes"} = $note;
+	$action->{"notification"} = "";
 	
-	//Instancia la clase usuario
+	//Instancia la clase definida
 	require_once("../core/classes/" . $className . ".php");
 	$class = new $className;
+
+	$result["data"] = $action;
+	$result["post"] = "";
 
 	//Realiza la accion
 	$result["success"] = $class->$method($action);
@@ -220,14 +250,54 @@
 			$action->collect = $service->CheckToCollect();
 			$action->price = $service->PRICE;
 		}
+		elseif(intval($tipo) == 10) {
+			require_once("../core/classes/users.php");
+			$usua = new users();
+			$body = sprintf($config->verifyValue("DELAY_MESSAGE"),$det,$service->type->getResource());
+			$to = implode(";",[$service->REQUESTED_EMAIL . "," . $service->REQUESTED_BY, $service->DELIVER_EMAIL . "," . $service->DELIVER_TO]);
+			$subject = $config->verifyValue("DELAY_SUBJECT");
+			$usua->sendMail($body, $to, $subject);
+			if($usua->nerror > 0) {
+				$action->{"notification"} = $usua->error;
+				_error_log($usua->error);
+			}
+			else {
+				$action->{"notification"} = $reso->getResourceByName("NOTIFICATION_SENT") . " (TO: $to SUBJECT: $subject BODY: $body)"; 
+			}
+		}
 		
-		$result["data"] = $action;
+		//Verifica si debe realizar una accion posterior
+		if(intval($tipo) != $action->action) {
+			//Instancia la clase definida
+			require_once("../core/classes/" . $action->class . ".php");
+			$class = new $action->class;
+			
+			foreach($action->position as $key => $val) {
+				if(strpos($val,"{{USER_ID}}") !== false)
+					$val = str_replace("{{USER_ID}}", $user, $val);
+				$class->$key = $val;
+			}
+			
+			$method = $action->method;
+			$class->$method();
+			
+			if($class->nerror > 0) 
+				$result["message"] .= "<br/>Action Post error: " . $class->error . " SQL " . $class->sql;
+			else 
+				$result["message"] .= "<br/>Action Post: OK";				
+
+			$result["post"] = $action;
+		}
+		
 	}
 	else {
 		$result["message"] = $class->error;
 		if(boolval($debug)) 
 			$result["data"] = $class->sql;
 	}
+
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

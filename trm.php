@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -19,7 +19,7 @@
 	if($result["success"] !== true) 
 		$inter->redirect($result["link"]);
 
-	require_once("core/classes/money_converter.php");
+	require_once("core/classes/money-bill-1_converter.php");
 	
 ?>
 <!DOCTYPE html>
@@ -153,21 +153,24 @@
 	
 	
     <script>
-	var fields = ["MONEY_ID", "MONEY_FROM", "MONEY_TO", "VALUE_TO", "DATERATE", "REGISTERED_ON", "REGISTERED_BY", "BLOCKED", "LANGUAGE_ID"];
+	var fields = ["money-bill-1_ID", "money-bill-1_FROM", "money-bill-1_TO", "VALUE_TO", "DATERATE", "REGISTERED_ON", "REGISTERED_BY", "BLOCKED", "LANGUAGE_ID"];
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();		
         table = $('#tableTRM').DataTable({
 			"ajax": { 
 				"url": "core/actions/_load/__loadSummary.php",
 				"data": {
-					"class": "money_converter",
+					"class": "money-bill-1_converter",
 					"field": fields.join()
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
-				{ "data": "MONEY_ID", "searchable": false, "visible": false },
-				{ "data": "MONEY_FROM", "responsivePriority": 2 },
-				{ "data": "MONEY_TO", "responsivePriority": 3 },
+				{ "data": "money-bill-1_ID", "searchable": false, "visible": false },
+				{ "data": "money-bill-1_FROM", "responsivePriority": 2 },
+				{ "data": "money-bill-1_TO", "responsivePriority": 3 },
 				{ "data": "VALUE_TO", "responsivePriority": 4 },
 				{ "data": "DATERATE", "responsivePriority": 5 },
 				{ "data": "REGISTERED_ON" },
@@ -256,7 +259,7 @@
 			data: { 
 				txtId: id,
 				txtAction: action,
-				txtClass: "money_converter"
+				txtClass: "money-bill-1_converter"
 			},
 			beforeSend: function (xhrObj) {
 				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
@@ -297,7 +300,7 @@
 				data: { 
 					txtId: id,
 					activate: activate,
-					txtClass: "money_converter", 
+					txtClass: "money-bill-1_converter", 
 					txtLink: "trm.php",
 					txtPre: "TRM"
 				},

@@ -453,7 +453,7 @@ class Mimetypes
         'mmd' => 'application/vnd.chipnuts.karaoke-mmd',
         'mmf' => 'application/vnd.smaf',
         'mmr' => 'image/vnd.fujixerox.edmics-mmr',
-        'mny' => 'application/x-msmoney',
+        'mny' => 'application/x-msmoney-bill-1',
         'mobi' => 'application/x-mobipocket-ebook',
         'mods' => 'application/mods+xml',
         'mov' => 'video/quicktime',

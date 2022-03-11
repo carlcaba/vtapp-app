@@ -14,6 +14,9 @@
 	$conf = new configuration("MAPS_API_CALLBACK_AUTOCOMPLETE");
 	$autocomplete_callback = $conf->verifyValue();
 
+	if(!isset($titleMapModal))
+		$titleMapModal = "";
+
 	if($titleMapModal == "") {
 		$titleMapModal = $_SESSION["SELECT_LOCATION"];
 		$showOkMap = true;

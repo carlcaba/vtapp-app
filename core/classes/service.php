@@ -22,6 +22,7 @@ class service extends table {
 	var $type;
 	var $vehicle;
 	var $vie2;
+	var $vie3;
 	
 	//Constructor
 	function __constructor($service = "") {
@@ -50,6 +51,7 @@ class service extends table {
 		$this->vehicle = new vehicle_type();
 		$this->view = "VIE_SERVICE_SUMMARY";		
 		$this->vie2 = "VIE_NOT_BIDDED_SUMMARY";		
+		$this->vie3 = "VIE_SERVICE_LIST_SUMMARY";		
 	}
 
     //Funcion para Set el usuario
@@ -305,7 +307,16 @@ class service extends table {
 	//Funcion para contar los asociados
 	function getTotalCount() {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT COUNT(SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE";
+		$this->sql = "SELECT COUNT(SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE ";
+		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
+			$this->sql .= "AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+		}
+		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
+			$this->sql .= "AND PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+		}
+		else if($_SESSION["vtappcorp_useraccess"] == "VIS") {
+			$this->sql .= "AND USER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+		}
         //Obtiene los resultados
         $row = $this->__getData();
 		//Numero a retornar
@@ -354,6 +365,54 @@ class service extends table {
 			$return = ($row[0] == "1");
 		return $return;	
 	}
+
+	function getTotal($type = 0, $curmon = true) {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT SUM(PRICE) FROM $this->table ";
+		if($curmon) 
+			$this->sql .= "WHERE MONTH(REGISTERED_ON) = MONTH(CURRENT_DATE()) AND YEAR(REGISTERED_ON) = YEAR(CURRENT_DATE())";
+		else 
+			$this->sql .= "WHERE YEAR(REGISTERED_ON) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(REGISTERED_ON) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)";
+        //Obtiene los resultados
+        $row = $this->__getData();
+		//Numero a retornar
+		$return = 0;
+        //Registro existe
+        if($row) {
+			switch($type) {
+			case 0:
+				$return = floatval($row[0]);
+				break;
+			case 1:
+				$return = floatval($row[0] * 0.7);
+				break;
+			case 2:
+				$return = floatval($row[0] * 0.3);
+				break;
+			}
+		}
+		return $return;	
+	}
+
+	function raiseTotal($type = 0) {
+		//Arma la sentencia SQL
+		$current = $this->getTotal($type);
+		$last = $this->getTotal($type,false);
+		//Valor a retornar
+		$return = "";
+		if($last > 0)
+			$percent = $current * 100 / $last;
+		else 
+			$percent = 0;
+		//Verifica valores
+		if($percent > 100)
+			$return = "<span class=\"description-percentage text-success\"><i class=\"fa fa-caret-up\"></i> " . number_format($percent-100,2,".",",") . "%</span>";
+		else if($percent < 100)
+			$return = "<span class=\"description-percentage text-danger\"><i class=\"fa fa-caret-down\"></i> " . number_format($percent-100,2,".",",") . "%</span>";
+		else 
+			$return = "<span class=\"description-percentage text-warning\"><i class=\"fa fa-caret-left\"></i> " . number_format(0,2,".",",") . "%</span>";
+		return $return;	
+	}
 	
 	function updateState($state = "", $lp = "") {
 		//Verifica el estado
@@ -361,7 +420,7 @@ class service extends table {
 			$state = $this->state->getNextState();
 		//Arma la sentencia sql
 		$this->sql = "UPDATE " . $this->table . " SET STATE_ID = '" . $state . "' WHERE ID = " . $this->_checkDataType("ID");
-		error_log("SQL Service: " . $this->sql . " " . print_r(debug_backtrace(2), true));
+		_error_log("Update Service: ", $this->sql);
 		//Ejecuta la sentencia
 		$this->executeQuery();
 	}
@@ -380,7 +439,6 @@ class service extends table {
 					"REQUESTED_ZONE = " . $this->request_zone->ID . " AND " .
 					"DELIVER_ZONE = " . $this->request_zone->ID .
 					$this->ConditionLoad();
-		error_log($this->sql . " " . print_r(debug_backtrace(2), true));
 		//Obtiene los resultados
         $row = $this->__getData();
 		//Numero a retornar
@@ -398,11 +456,9 @@ class service extends table {
 		//Arma la sentencia de consulta
 		$this->sql = "SELECT * FROM $this->view WHERE IS_BLOCKED = FALSE AND " .
 					"REGISTERED_BY = " . $this->_checkDataType("REGISTERED_BY") . " AND " .
-					//"REQUESTED_ZONE = " . $this->request_zone->ID . " AND " .
-					//"DELIVER_ZONE = " . $this->request_zone->ID .
 					"PAYED = FALSE AND NOTIFIED = FALSE " .
 					$this->ConditionLoad();
-		error_log($this->sql . " " . print_r(debug_backtrace(2), true));
+		_error_log("Testing error log", $this->sql);
 		//Variable a retornar
 		$return = "";
 		$counter = 0;
@@ -416,21 +472,21 @@ class service extends table {
 			//Requested zone
 			if($row[40] == $this->request_zone->ZONE_NAME) {
 				$blZR = true;
-				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" /></td>\n";
+				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $_SESSION["START_TYPING_ZONE"] . "\" /></td>\n";
 			}
 			else 
-				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" value=\"$row[40]\" disabled/></td>\n";
+				$return .= "<td><input id=\"txtZONE_REQUEST_$counter\" name=\"txtZONE_REQUEST_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $_SESSION["START_TYPING_ZONE"] . "\" value=\"$row[40]\" disabled/></td>\n";
 			//Deliver to
 			$return .= "<td>$row[16]</td>\n";
 			//Deliver address
 			$return .= "<td id=\"tdDELIVER_ADDRESS_$counter\">$row[20]</td>\n";
 			//Deliver zone
 			if($row[48] == $this->request_zone->ZONE_NAME) {
-				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\"/></td>\n";
+				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $_SESSION["START_TYPING_ZONE"] . "\"/></td>\n";
 				$blZD = true;
 			}
 			else 
-				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $SESSION["START_TYPING_ZONE"] . "\" value=\"$row[48]\" disabled/></td>\n";
+				$return .= "<td><input id=\"txtZONE_DELIVER_$counter\" name=\"txtZONE_DELIVER_$counter\" type=\"text\" class=\"form-control\" placeholder=\"" . $_SESSION["START_TYPING_ZONE"] . "\" value=\"$row[48]\" disabled/></td>\n";
 			//Type
 			$return .= "<td>$row[28]</td>\n";
 			//PRICE
@@ -458,9 +514,9 @@ class service extends table {
 				$maps = "<button type=\"button\" class=\"btn btn-default\" id=\"btnLocate_$counter\" name=\"btnLocate_$counter\" title=\"" . $_SESSION["COMPLETE_LOCATION"] . "\" onclick=\"completeLocation($counter);\" " . ($blZR && $blZD ? "" : "disabled") . "><i class=\"fa fa-map\"></i></button>";
 			else 
 				$maps = "";
-			$save = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["SAVE"] . "\" onclick=\"save($counter);\" id=\"btnSave_$counter\" name=\"btnSave_$counter\" " . ($blZR && $blZD ? "" : "disabled") . "><i class=\"fa fa-floppy-o\"></i></button>";
-			$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $row[0] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
-			$delete = "<button type=\"button\" class=\"btn btn-default\" id=\"btnDelete_$counter\" name=\"btnDelete_$counter\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $row[0] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+			$save = "<button type=\"button\" class=\"btn btn-success\" title=\"" . $_SESSION["SAVE"] . "\" onclick=\"save($counter);\" id=\"btnSave_$counter\" name=\"btnSave_$counter\" " . ($blZR && $blZD ? "" : "disabled") . "><i class=\"fa fa-floppy-o\"></i></button>";
+			$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $row[0] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
+			$delete = "<button type=\"button\" class=\"btn btn-danger\" id=\"btnDelete_$counter\" name=\"btnDelete_$counter\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $row[0] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
 			$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $maps . $view . $save . $delete . "</div></div>";
 			//acciones
 			$return .= "<td>$action</td>";
@@ -591,11 +647,119 @@ class service extends table {
             }
         }
 	}
+	
+	//Funcion para verificar datos adicionales
+	function getAditionalData() {
+		$fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE", "DATE_FORMAT(STR_TO_DATE(TIME_START_TO_DELIVER,'%H'),'%l %p')", "DATE_FORMAT(STR_TO_DATE(TIME_FINISH_TO_DELIVER,'%H'),'%l %p')", "CLIENT_PAYMENT_TYPE", "PARTNER_NAME"];
+		$this->sql = "SELECT DISTINCT " . str_replace(" , "," ",implode(", ",$fields)) . " FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
+		$row = $this->__getData();
+		_error_log("Nothing",$this->sql);
+		return $row;
+	}
+
+	//Funcion que muestra los servicios de un perfil
+	function showCards($reference) {
+		$result = "<div class=\"card-body\">\n" .
+					"<div>\n" .
+					"<div class=\"btn-group w-100 mb-2\">\n" .
+					"<a class=\"btn btn-default active\" href=\"javascript:void(0)\" title=\"" . $_SESSION["ALL_ITEMS"] . "\" data-filter=\"all\"> " . $_SESSION["ALL_ITEMS"] . " </a>\n";
+		$sWhere = "";
+		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
+			$sWhere = "WHERE CLIENT_ID = '$reference'";
+		}
+		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
+			$sWhere = "WHERE PARTNER_ID = '$reference'";
+		}
+		else if($_SESSION["vtappcorp_useraccess"] == "VIS") {
+			$sWhere = "WHERE USER_ID = '$reference'";
+		}
+		$this->sql = "SELECT DISTINCT SERVICE_STATE_NAME, ID_STATE, ICON_STATE, COUNT(SERVICE_ID) " .
+				"FROM $this->view " . $sWhere .
+				" GROUP BY SERVICE_STATE_NAME, ID_STATE, ICON_STATE " .
+				"ORDER BY 4 DESC LIMIT 4";
+		_error_log($this->sql);
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$result .= "<a class=\"btn btn-default bg-light\" href=\"javascript:void(0)\" title=\"" . $_SESSION["STATUS"] . " " . $row[0] . "\" data-filter=\"$row[1]\"> <i class=\"$row[2]\"></i>&nbsp; " . $_SESSION["STATUS"] . " $row[0] ($row[3])</a>\n";
+		}
+		$result .= "</div>\n";
+		$this->sql = "SELECT DISTINCT SERVICE_ID, USER_ID, CLIENT_NAME, DELIVER_TO, DELIVER_ADDRESS, REQUESTED_BY, SERVICE_STATE_NAME, ID_STATE, ICON, ICON_STATE " .
+			"FROM $this->view $sWhere";
+		_error_log($this->sql);
+		$result .= "<div class=\"mb-2\">\n" .
+			"<a class=\"btn btn-secondary\" href=\"javascript:void(0)\" data-shuffle> Reordenar </a>\n" .
+			"<div class=\"float-right\">\n" .
+			"<select class=\"custom-select\" style=\"width: auto;\" data-sortOrder>\n" .
+			"<option value=\"index\"> Ordenar por estado </option>\n" .
+			"<option value=\"sortData\"> Ordenar por destinatario </option>\n" .
+			"</select>\n" .
+			"<div class=\"btn-group\">\n" .
+			"<a class=\"btn btn-default\" href=\"javascript:void(0)\" data-sortAsc> Ascendente </a>\n" .
+			"<a class=\"btn btn-default\" href=\"javascript:void(0)\" data-sortDesc> Descendente </a>\n" .
+			"</div>\n" .
+			"</div>\n" .
+			"</div>\n";
+		$result .= "<div>\n<div class=\"filter-container p-0 row\">\n";
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$state = str_replace(" ","-",$row[6]);
+			$result .= "<div class=\"filtr-item col-sm-3\" data-category=\"$row[7]\" data-sort=\"$state sample\">\n";
+				$result .= "<div class=\"card card-primary card-outline direct-chat direct-chat-primary\">\n";
+					$result .= "<div class=\"card-header\">\n";
+						$result .= "<h3 class=\"card-title\"><i class=\"$row[9]\" title=\"$row[6]\"></i>&nbsp;$row[3]</h3>\n";
+						$result .= "<div class=\"card-tools\">\n";
+							$result .= "<button type=\"button\" title=\"" . $_SESSION["MINIMIZE"] . "\" class=\"btn btn-tool\" data-card-widget=\"collapse\">\n";
+								$result .= "<i class=\"fa fa-minus\"></i>\n";
+							$result .= "</button>\n";
+							/*
+							$result .= "<button type=\"button\" title=\"" . $_SESSION["TIMELINE"] . "\" class=\"btn btn-tool\" onclick=\"location.href='service-log.php?id=$row[0]'\">\n";
+								$result .= "<i class=\"fa fa-history\"></i>\n";
+							$result .= "</button>\n";
+							$result .= "<button type=\"button\" class=\"btn btn-tool\" title=\"". $_SESSION["INFORMATION"] . "\">\n";
+								$result .= "<i class=\"fa fa-info\"></i>\n";
+							$result .= "</button>\n";
+							$result .= "<button type=\"button\" title=\"" . $_SESSION["DELETE"] . "\" class=\"btn btn-tool\" data-card-widget=\"remove\">\n";
+								$result .= "<i class=\"fa fa-trash\"></i>\n";
+							$result .= "</button>\n";
+							*/
+						$result .= "</div>\n";
+					$result .= "</div>\n";
+					$result .= "<div class=\"card-body\">\n";
+						$result .= "<a href=\"javascript:void(0);\" data-toggle=\"lightbox\" data-title=\"" . $_SESSION["DESTINY"] . ": $row[3]\" data-height=\"490\" data-remote=\"core/actions/_load/__loadInfoService.php?id=$row[0]\">\n";
+							$result .= "<div class=\"direct-chat-messages\">\n";
+								$result .= "<div class=\"direct-chat-msg\">\n";
+									$result .= "<div class=\"direct-chat-infos clearfix\">\n";
+										$result .= "<span class=\"float-left\">" . $_SESSION["DESTINY"] . "</span>\n";
+									$result .= "</div>\n";
+									$result .= "<div class=\"direct-chat-timestamp\">$row[4]</div>\n";
+								$result .= "</div>\n";
+								$result .= "<div class=\"direct-chat-msg\">\n";
+									$result .= "<div class=\"direct-chat-infos clearfix\">\n";
+										$result .= "<span class=\"float-left\">" . $_SESSION["STATUS"] . "</span>\n";
+									$result .= "</div>\n";
+									$result .= "<div class=\"direct-chat-timestamp\">$row[6]</div>\n";
+								$result .= "</div>\n";
+								$result .= "<div class=\"direct-chat-msg\">\n";
+									$result .= "<div class=\"direct-chat-infos clearfix\">\n";
+										$result .= "<span class=\"float-left\">" . $_SESSION["SERVICE_TABLE_TITLE_3"] . "</span>\n";
+									$result .= "</div>\n";
+									$result .= "<div class=\"direct-chat-timestamp\">$row[5]</div>\n";
+								$result .= "</div>\n";
+							$result .= "</div>\n";
+						$result .= "</div>\n";
+					$result .= "</a>\n";
+				$result .= "</div>\n";
+			$result .= "</div>\n";
+		}
+		$result .= "</div>\n</div>\n";
+		return $result;
+	}
 		
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
 		$fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE", "TO_COLLECT"];
 		//Agrega la clausula WHERE personalizada
 		if($sWhere != "")
 			$sWhere .= " AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"];
@@ -611,7 +775,7 @@ class service extends table {
 			$sWhere .= " AND USER_ID = '" . $_SESSION["vtappcorp_userid"] . "'";
 		}
 		//Cuenta el total de filas
-		$this->sql = "SELECT COUNT(DISTINCT " . $fields[0] . ") FROM $this->view $sWhere";
+		$this->sql = "SELECT COUNT(DISTINCT " . $fields[0] . ") FROM $this->vie3 $sWhere";
         //Obtiene los resultados
         $row = $this->__getData();
         //Registro no existe
@@ -627,42 +791,42 @@ class service extends table {
 			"sql" => "");
 		
 		//Arma la sentencia SQL
-		$this->sql = "SELECT DISTINCT " . str_replace(" , "," ",implode(", ",$aColumnsBD)) . " FROM $this->view $sWhere $sOrder $sLimit";
+		$this->sql = "SELECT DISTINCT " . str_replace(" , "," ",implode(", ",$aColumnsBD)) . " FROM $this->vie3 $sWhere $sOrder $sLimit";
 		$output["sql"] = $this->sql;
 		//Recoge los resultados
 		foreach($this->__getAllData() as $aRow) {
 			//$row = array_fill_keys($aColumnsDB,'');
 			$row = array_fill_keys($aColumnsBD,'');
-			for($i = 0;$i < count($aColumnsBD)-1;$i++) {
+			for($i = 0;$i < count($aColumnsBD)-2;$i++) {
 				if(strpos($aColumnsBD[$i],"_ID") !== false) {
 					if($aColumnsBD[$i] == $fields[0]) {
 						//Verifica el estado para activar o desactivar
 						if($aRow[7])
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',true,'" . $aRow[1] . "');\"><i class=\"fa fa-unlock\"></i></button>";
+							$activate = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["ACTIVATE"] . "\" type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',true,'" . $aRow[1] . "');\"><i class=\"fa fa-unlock\"></i></button>";
 						else 
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',false,'" . $aRow[1] . "');\"><i class=\"fa fa-lock\"></i></button>";
+							$activate = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["DEACTIVATE"] . "\" type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',false,'" . $aRow[1] . "');\"><i class=\"fa fa-lock\"></i></button>";
 						
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
-						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-						$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
-						$actBid = ($aRow[11] == "0" && $aRow[12] == "1") ? "" : "disabled";
-						$actPay = ($aRow[12] == "1") ? "disabled" : "";
+						$view = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["VIEW"] . "\" type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
+						$edit = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["EDIT"] . "\" type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+						$delete = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["DELETE"] . "\" type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+						$actBid = ($aRow[11] == "0" && ($aRow[12] == "1" || $aRow[15] == "1")) ? "" : "disabled";
+						$actPay = ($aRow[12] == "1" || $aRow[15] == "1") ? "disabled" : "";
 						$payed = "";
 						if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL")
-							$bid = "<button type=\"button\" class=\"btn btn-default\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
+							$bid = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["NOTIFY"] . "\" type=\"button\" class=\"btn btn-success\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
 						else if($_SESSION["vtappcorp_useraccess"] == "GOD") {
-							$bid = "<button type=\"button\" class=\"btn btn-default\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
-							$payed = "<button type=\"button\" class=\"btn btn-default\" name=\"payBtn" . $aRow[0] . "\" id=\"payBtn" . $aRow[0] . "\" title=\"" . $_SESSION["MARK_AS_PAYED"] . "\" onclick=\"markAsPayed('" . $aRow[$i] . "');\" $actPay><i class=\"fa fa-credit-card\"></i></button>";
+							$bid = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["NOTIFY"] . "\" type=\"button\" class=\"btn btn-success\" name=\"bidBtn" . $aRow[0] . "\" id=\"bidBtn" . $aRow[0] . "\" title=\"" . $_SESSION["NOTIFY"] . "\" onclick=\"startBid('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-gavel\"></i></button>";
+							$payed = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["MARK_AS_PAYED"] . "\" type=\"button\" class=\"btn btn-default\" name=\"payBtn" . $aRow[0] . "\" id=\"payBtn" . $aRow[0] . "\" title=\"" . $_SESSION["MARK_AS_PAYED"] . "\" onclick=\"markAsPayed('" . $aRow[$i] . "');\" $actPay><i class=\"fa fa-credit-card\"></i></button>";
 						}
 						else	
 							$bid = "";
 						if($aRow[11] == 1) {
-							$assign = "<button type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-motorcycle\"></i></button>";
+							$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["ASSIGN"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-motorcycle\"></i></button>";
 						}
 						else {
-							$assign = "<button type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
+							$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["INFORMATION"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
 						}
-						$history = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["TIMELINE"] . "\" onclick=\"location.href = 'service-log.php?id=" . $aRow[$i] . "';\"><i class=\"fa fa-history\"></i></button>";
+						$history = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["TIMELINE"] . "\" type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["TIMELINE"] . "\" onclick=\"location.href = 'service-log.php?id=" . $aRow[$i] . "';\"><i class=\"fa fa-history\"></i></button>";
 						
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $history . $activate . $payed . $bid . $assign . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -780,11 +944,13 @@ class service extends table {
 					"fragile" => $row[15],
 					"roundtrip" => $row[41],
 					"notes" => $row[27],
-					"time_start" => $row[45],
-					"time_finish" => $row[46],
+					"time_start" => $row[46],
+					"time_finish" => $row[45],
 					"vehicle_type_id" => $row[52],
 					"vehicle_type_name" => $row[53],
-					"vehicle_icon" => $row[16]);
+					"vehicle_icon" => $row[16],
+					"today" => date("y-m-d h:i:sa"));
+			$parZoneD = $this->deliver_zone->getParentZone();
 			switch($step) {
 				//Paso 1
 				case 1: {
@@ -809,7 +975,6 @@ class service extends table {
 														"valid" => false));
 						}
 					}
-					$parZoneD = $this->deliver_zone->getParentZone();
 
 					//Agrega los campos del paso
 					$data["deliver_address"] = $row[3];
@@ -831,6 +996,7 @@ class service extends table {
 					$now = mktime(intval(date("H")),0,0,intval(date("m")),intval(date("d")),intval(date("Y")));
 					$hourdiff = round(($maxtime - $now)/3600, 1);
 					$times = array(1,2,3);
+					$istrue = false;
 					foreach($times as $key => $value) {
 						if($key == 0) {
 							array_push($validate, array("id" => ($key + 1),				
@@ -840,7 +1006,7 @@ class service extends table {
 						else {
 							array_push($validate, array("id" => ($key + 1) ,
 														"text" => sprintf($_SESSION["TIME_PICK_UP"],$times[$key - 1],$value,$_SESSION["HOURS"]),
-														"valid" => $hourdiff == $value));
+														"valid" => (($key == 2 && $hourdiff > $value) ? true : $hourdiff == $value)));
 						}
 					}
 					$parZoneD = $this->deliver_zone->getParentZone();
@@ -959,7 +1125,7 @@ class service extends table {
 		catch (Exception $ex) {
 			$this->nerror = 110;
 			$this->error = $ex->getMessage();
-			error_log("Error getting coordinates: " . $ex->getMessage() . "\n" . $url . "\n" . $result . " " . print_r(debug_backtrace(2), true));
+			_error_log("Error getting coordinates: " . $ex->getMessage());
 			$data = null;
 		}
 		return $data;
@@ -987,6 +1153,14 @@ class service extends table {
 					"FROM $this->view " .
 					"WHERE MONTH(REGISTERED_ON) = $month AND YEAR(REGISTERED_ON) = $year " .
 					"GROUP BY CONCAT(MONTHNAME(REGISTERED_ON),'/',YEAR(REGISTERED_ON))";
+		$this->sql = "SELECT CONCAT(MONTHNAME(S.REGISTERED_ON),'/',YEAR(S.REGISTERED_ON)) MONTH_, COUNT(S.ID) TOTAL, " .
+					"SUM(CASE WHEN E.STEP_ID < 6 THEN 1 ELSE 0 END) PROCESO, " .
+					"SUM(CASE WHEN E.STEP_ID > 5 AND E.STEP_ID < 11 THEN 1 ELSE 0 END) EN_CAMINO, " .
+					"SUM(CASE WHEN E.STEP_ID > 10 THEN 1 ELSE 0 END) TERMINADO " .
+					"FROM $this->table S " .
+					"INNER JOIN " . $this->state->table . " E ON (E.ID = S.STATE_ID) " .
+					"WHERE MONTH(S.REGISTERED_ON) = $month AND YEAR(S.REGISTERED_ON) = $year " .
+					"GROUP BY CONCAT(MONTHNAME(S.REGISTERED_ON),'/',YEAR(S.REGISTERED_ON))";
 		//Valor a retornar
 		$return = array("month" => date("F", mktime(0, 0, 0, $month, 1, $year)),
 						"year" => $year,
@@ -1042,8 +1216,8 @@ class service extends table {
 							"registered_on" => $row[3],
 							"notified_on" => $row[4],
 							"minutes" => intval($row[5]),
-							"new_stateid" => $row[6],
-							"notification_id" => $row[7]);
+							"new_stateid" => $row[7],
+							"notification_id" => $row[8]);
 			array_push($return,$data);
 		}
 		return $return;

@@ -60,7 +60,8 @@ class service_state extends table {
         $lang = $_SESSION["LANGUAGE"];
 	    //Arma la sentencia SQL
         $this->sql = "SELECT R.RESOURCE_TEXT FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
-            "ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE AND A.ID = $id";
+            "ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE AND A.ID = '$id'";
+		_error_log($this->sql);
         //Variable a retornar
         $result = "";
         //Obtiene los resultados
@@ -107,6 +108,22 @@ class service_state extends table {
         }
         //Retorna
         return $result;
+	}
+	
+	//Funcion que obtiene los estados
+	function getArray() {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT SERVICE_STATE_ID FROM $this->view " .
+					"WHERE IS_BLOCKED = FALSE ORDER BY ID_STATE";
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			array_push($return, $row[0]);
+		}
+		//Retorna
+		return $return;
+		
 	}
 
 	//Funcion para obtener la informacion del estado
@@ -168,23 +185,7 @@ class service_state extends table {
 			$actual++; 
 		//Arma la sentencia SQL
 		$this->sql = "SELECT ID FROM $this->table WHERE STEP_ID = $actual AND IS_BLOCKED = FALSE LIMIT 1";
-		
-		error_log("SQL Service-state: " . $this->sql . " " . print_r(debug_backtrace(2), true));
-		/*
-		//Separa los valores
-		$name = explode("_", $this->RESOURCE_NAME);
-		//Genera el siguiente valores
-		$number = intval(end($name));
-		//Ajusta el nombre
-		$name = array_slice($name,0,2);
-		//Agrega el nuevo numero
-		array_push($name,(++$number));
-		//Asigna el valor
-		$this->RESOURCE_NAME = implode("_",$name);
-        //Arma la sentencia SQL
-        $this->sql = "SELECT ID FROM $this->table WHERE RESOURCE_NAME = " . $this->_checkDataType("RESOURCE_NAME");
-		*/
-		
+		_error_log("Control get Next state ", $this->sql);
         //Obtiene los resultados
         $row = $this->__getData();
 		//Retorno

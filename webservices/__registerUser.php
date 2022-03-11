@@ -44,12 +44,14 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['name'])) {
 			if(!isset($_GET['name'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$name = $_GET["name"];
@@ -103,43 +105,43 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["NAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($phone)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["PHONE_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($email)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["EMAIL_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($company)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["COMPANY_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($ident)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["IDENTIFICATION_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(empty($password)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["PASSWORD_EMPTY_2"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(strlen($confirm) ) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["CONFIRM_PASSWORD_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Verifica la longitud de la contraseña
@@ -149,7 +151,7 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["PASSWORD_LENGTH"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	$site = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT");
@@ -164,7 +166,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["USER_EMAIL_REGISTERED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Verifica el cliente
@@ -177,7 +179,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["CLIENT_NAME_REGISTERED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	$clien->IDENTIFICATION = $ident;
@@ -187,7 +189,7 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["CLIENT_IDENTIFICATION_REGISTERED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Verifica el aliado
@@ -201,7 +203,7 @@
 			//Asigna el mensaje
 			$result["message"] = $_SESSION["PARTNER_NAME_NOT_REGISTERED"];
 			//Termina
-			exit(json_encode($result));
+			goto _Exit;
 		}
 	}
 	
@@ -228,7 +230,7 @@
 		//Asigna el mensaje
 		$result["message"] = $clien->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Asigna los datos
@@ -256,7 +258,7 @@
 		//Asigna el mensaje
 		$result["message"] = $usua->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Guarda las variables de sesion
@@ -307,6 +309,8 @@
 	$result["message"] = $_SESSION["USER_REGISTERED"];
 	$result["success"] = true;
 
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

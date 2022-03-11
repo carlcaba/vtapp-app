@@ -178,6 +178,9 @@
 					"options": "<?= $source ?>"
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "USER_ID", "searchable": false, "responsivePriority": 2 },
 				{ "data": "FULL_NAME", "responsivePriority": 3 },

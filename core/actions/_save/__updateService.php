@@ -111,7 +111,7 @@
 					//Actualiza la informacion
 					$quota->useQuota($amount);
 					if($quota->nerror > 0) {
-						error_log("Error applying quota on Client Quota: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
+						_error_log("Error applying quota on Client Quota: " . $quota->error . "\nTrace:" . $quota->sql . " " . print_r(debug_backtrace(2), true)); 
 					}
 					//Asigna el valor a devolver
 					$data = array("id" => $row[0],

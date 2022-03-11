@@ -58,16 +58,13 @@ class interfaces extends table {
 				$result = true;
 			}
 			else {
-				error_log("max time " . $max_time);				
 				//Verifica el ultimo acceso registrado (en la sesion)
 				$lastDate = $_SESSION['vtappcorp_lastAccess'];
-				error_log("last date " . $lastDate);				
 				//Toma el dateStamp del servidor
 				$now = date("Y-n-j H:i:s");
 				//Calcula la diferencia
 				$time = (strtotime($now)-strtotime($lastDate));
 				$this->error = $time;
-				error_log("time " . $time);				
 				//Si ya expiro la sesion
 				if($time >= $max_time) {
 					//Registra en el log
@@ -218,7 +215,7 @@ class interfaces extends table {
 		if(strpos($link,";") !== false)
 			$link = substr($link,0,strpos($link,";"));
         //Arma la sentencia SQL
-        $this->sql = "SELECT ID FROM $this->table WHERE LINK LIKE '" . $link . "%' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
+        $this->sql = "SELECT ID FROM $this->table WHERE LINK LIKE '" . $link . "' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
         //Obtiene los resultados
         $row = $this->__getData();
         //Valida el resultado
@@ -331,7 +328,14 @@ class interfaces extends table {
             }
 		}
 		$hs = headers_sent();
-		//$location = str_replace("//","/",$location);
+		$vvar = explode("//",$location);
+		_error_log($location);
+		if(count($vvar) > 1){
+			$location = $vvar[0] . "//";
+			$oarr = array_shift($vvar);
+			$location .= implode("/",$vvar);
+		}
+		_error_log($location);
 		if(!$hs) {
 			header("Location: $location");
 			//header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');

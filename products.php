@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -141,7 +141,7 @@
 	<script src="plugins/fastclick/fastclick.js"></script>
 	
     <script>
-	var fields = ["PRODUCT_ID", "PRODUCT_NAME", "CODE" , "SPECIFICATION", "TRADE", "QUANTITY", "PRICE", "MONEYTYPE", "OBSERVATION", "FIELD", "AREA_NAME", "CATEGORY_NAME", "REGISTERED_ON", "REGISTERED_BY", "BLOCKED", "LANGUAGE_ID"];
+	var fields = ["PRODUCT_ID", "PRODUCT_NAME", "CODE" , "SPECIFICATION", "TRADE", "QUANTITY", "PRICE", "money-bill-1TYPE", "OBSERVATION", "FIELD", "AREA_NAME", "CATEGORY_NAME", "REGISTERED_ON", "REGISTERED_BY", "BLOCKED", "LANGUAGE_ID"];
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();		
         table = $('#tableProduct').DataTable({
@@ -152,6 +152,9 @@
 					"field": fields.join()
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "PRODUCT_ID", "searchable": false, "visible": false },
 				{ "data": "PRODUCT_NAME", "responsivePriority": 2 },
@@ -159,8 +162,8 @@
 				{ "data": "SPECIFICATION", "visible": false },
 				{ "data": "TRADE" },
 				{ "data": "QUANTITY", "sClass": "text-center" , "render": $.fn.dataTable.render.number(",", ".", 0, '') },
-				{ "data": "PRICE", "sClass": "text-center" , "render": function (data, type, row) { return "$" + FormatNumber(data,2) + " " + row.MONEYTYPE; } },
-				{ "data": "MONEYTYPE", "visible": false },
+				{ "data": "PRICE", "sClass": "text-center" , "render": function (data, type, row) { return "$" + FormatNumber(data,2) + " " + row.money-bill-1TYPE; } },
+				{ "data": "money-bill-1TYPE", "visible": false },
 				{ "data": "OBSERVATION" },
 				{ "data": "FIELD" },
 				{ "data": "AREA_NAME" },

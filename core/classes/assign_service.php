@@ -18,6 +18,11 @@ class assign_service extends table {
 	
 	//Constructor de la clase
 	function __constructor() {
+		$this->assign_service();
+	}
+	
+	//Constructor anterior
+	function assign_service ($user  = '') {
 		//Llamado al constructor padre
 		parent::tabla("TBL_ASSIGN_SERVICE");
 		$this->REGISTERED_ON = "NOW()";
@@ -154,5 +159,52 @@ class assign_service extends table {
         //Busca la informacion
         $this->vehicle->__getInformation();
     }
+	
+	//Funcion para obtener la informacion del servicio asignado
+	function __getInformation() {
+		//Llama el metodo generico
+		parent::__getInformation();
+		//Verifica la informacion
+		if($this->nerror > 0) {
+			//Asigna el error
+			$this->error = $_SESSION["NOT_REGISTERED"];
+			$this->nerror = 20;
+		}
+		else {
+			//Asigna la informacion
+			$this->setService($this->SERVICE_ID);
+			$this->setPartner($this->PARTNER_ID);
+			$this->setEmployee($this->EMPLOYEE_ID);
+			$this->setVehicle($this->VEHICLE_ID);
+			//Limpia el error
+			$this->error = "";
+			$this->nerror = 0;
+		}
+	}
+
+	//Funcion para obtener la informacion por ID servicio
+	function getInformationByService() {
+		$this->sql = "SELECT ID FROM $this->table WHERE SERVICE_ID = " . $this->_checkDataType("SERVICE_ID");
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "UUID()";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = $_SESSION["NOT_REGISTERED"];
+        }
+        else {
+            //Asigna el ID
+            $this->ID = $row[0];
+            //Llama el metodo
+            $this->__getInformation();
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+	}
+
 }
 ?>

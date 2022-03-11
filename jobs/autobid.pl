@@ -1,0 +1,1 @@
+my $phpDoc = `/home1/logicaadmin/public_html/vtapp/jobs/__startBidAuto.php`;

@@ -11,6 +11,9 @@
 	$badgeNoti = ($totalNoti == 0) ? "" : "<span class=\"badge badge-warning navbar-badge\">$totalNoti</span>\n";
 	$badgeChat = ($totalChat == 0) ? "" : "<span class=\"badge badge-danger navbar-badge\">$totalChat</span>\n";
 ?>
+		<div class="preloader flex-column justify-content-center align-items-center">
+			<img class="animation__shake" src="img/logo/logo_app.png" alt="VtappLogo" height="143" width="136">
+		</div>
 		<!-- Navbar -->
 		<nav class="main-header navbar navbar-expand <?= $skin[0] ?> border-bottom">
 			<!-- Left navbar links -->
@@ -35,10 +38,16 @@
 			</form>
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
+				<li class="nav-item dropdown">
+					<a class="btn btn-primary" href="my-services.php" role="button">
+						<i class="fa fa-motorcycle"></i>
+						<?= $_SESSION["MY_SERVICES"] ?>
+					</a>				
+				</li>
 				<!-- Messages Dropdown Menu -->
 				<li class="nav-item dropdown">
 					<a class="nav-link" data-toggle="dropdown" href="#">
-						<i class="fa fa-comments-o"></i>
+						<i class="fa fa-comments"></i>
 						<div id="directChatCount"><?= $badgeChat ?></div>
 					</a>
 <?= $chat->showPanel() ?>
@@ -46,7 +55,7 @@
 				<!-- Notifications Dropdown Menu -->
 				<li class="nav-item dropdown">
 					<a class="nav-link" data-toggle="dropdown" href="#">
-						<i class="fa fa-bell-o"></i>
+						<i class="fa fa-bell"></i>
 						<div id="notificationCount"><?= $badgeNoti ?></div>
 					</a>
 <?= $noti->showPanel() ?>

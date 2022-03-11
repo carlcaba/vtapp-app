@@ -3358,3 +3358,7 @@ INSERT INTO TBL_SYSTEM_RESOURCE VALUES (0,'YOUR_SELECTION','Su selección',2,TRU
 
 INSERT INTO TBL_CLIENT VALUES('ec5239d9-7f28-11ea-91a7-54e6f54a840f', 'CLIENTE INDIVIDUAL', 1, 1, 'CC-1111111', '', '', '', '', '', 1, '', '', '', '', '', '', '', '', NULL, 0, '2020-04-15 09:53:52', 'carlcaba', NULL, '');
 INSERT INTO TBL_SYSTEM_RESOURCE VALUES (0,'TBL_CLIENT.EXPIRES_ON','text,Expira en,Expira en,,',2,FALSE,FALSE,NOW(),'carlcaba',NULL,NULL);
+
+
+	
+	

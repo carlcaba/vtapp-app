@@ -1,0 +1,69 @@
+{
+    "success": true,
+    "message": "Información actualizada",
+    "continue": true,
+    "description": "Webservice que retorna la información en el proceso de asignación de servicios",
+    "data": [
+        {
+            "id": "a73e9f0f-8779-11eb-b9f5-52540003f9f1",
+            "client_id": "ec5239d9-7f28-11ea-91a7-54e6f54a840f",
+            "client_identification": "CC-1111111",
+            "client_name": "CLIENTE INDIVIDUAL",
+            "deliver_to": "LEONARDO",
+            "requested_by": "ADMINISTRADOR ",
+            "requested_address": "Carrera 98a #65-10, Bogotá, Colombia",
+            "requested_cellphone": "3002764204",
+            "requested_email": "carlos.cabrera@vtapp.logicaestudio.com",
+            "requested_lat": "4.587",
+            "requested_lon": "-74.0938",
+            "requested_zone_id": "22",
+            "requested_zone_name": "CARACAS",
+            "requested_parent_zone_id": "16",
+            "requested_parent_zone_name": "ANTONIO NARIÑO",
+            "requested_city_id": "1",
+            "requested_city_name": "Bogotá",
+            "delivery_type_id": "1",
+            "delivery_type_name": "Sobre",
+            "quantity": "1",
+            "height": "28.00000000",
+            "width": "22.00000000",
+            "length": "10.00000000",
+            "weight": "5.00000000",
+            "fragile": "0",
+            "roundtrip": "0",
+            "notes": "dsadsa",
+            "time_start": "20",
+            "time_finish": "19",
+            "vehicle_type_id": "1",
+            "vehicle_type_name": "Bicicleta",
+            "vehicle_icon": null,
+            "validation": [
+                {
+                    "id": "579",
+                    "text": "EL DORADO (SANTA FE)",
+                    "valid": false
+                },
+                {
+                    "id": "478",
+                    "text": "CERROS DE ORIENTE (RAFAEL URIBE URIBE)",
+                    "valid": false
+                },
+                {
+                    "id": "222",
+                    "text": "SADEC DOS (CIUDAD BOLIVAR)",
+                    "valid": false
+                },
+                {
+                    "id": "22",
+                    "text": "CARACAS (ANTONIO NARIÑO)",
+                    "valid": true
+                },
+                {
+                    "id": -1,
+                    "text": "No tengo una ruta determinada (No tengo una ruta determinada)",
+                    "valid": true
+                }
+            ]
+        }
+    ]
+}

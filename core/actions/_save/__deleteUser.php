@@ -9,7 +9,7 @@
 	//Variable del codigo
 	$result = array('success' => false,
                     'message' => $_SESSION["NO_DATA_FOR_VALIDATE"],
-                    'link' => 'users.php');
+                    'link' => 'users-manager.php');
 	
 	//Captura las variables
 	if(!isset($_POST['strModel'])) {

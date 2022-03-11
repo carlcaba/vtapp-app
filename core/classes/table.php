@@ -5,17 +5,19 @@
 
 	define("LANGUAGE",2);
 	$_SESSION["LANGUAGE"] = 2;
-    date_default_timezone_set('America/Bogota');
+	setlocale(LC_TIME, "es_ES.UTF-8");
+	date_default_timezone_set('America/Bogota');
 	$log_file = "./my-errors.log"; 
 	ini_set('display_errors', '0');
 	ini_set("log_errors", TRUE);  
-	ini_set('error_log', $log_file); 
+	ini_set('_error_log', $log_file); 
 
 	//error_reporting(E_ALL | E_STRICT);	
 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
 	
 	//Incluye las clases requeridas
     require_once("connector_db.php");
+	require_once ('apache4log/Logger.php');
 
 	//Define la clase
     abstract class table {
@@ -79,22 +81,6 @@
 
         //Funcion que conecta a la BD
         private function connectIt() {
-			/*
-            //Revisa que no esté previamente conectado
-            if(!isset($this->conx)) {
-				//Refresca la conexion a la BD
-				$this->conx = new connector_db();
-			}
-			//Si ocurre algun error
-			if(!$this->conx->connect()) {
-				$this->error = $this->conx->Error;
-				$this->nerror = 10;
-			}
-			else {
-				$this->nerror = 0;
-				$this->error = "";
-			}
-			*/
 			$this->conx = connector_db::getInstance();
 			if(!$this->conx->connect()) {
 				$this->error = $this->conx->Error;
@@ -112,7 +98,6 @@
             if($this->nerror > 0)
                 return;
             //Arma la sentencia SQL
-            $this->sql = "SHOW FIELDS FROM $this->table";
             $this->sql = "SHOW FULL COLUMNS FROM $this->table";
             //Obtiene los campos
             $this->fields = 0;
@@ -265,6 +250,7 @@
 				switch(strtolower($this->arrColTypes[$idCol])) {
 					case "text":
 					case "char":
+					case "mediumtext":
 					case "varchar": {
 						if ($this->arrColDatas[$idCol] == "CURRENT_USER()") {
 							$datas = $this->arrColDatas[$idCol];
@@ -682,7 +668,7 @@
 				$row = mysqli_fetch_row($this->conx->query_id);
 				if($row == null)
 					//Log error
-					error_log("SQL: " . $this->sql);
+					_error_log("SQL: " . $this->sql);
 				else 
 					//Lo convierte
 					$row = utf8_converter($row);
@@ -730,7 +716,7 @@
         // $options: opciones adicionales (readonly)
 		// $reso: Opciones de mostrar como recursos
 		// $onlyfield: Si debe mostrar solo el campo
-        public function showField($field, $stabs, $icon = "", $class = "", $showValue = false, $value = "", $color = false, $size = "6,6,12", $options = "", $reso = null, $onlyfield = false, $label = true, $disabled = true) {
+        public function showField($field, $stabs, $icon = "", $class = "", $showValue = false, $value = "", $color = false, $size = "6,6,12", $options = "", $reso = null, $onlyfield = false, $label = true, $disabled = true, $extra = "" ) {
             $return = "";
             $valor = "";
             //Verifica la bandera
@@ -801,11 +787,11 @@
 					$return = "<div class=\"form-example-int form-horizental\">\n";
 					$return .= "<div class=\"row\">\n<div class=\"col-lg-2 col-md-3 col-sm-3 col-xs-12\">\n<label class=\"hrzn-fm\">" . $comments[1] . $required . "</label>\n</div>\n";
 					$return .= "<div class=\"form-group $dateclass3\">\n<div class=\"col-lg-8 col-md-7 col-sm-7 col-xs-12\">\n<div class=\"nk-int-st $dateclass2\">\n" . $spandate;
-					$return .= "$stabs\t\t<input id=\"$fieldname\" class=\"form-control $dateclass\" $numeric placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+					$return .= "$stabs\t\t<input id=\"$fieldname\" class=\"form-control $dateclass\" $numeric placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
 					$return .= "</div>\n</div>\n</div>\n</div>\n</div>\n";
 				}
 				else {
-					$return = "$stabs\t\t<input id=\"$fieldname\" class=\"form-control $dateclass\" $numeric placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+					$return = "$stabs\t\t<input id=\"$fieldname\" class=\"form-control $dateclass\" $numeric placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
 				}
 				//retorna
 				return $return;
@@ -867,7 +853,7 @@
 				}
                 $return .= "$stabs\t\t\t</div>\n";
                 $return .= "$stabs\t\t\t</div>\n";
-                $return .= "$stabs\t\t<input id=\"txt$control\" data-hidden=\"hf$control\" class=\"form-control txtResource\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"txt$control\" $comments[3] $required2 $options >\n";
+                $return .= "$stabs\t\t<input id=\"txt$control\" data-hidden=\"hf$control\" class=\"form-control txtResource\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"txt$control\" $comments[3] $required2 $options $extra>\n";
                 $return .= "$stabs\t\t\t</div>\n";
 			}
 			//Verifica si es identificacion
@@ -900,22 +886,22 @@
 				$return = str_replace("{{VAL_IDENTIFICATION}}",$valId,$return);
                 $return .= "$stabs\t\t\t</div>\n";
                 $return .= "$stabs\t\t\t</div>\n";
-                $return .= "$stabs\t\t<input id=\"txt$control\" data-hidden=\"hf$control\" class=\"form-control txtResource\" placeholder=\"$comments[2]\" value=\"" . $vals[1] . "\" type=\"$comments[0]\" name=\"txt$control\" $comments[3] $required2 $options >\n";
+                $return .= "$stabs\t\t<input id=\"txt$control\" data-hidden=\"hf$control\" class=\"form-control txtResource\" placeholder=\"$comments[2]\" value=\"" . $vals[1] . "\" type=\"$comments[0]\" name=\"txt$control\" $comments[3] $required2 $options $extra>\n";
                 $return .= "$stabs\t\t\t</div>\n";
 			}
             //Verifica si es dinero
-            else if(strpos($icon,"fa fa-money") !== false) {
+            else if(strpos($icon,"fa fa-money-bill-1") !== false) {
 				$local = localeconv();
                 //$return .= "$stabs\t\t\t<div class=\"input-group\">\n";
                 //$return .= "$stabs\t\t\t\t<span class=\"input-group-addon\">$</span>\n";
-                $return .= "$stabs\t\t\t\t<input id=\"$fieldname\" class=\"form-control \" placeholder=\"$comments[2]\" type=\"text\" name=\"$fieldname\" $comments[3] $required2 $valor $options data-smk-type=\"decimal\" data-smk-decimal-separator=\"" . $local["decimal_point"] . "\" data-smk-thousand-separator=\"" . $local["thousands_sep"] . "\" data-smk-digits-after-separator=\"" . $this->arrColPrecision[$field] . "\">\n";
+                $return .= "$stabs\t\t\t\t<input id=\"$fieldname\" class=\"form-control \" placeholder=\"$comments[2]\" type=\"text\" name=\"$fieldname\" $comments[3] $required2 $valor $options data-smk-type=\"decimal\" data-smk-decimal-separator=\"" . $local["decimal_point"] . "\" data-smk-thousand-separator=\"" . $local["thousands_sep"] . "\" data-smk-digits-after-separator=\"" . $this->arrColPrecision[$field] . "\" $extra>\n";
                 //$return .= "$stabs\t\t\t</div>\n";
             }
 			else if(strpos($this->arrColTypes[$field],"date") !== false) {
 				$return .= "<div class=\"input-group\">\n";
                 $return .= "<div class=\"input-group-prepend\">\n";
 				$return .= "<span class=\"input-group-text\"><i class=\"fa fa-calendar\"></i></span>\n</div>\n";
-                $return .= "$stabs\t\t<input id=\"$fieldname\" class=\"form-control date\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+                $return .= "$stabs\t\t<input id=\"$fieldname\" class=\"form-control date\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
                 $return .= "</div>\n";
 			}
 			//Verifica si es direccion
@@ -924,7 +910,7 @@
 				$return .= "\t<div class=\"input-group-prepend\">\n";
 				$return .= "\t\t<span class=\"input-group-text\"><i class=\"fa fa-map\"></i></span>\n";
 				$return .= "\t</div>\n";
-                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
 				$return .= "\t<div class=\"input-group-append\">\n";
 				$return .= "\t\t<div class=\"input-group-text\"><a href=\"#\" onclick=\"$('#divMapModal').modal('toggle');\" title=\"Open map\"><i class=\"fa fa-map-marker\"></i></a></div>\n";
 				$return .= "\t\t<input type=\"hidden\" id=\"hfLATITUDE\" name=\"hfLATITUDE\" value=\"\">\n";
@@ -938,16 +924,31 @@
 				$return .= "\t<div class=\"input-group-prepend\">\n";
 				$return .= "\t\t<span class=\"input-group-text\"><i class=\"fa fa-map\"></i></span>\n";
 				$return .= "\t</div>\n";
-                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
 				$return .= "\t<div class=\"input-group-append\">\n";
 				$return .= "\t\t<div class=\"input-group-text\"><a href=\"#\" onclick=\"showMap('$field');\" title=\"Open map\"><i class=\"fa fa-map-marker\"></i></a></div>\n";
-				$return .= "\t\t<input type=\"hidden\" id=\"hfLATITUDE_$field\" name=\"hfLATITUDE_$field\" value=\"\">\n";
-				$return .= "\t\t<input type=\"hidden\" id=\"hfLONGITUDE_$field\" name=\"hfLONGITUDE_$field\" value=\"\">\n";
+				//Verifica si tiene valor
+				$f2 = explode("_", $field);
+				if(($showValue || $valor != "") && $this->arrColDatas[$f2[0] . "_COORDINATES"] != "") {
+					$arrVal = explode(",",$this->arrColDatas[$f2[0] . "_COORDINATES"]);
+					$valLAT = $arrVal[0];
+					$valLON = $arrVal[1];
+				}
+				else {
+					$valLAT = "";
+					$valLON = "";
+				}
+				if($valLAT == "''")
+					$valLAT = "";
+				if($valLON == "''")
+					$valLON = "";
+				$return .= "\t\t<input type=\"hidden\" id=\"hfLATITUDE_$field\" name=\"hfLATITUDE_$field\" value=\"$valLAT\">\n";
+				$return .= "\t\t<input type=\"hidden\" id=\"hfLONGITUDE_$field\" name=\"hfLONGITUDE_$field\" value=\"$valLON\">\n";
 				$return .= "\t</div>\n";
 				$return .= "</div>\n";
             }
             else {
-                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options>\n";
+                $return .= "$stabs\t\t<input id=\"$fieldname\" $numeric class=\"form-control $dateclass\" placeholder=\"$comments[2]\" type=\"$comments[0]\" name=\"$fieldname\" $comments[3] $required2 $valor $options $extra>\n";
             }
 			if($icon != "") {
 				$return .= "</div>\n";
@@ -1188,4 +1189,31 @@
         }
     }
 	
+	if(!function_exists("_error_log")) {
+		//Funcion propia para generar errores
+		function _error_log($msg, $sql = "", $log = false) {
+			if($sql != "")
+				$msg .= "\nSQL: " . $sql;
+			$trace = debug_backtrace();
+			$msg .= "\nAt line " . $trace[0]["line"] . " on " . $trace[0]["file"] . "\nStackTrace";
+			foreach(array_slice($trace, 1) as $prg) {
+				$msg .= "\nLine " . $prg["line"] . " -> " . $prg["file"] . " : " . $prg["function"];
+			}
+			if(defined("DEBUG")) 
+				if(!boolval(DEBUG))
+					$msg = "DEBUG disabled!\n\n" . $msg;
+				else
+					$msg = "DEBUG enabled!\n\n" . $msg;
+			else
+				$msg = "DEBUG not defined!\n\n" . $msg;
+
+			if($log) {
+				Logger::configure($_SERVER['DOCUMENT_ROOT'] . '/config.xml');
+				$logger = Logger::getLogger("VTAPPLogger");
+				$logger->debug($msg);
+			}
+			else 
+				error_log($msg);
+		}
+	}	
 ?>

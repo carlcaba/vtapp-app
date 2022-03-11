@@ -10,6 +10,8 @@ require_once("city.php");
 require_once("configuration.php");
 require_once("resources.php");
 require_once("phpmailer/PHPMailerAutoload.php");
+require_once('vendor/autoload.php');
+use Twilio\Rest\Client;
 
 class users extends table {
 	//Relacion con otras clases
@@ -19,6 +21,7 @@ class users extends table {
 	var $adminMail;
 	var $view;
 	var $vieol;
+	var $vielo;
 	var $city;
 	
 	//Constructor
@@ -46,6 +49,7 @@ class users extends table {
 		$this->adminMail = "carlos.cabrera@vtapp.logicaestudio.com";
 		$this->view = "VIE_USER_SUMMARY";
 		$this->vieol = "VIE_USERS_ONLINE_SUMMARY";
+		$this->vielo = "VIE_USERS_ACTIONS";
 		if($user != "")
 			$this->__getInformation();
 	}
@@ -378,6 +382,7 @@ class users extends table {
 
 	//Funcion que despliega los valores en un usuario
 	function showOptionList($tabs = 8, $selected = "", $reference = "", $fulloptions = false) {
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
@@ -580,7 +585,7 @@ class users extends table {
 	//Funcion que adiciona el usuario
 	function __add($origin = "", $lang = "", $client = "") {
 		//Verifica el acceso
-		if($this->acceso->ID == 70 || $this->ACCESS_ID == 70) {
+		if($this->ACCESS_ID == 70 || $this->access->ID == 70) {
 			//Asigna usuario a cédula
 			$this->ID = explode("-",$this->IDENTIFICATION)[1];
 			//Asigna contraseña a celular
@@ -638,6 +643,18 @@ class users extends table {
 			$to = $this->conf->verifyValue("MAIN_MAIL");
 			//Envia el correo
 			$this->sendMail($mBody, $to);
+		}
+		
+		//Verifica si es mensajero
+		if($this->ACCESS_ID == 70 || $this->access->ID == 70) {
+			//Obtiene informacion de la configuracion
+			$mBody = sprintf($resources->getResourceByName("MESSENGER_WELCOME",$lang),			
+								$this->conf->verifyValue("APP_NAME"),
+								$this->ID,
+								$this->CELLPHONE,
+								$this->conf->verifyValue("COMPANY_NAME"));			
+			//Envia SMS
+			$this->sendSMS($mBody);
 		}
 	}
 	
@@ -827,7 +844,15 @@ class users extends table {
 			//Define datos del mensaje
 			$mail->addReplyTo($mailto[0], $this->conf->verifyValue("COMPANY_NAME"));
 			$mail->setFrom($mailto[0], $this->conf->verifyValue("COMPANY_NAME"));
-			$mail->addAddress($to, $this->FIRST_NAME . " " . $this->LAST_NAME);
+			//Si tiene mas de un destinatario
+			if(strpos($to,";") === false)
+				$mail->addAddress($to, $this->FIRST_NAME . " " . $this->LAST_NAME);
+			else {
+				foreach(explode(";",$to) as $to2) {
+					$dest = explode(",",$to2);
+					$mail->addAddress($dest[0], $dest[1]);
+				}
+			}
 			$mail->Subject  = $subject;
 
 			//Ajusta los parametros de la clase que envia el correo
@@ -919,13 +944,13 @@ class users extends table {
 			
 			//Verifica el estado para activar o desactivar
 			if($row[5])
-				$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ACTIVATE"] . "\"><i class=\"fa fa-unlock\"></i></button>";
+				$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["ACTIVATE"] . "\"><i class=\"fa fa-unlock\"></i></button>";
 			else 
-				$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DEACTIVATE"] . "\"><i class=\"fa fa-lock\"></i></button>";
+				$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["DEACTIVATE"] . "\"><i class=\"fa fa-lock\"></i></button>";
 			
-			$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('$row[0]','view')\"><i class=\"fa fa-eye\"></i></button>";
-			$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('$row[0]','edit')\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-			$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('$row[0]','delete')\"><i class=\"fa fa-trash\"></i></button>";
+			$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('$row[0]','view')\"><i class=\"fa fa-eye\"></i></button>";
+			$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('$row[0]','edit')\"><i class=\"fa fa-pen-to-square\"></i></button>";
+			$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('$row[0]','delete')\"><i class=\"fa fa-trash\"></i></button>";
 
 			$return .= "<td align=\"center\"><div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $activate . $view . $edit . $delete . "</div></div></td>\n";
 			$return .= "</tr>\n";
@@ -935,6 +960,7 @@ class users extends table {
 	}
 	
 	function dataForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -1139,19 +1165,19 @@ class users extends table {
 					if($aColumnsBD[$i] == "USER_ID") {
 						//Verifica el estado para activar o desactivar
 						if($aRow[5])
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $this->inter->encrypt($aRow[$i]) . "',true,'$aRow[$i]');\"><i class=\"fa fa-unlock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $this->inter->encrypt($aRow[$i]) . "',true,'$aRow[$i]');\"><i class=\"fa fa-unlock\"></i></button>";
 						else 
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $this->inter->encrypt($aRow[$i]) . "',false,'$aRow[$i]');\"><i class=\"fa fa-lock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $this->inter->encrypt($aRow[$i]) . "',false,'$aRow[$i]');\"><i class=\"fa fa-lock\"></i></button>";
 						
 						$profile = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["PROFILE"] . "\" onclick=\"location.href = 'profile.php?id=$aRow[$i]'\");\"><i class=\"fa fa-id-card\"></i></button>";
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','view');\"><i class=\"fa fa-eye\"></i></button>";
+						$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','view');\"><i class=\"fa fa-eye\"></i></button>";
 						$reset = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["RESET_PASSWORD"] . "\" onclick=\"resetPassword('" . $this->inter->encrypt($aRow[$i]) . "');\"><i class=\"fa fa-wrench\"></i></button>";
-						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-						$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+						$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+						$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $this->inter->encrypt($aRow[$i]) . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
 						if(substr($aRow[7],0,-1) == "CL") 
-							$funds = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ADD_FUNDS"] . "\" onclick=\"addFunds('" . $this->inter->encrypt($aRow[$i]) . "');\"><i class=\"fa fa-money\"></i></button>";
+							$funds = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ADD_FUNDS"] . "\" onclick=\"addFunds('" . $this->inter->encrypt($aRow[$i]) . "');\"><i class=\"fa fa-money-bill-1\"></i></button>";
 						else 
-							$funds = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ADD_FUNDS"] . "\" onclick=\"addFunds('" . $this->inter->encrypt($aRow[$i]) . "');\" disabled=\"disabled\"><i class=\"fa fa-money\"></i></button>";
+							$funds = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ADD_FUNDS"] . "\" onclick=\"addFunds('" . $this->inter->encrypt($aRow[$i]) . "');\" disabled=\"disabled\"><i class=\"fa fa-money-bill-1\"></i></button>";
 												
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $reset . $activate . $funds . $profile . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -1385,21 +1411,43 @@ class users extends table {
 		}
 		return $return;
     }
+	
+    //Funcion que verifica usuarios para logout
+    function getConnectedUsers() {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT * FROM " . $this->vielo . " WHERE ACTION_TAKE <> ''";
+		//Variable a devolver
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			//Arma la respuesta
+			$data = array("uid" => $row[0],
+							"exid" => $row[1],
+							"time" => $row[2],
+							"action" => $row[3]);
+			array_push($return,$data);
+		}
+		return $return;
+    }	
 
 	//Enviar notification a firebase
-	function sendGCM($message) {
+	function sendGCM($message, $sid = "") {
 		$id = $this->GOOGLE_USER;
 		if(!boolval($this->conf->verifyValue("PUSHSAFER_ACTIVE"))) {
 			$url = $this->conf->verifyValue("FIREBASE_SERVER");
-			$fields = array ('registration_ids' => array ($id),
-							'data' => array ("message" => $message)
-						);
+			$notify = array("title" => "Vtapp",
+							"body" => $message);
+			$data = array("id" => $sid);
+	
+			$fields = array("to" => $id,
+							"notification" => $notify,
+							"data" => $data);
 			$fields = json_encode ($fields);
 			$headers = array (
 					'Authorization: key=' . $this->conf->verifyValue("FIREBASE_SERVER_KEY"),
 					'Content-Type: application/json'
 			);
-			error_log("Start notification: data -> " . print_r($fields,true));
+			_error_log("Start notification: data -> " . print_r($fields,true));
 			$this->nerror = 0;
 			$this->error = "";
 			try {
@@ -1412,12 +1460,40 @@ class users extends table {
 				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
 				$result = curl_exec($ch);
+				if($result === false) {
+					throw new Exception(curl_error($ch));
+				}
+				$transObj = json_decode($result);
+				switch(json_last_error()) {
+					case JSON_ERROR_NONE:
+						$errMsg = "";
+						break;
+					case JSON_ERROR_DEPTH:
+						$errMsg = ' - Excedido tamaño máximo de la pila';
+						break;
+					case JSON_ERROR_STATE_MISMATCH:
+						$errMsg = ' - Desbordamiento de buffer o los modos no coinciden';
+						break;
+					case JSON_ERROR_CTRL_CHAR:
+						$errMsg = ' - Encontrado carácter de control no esperado';
+						break;
+					case JSON_ERROR_SYNTAX:
+						$errMsg = ' - Error de sintaxis, JSON mal formado';
+						break;
+					case JSON_ERROR_UTF8:
+						$errMsg = ' - Caracteres UTF-8 malformados, posiblemente codificados de forma incorrecta';
+						break;
+					default:
+						$errMsg = ' - Error desconocido';
+						break;
+				}
 				curl_close ($ch);
+				$result = $transObj;
 			}
 			catch (Exception $ex) {
 				$this->nerror = 110;
 				$this->error = $ex->getMessage();
-				error_log("Error on notification: " . $ex->getMessage());
+				_error_log("Error on notification: " . $ex->getMessage());
 				$result = "";
 			}
 		}
@@ -1448,6 +1524,49 @@ class users extends table {
 			$context  = stream_context_create($options);
 			$result = file_get_contents($url, false, $context);			
 		}
+		
+		$smsres = $this->sendSMS($message,$sid);
+
+		return $result;
+	}	
+
+	//Enviar notification a Twilio
+	function sendSMS($message, $sid = "") {
+		$result = array("success" => false,
+						"error" => "",
+						"nerror" => 0,
+						"result" => "");
+		$notify = boolval($this->conf->verifyValue("NOTIFICATION_BY_SMS"));
+		$wsqry = 0;
+		if($notify) {
+			$id = $this->conf->verifyValue("SMS_PREFIX") . $this->CELLPHONE;
+			$account = $this->conf->verifyValue("SMS_ACCOUNT_ID");
+			$token = $this->conf->verifyValue("SMS_TOKEN");
+			$number = $this->conf->verifyValue("SMS_NUMBER");
+			try {
+				$params = array("id" => $id,
+								"account" => $account,
+								"token" => $token,
+								"number" => $number,
+								"message" => $message,
+								"sid" => $sid);
+				$wsqry = $this->addTraceWS("sendSMS",json_encode($params),"Class user","");
+				$client = new Client($account, $token);
+				$response = $client->messages->create($id,array(
+											'from' => $number,
+											'body' => $message
+				));			
+				$result["success"] = true;
+				$result["result"] = $response;
+			}
+			catch (Exception $ex) {
+				$result["nerror"] = 120;
+				$result["error"] = $ex->getMessage();
+				_error_log("Error on notification SMS: " . $ex->getMessage());
+			}
+		}
+		if($wsqry > 0) 
+			$wsqry = $this->updateTraceWS($wsqry,json_encode($result));
 		return $result;
 	}	
 	
@@ -1474,5 +1593,35 @@ class users extends table {
 		return $iTotal;
 	}
 	
+	private function addTraceWS($script, $params, $source, $result) {
+		include_once("ws_query.php");
+		$ws = new ws_query();
+		$ws->WEBSERVICE = $script;
+		$ws->PARAMS = $params;
+		$ws->CALLED_FROM = $source;
+		$ws->RETURNED = $result;
+		$ws->REGISTERED_ON = "NOW()";
+		$ws->REGISTERED_BY = "notifier";
+		$ws->_add();
+		if($ws->nerror == 0)
+			return $ws->ID;
+		else 
+			return -1;
+	}
+
+	//Funcion para actualizar el trace de los webservices
+	private function updateTraceWS($id, $result) {
+		include_once("ws_query.php");
+		$ws = new ws_query();
+		$ws->ID = $id;
+		$ws->RETURNED = $result;
+		$ws->MODIFIED_ON = "NOW()";
+		$ws->MODIFIED_BY = "notifier";
+		$ws->updateResult();
+		if($ws->nerror == 0)
+			return $ws->ID;
+		else 
+			return -1;
+	}
 }
 ?>

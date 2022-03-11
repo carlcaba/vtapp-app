@@ -158,8 +158,8 @@ class movement extends table {
 			for($i = 0;$i < count($aColumnsBD)-1;$i++) {
 				if(strpos($aColumnsBD[$i],"_ID") !== false) {
 					if($aColumnsBD[$i] == "MOVEMENT_ID") {
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','output.php');\"><i class=\"fa fa-eye\"></i></button>";
-						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','editoutput.php');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
+						$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','output.php');\"><i class=\"fa fa-eye\"></i></button>";
+						$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','editoutput.php');\"><i class=\"fa fa-pen-to-square\"></i></button>";
 												
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $view . $edit . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -218,7 +218,7 @@ class movement extends table {
 		if($action != "new") {
 			//Arma la sentencia sql para mostrar los items
 			$this->sql = "SELECT MOVEMENT_ID, INTERNAL_NUMBER, MOVE_DATE, DETAIL_ID, MOVEMENT_TYPE_ID, RESOURCE_TEXT, APPLIED, EMPLOYEE_NAME, PRODUCT_ID, PRODUCT_NAME, QUANTITY, PRICE, FACTOR, ID_ORDER, CODE, UNIT, " .
-						"MONEY_FACTOR, MONEYTYPE, ACTUAL_EXISTENCE, ENTRIES, OUTPUTS FROM $this->view2 WHERE MOVEMENT_ID = '" . $this->ID . "' AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . " ORDER BY ID_ORDER";
+						"money-bill-1_FACTOR, money-bill-1TYPE, ACTUAL_EXISTENCE, ENTRIES, OUTPUTS FROM $this->view2 WHERE MOVEMENT_ID = '" . $this->ID . "' AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . " ORDER BY ID_ORDER";
 
 			//Si NO es para datatable
 			if(!$datatable) {
@@ -271,9 +271,9 @@ class movement extends table {
 				$result .= "<td>$ " . number_format($total,2,",",".") . "</td>\n";
 				$result .= "<td><div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">\n";
 				//Botones
-				$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show($row[13],'view');\"><i class=\"fa fa-eye\"></i></button>";
-				$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($row[13],'edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-				$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"deleteItem($row[13]);\"><i class=\"fa fa-trash\"></i></button>";
+				$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show($row[13],'view');\"><i class=\"fa fa-eye\"></i></button>";
+				$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show($row[13],'edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+				$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"deleteItem($row[13]);\"><i class=\"fa fa-trash\"></i></button>";
 				//Data
 				$data = array("cbProduct"=> $row[8],
 								"hfID"=> $row[8],
@@ -284,7 +284,7 @@ class movement extends table {
 								"txtPRICE"=> $row[11],
 								"txtTOTAL"=> $total,
 								"hfFactor"=> $row[12],
-								"hfMoneyFactor"=> $row[16],
+								"hfmoney-bill-1Factor"=> $row[16],
 								"hfIdMove" => $row[0],
 								"hfIdMoveDetail" => $row[3]);
 				$result .= $view . $edit . $delete . "\n<input type=\"hidden\" name=\"hfRow_$row[13]\" id=\"hfRow_$row[13]\" value='" . json_encode($data) . "'>\n";

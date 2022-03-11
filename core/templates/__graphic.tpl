@@ -59,8 +59,8 @@
 									<div class="row">
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
-												<span class="description-percentage text-success"><i class="fa fa-caret-up"></i> 0%</span>
-												<h5 class="description-header">$0.00</h5>
+												<?= $serv->raiseTotal() ?>
+												<h5 class="description-header">$<?= number_format($serv->getTotal(),2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_REVENUE"] ?></span>
 											</div>
 											<!-- /.description-block -->
@@ -68,8 +68,8 @@
 										<!-- /.col -->
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
-												<span class="description-percentage text-warning"><i class="fa fa-caret-left"></i> 0%</span>
-												<h5 class="description-header">$0.00</h5>
+												<?= $serv->raiseTotal(1) ?>
+												<h5 class="description-header">$<?= number_format($serv->getTotal(1),2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_COST"] ?></span>
 											</div>
 											<!-- /.description-block -->
@@ -77,8 +77,8 @@
 										<!-- /.col -->
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
-												<span class="description-percentage text-success"><i class="fa fa-caret-up"></i> 0%</span>
-												<h5 class="description-header">$0.00</h5>
+												<?= $serv->raiseTotal(2) ?>
+												<h5 class="description-header">$<?= number_format($serv->getTotal(2),2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_PROFIT"] ?></span>
 											</div>
 											<!-- /.description-block -->

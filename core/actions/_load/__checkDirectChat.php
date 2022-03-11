@@ -16,7 +16,7 @@
 	//Asigna la informacion
 	$chat = new directchat($_SESSION["vtappcorp_userid"]);
 	
-	$messages = $chat->getTotalCount();
+	$messages = intval($chat->getTotalCount());
 	$panel = $chat->showPanel(0,true);
 	$chats = $chat->showLastChats(true);
 	

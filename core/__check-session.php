@@ -1,12 +1,23 @@
 <?
     //Inicio de sesion
-    session_name('vtappcorp_session');
-	session_start();
+	if (session_status() === PHP_SESSION_NONE) {
+		session_name('vtappcorp_session');
+		session_start();
+	}	
 
 	//Incluye las clases requeridas
 	include_once("classes/configuration.php");
 	include_once("classes/interfaces.php");
 	include_once("classes/users.php");
+
+	//Verifica si esta habilitado el debug
+	if(!defined("DEBUG")) {
+		$conf = new configuration("DEBUGGING");
+		$debug = $conf->verifyValue();
+		if($debug === 0)
+			$debug = false;
+		define("DEBUG", $debug); 
+	}
 	
 	function checkSession($caller,$check = false) {
 		$link = $caller;
@@ -32,13 +43,8 @@
 		if(!$check)
 			$inter->updateLastAccess();
 		
-		error_log("Verifying session " . basename(__FILE__));
-		error_log("Session exp " . $sesexp . " " . basename(__FILE__));
-		error_log("Session name " . session_id());
-		
 		if($inter->verifySession($sesexp)) {
 			if(!isset($_SESSION)) {
-				error_log("Session not found " . basename(__FILE__));
 				include("__getLastUser.php");
 				include("__load-resources.php");
 			}
@@ -69,12 +75,12 @@
 				if($user->nerror != 50) {
 					$result["success"] = false;
 					$result["message"] = $user->error;
-					$_SESSION["vtappcorp_user_alert"] = $user->error;
+					$_SESSION["vtappcorp_user_alert"] = $user->error . " - $caller" ;
 					//envia al usuario a la pag. de no autorizado
 					$result["link"] = "unauthorized.php";	
 				}
 				else {
-					$_SESSION["vtappcorp_user_message"] = $user->error;
+					$_SESSION["vtappcorp_user_message"] = $user->error . " - $caller";
 				}
 			} 
 		}

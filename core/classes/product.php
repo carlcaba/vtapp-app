@@ -270,7 +270,7 @@ class product extends table {
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
 		//Arma la sentencia SQL
-		$this->sql = "SELECT A.PRODUCT_ID, A.PRODUCT_NAME, A.QUANTITY, A.PRICE, A.MONEYTYPE, A.CODE, A.SPECIFICATION, A.OBSERVATION, A.MONEY_TO, A.VALUE_TO " . //,  A.CONVERSION_ID, A.WIDTHUNIT, A.HEIGHTUNIT, A.WEIGHTUNIT " .
+		$this->sql = "SELECT A.PRODUCT_ID, A.PRODUCT_NAME, A.QUANTITY, A.PRICE, A.money-bill-1TYPE, A.CODE, A.SPECIFICATION, A.OBSERVATION, A.money-bill-1_TO, A.VALUE_TO " . //,  A.CONVERSION_ID, A.WIDTHUNIT, A.HEIGHTUNIT, A.WEIGHTUNIT " .
 				"FROM $this->view A WHERE A.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
 		//Verifica si es mostrar el listado para clientes
 		if($client && ($cate = $this->category->getClientCategory()) != "")
@@ -299,8 +299,8 @@ class product extends table {
 						$und = $this->conversion->FACTORUNIT;
 					}
 				}
-				$add = "data-product-quantity=\"" . $row[2] . "\" data-product-price=\"" . $row[3] . "\" data-product-moneytype=\"" . $row[4] . "\" data-code=\"" . $row[5] . "\" data-unit=\"$und\" " .
-					"data-factor=\"" . $factor . "\" data-factormoney=\"" . $row[9] . "\" data-factormoneyconversion=\"" . $row[8] . "\"";
+				$add = "data-product-quantity=\"" . $row[2] . "\" data-product-price=\"" . $row[3] . "\" data-product-money-bill-1type=\"" . $row[4] . "\" data-code=\"" . $row[5] . "\" data-unit=\"$und\" " .
+					"data-factor=\"" . $factor . "\" data-factormoney-bill-1=\"" . $row[9] . "\" data-factormoney-bill-1conversion=\"" . $row[8] . "\"";
 			}
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
@@ -325,7 +325,7 @@ class product extends table {
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
 		//Arma la sentencia SQL
-		$this->sql = "SELECT A.PRODUCT_ID, A.PRODUCT_NAME, A.QUANTITY, A.PRICE, A.MONEYTYPE, A.CODE, A.SPECIFICATION, A.OBSERVATION, A.MONEY_TO, A.VALUE_TO " . //,  A.CONVERSION_ID, A.WIDTHUNIT, A.HEIGHTUNIT, A.WEIGHTUNIT " .
+		$this->sql = "SELECT A.PRODUCT_ID, A.PRODUCT_NAME, A.QUANTITY, A.PRICE, A.money-bill-1TYPE, A.CODE, A.SPECIFICATION, A.OBSERVATION, A.money-bill-1_TO, A.VALUE_TO " . //,  A.CONVERSION_ID, A.WIDTHUNIT, A.HEIGHTUNIT, A.WEIGHTUNIT " .
 				"FROM $this->view A WHERE A.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
 		//Variable a retornar
 		$return = array("results" => array());
@@ -353,12 +353,12 @@ class product extends table {
 				}
 				$more = array("product-quantity" => $row[2],
 								"product-price" => $row[3],
-								"product-moneytype" => $row[4],
+								"product-money-bill-1type" => $row[4],
 								"code" => $row[5],
 								"unit" => $und,
 								"factor" => $factor,
-								"factormoney" => $row[9],
-								"factormoneyconversion" => $row[8]);
+								"factormoney-bill-1" => $row[9],
+								"factormoney-bill-1conversion" => $row[8]);
 			}
 			$data = array("id" => $row[0],
 						"text" => $row[1],
@@ -372,7 +372,7 @@ class product extends table {
 
 	//Funcion que retorna el resumen por producto
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit) {
-		//	var fields = ["PRODUCT_ID", "PRODUCT_NAME", "CODE", "SPECIFICATION", "TRADE", "QUANTITY", "PRICE", "MONEYTYPE", "OBSERVATION", "FIELD", "AREA_NAME", "CATEGORY_NAME", "REGISTERED_ON", "REGISTERED_BY", "IS_BLOCKED", "LANGUAGE_ID"];
+		//	var fields = ["PRODUCT_ID", "PRODUCT_NAME", "CODE", "SPECIFICATION", "TRADE", "QUANTITY", "PRICE", "money-bill-1TYPE", "OBSERVATION", "FIELD", "AREA_NAME", "CATEGORY_NAME", "REGISTERED_ON", "REGISTERED_BY", "IS_BLOCKED", "LANGUAGE_ID"];
 		//Verifica el where
 		if($sWhere != "")
 			$sWhere .= " AND LANGUAGE_ID = " . $_SESSION["LANGUAGE"];
@@ -404,15 +404,15 @@ class product extends table {
 					if($aColumnsBD[$i] == "PRODUCT_ID") {
 						//Verifica el estado para activar o desactivar
 						if($aRow[14])
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',true,'" . $aRow[1] . "');\"><i class=\"fa fa-unlock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["ACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',true,'" . $aRow[1] . "');\"><i class=\"fa fa-unlock\"></i></button>";
 						else 
-							$activate = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',false,'" . $aRow[1] . "');\"><i class=\"fa fa-lock\"></i></button>";
+							$activate = "<button type=\"button\" class=\"btn btn-primary\" title=\"" . $_SESSION["DEACTIVATE"] . "\" onclick=\"activate('" . $aRow[$i] . "',false,'" . $aRow[1] . "');\"><i class=\"fa fa-lock\"></i></button>";
 						
 						$qrcode = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["QR_CODE"] . "\" onclick=\"QRCode('" . $aRow[$i] . "','" . $aRow[1] . "');\"><i class=\"fa fa-qrcode\"></i></button>";
 						$barcode = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["BAR_CODE"] . "\" onclick=\"BarCode('" . $aRow[$i] . "','" . $aRow[1] . "');\"><i class=\"fa fa-barcode\"></i></button>";
-						$view = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
-						$edit = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','edit');\"><i class=\"fa fa-pencil-square-o\"></i></button>";
-						$delete = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
+						$view = "<button type=\"button\" class=\"btn btn-info\" title=\"" . $_SESSION["VIEW"] . "\" onclick=\"show('" . $aRow[$i] . "','view');\"><i class=\"fa fa-eye\"></i></button>";
+						$edit = "<button type=\"button\" class=\"btn btn-warning\" title=\"" . $_SESSION["EDIT"] . "\" onclick=\"show('" . $aRow[$i] . "','edit');\"><i class=\"fa fa-pen-to-square\"></i></button>";
+						$delete = "<button type=\"button\" class=\"btn btn-danger\" title=\"" . $_SESSION["DELETE"] . "\" onclick=\"show('" . $aRow[$i] . "','delete');\"><i class=\"fa fa-trash\"></i></button>";
 												
 						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $qrcode . $barcode . $activate . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
@@ -500,8 +500,8 @@ class product extends table {
 		$return .= $this->showField("SPECIFICATION", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("TRADE", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("QUANTITY", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
-		$return .= $this->showField("PRICE", "$stabs\t", "fa fa-money", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
-		$return .= $this->showField("MONEYTYPE", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
+		$return .= $this->showField("PRICE", "$stabs\t", "fa fa-money-bill-1", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
+		$return .= $this->showField("money-bill-1TYPE", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("OBSERVATION", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 		$return .= $this->showField("FIELD", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
 

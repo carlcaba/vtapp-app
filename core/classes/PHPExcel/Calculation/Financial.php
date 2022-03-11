@@ -1450,7 +1450,7 @@ class PHPExcel_Calculation_Financial
      * @param    float[]    $values                An array or a reference to cells that contain a series of payments and
      *                                            income occurring at regular intervals.
      *                                        Payments are negative value, income is positive values.
-     * @param    float    $finance_rate        The interest rate you pay on the money used in the cash flows
+     * @param    float    $finance_rate        The interest rate you pay on the money-bill-1 used in the cash flows
      * @param    float    $reinvestment_rate    The interest rate you receive on the cash flows as you reinvest them
      * @return    float
      */

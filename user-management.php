@@ -43,6 +43,8 @@
 		$action = $_GET['action'];
 	}
 	
+	$usua = new users($_SESSION["vtappcorp_userid"]);
+	
 	switch($action) {
 		case "new": {
 			$titlepage = $_SESSION["MENU_NEW"];
@@ -315,7 +317,7 @@
 					url: 'core/actions/_load/__loadReferences.php',
 					data: { 
 						value: value,
-						ref: "<?= $user->REFERENCE ?>"
+						ref: "<?= $usua->REFERENCE ?>"
 					},
 					dataType: "json",
 					beforeSend: function (xhrObj) {
@@ -347,6 +349,9 @@
 			var url = $("#hfLinkAction").val();
 			var $frm = $("#frmUser");
 			var datasObj = $frm.serializeObject();
+			if(!datasObj.hasOwnProperty("txtID")) {
+				datasObj["txtID"] = $("#txtID").val();
+			}
 			if(!datasObj.hasOwnProperty("cbBlocked")) {
 				datasObj["cbBlocked"] = $("#cbBlocked").is(':checked');
 			}
@@ -356,6 +361,7 @@
 			datasObj["hfSocialNetwork"] = $('#chkUserType').attr('disabled');
 			datasObj["cbChangePassword"] = $("#cbChangePassword").is(':checked');
 			datasObj["cbTBL_SYSTEM_USER_IDENTIFICATION"] = $("#hfDocType_" + $("#cbTBL_SYSTEM_USER_IDENTIFICATION").val()).val();
+			datasObj["src"] = "<?= $source ?>";
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);
 			$("#spanTitleName").html("");
@@ -365,6 +371,7 @@
 				var noty;
 				$.ajax({
 					url: url,
+					method: "POST",
 					data: { strModel: datas },
 					dataType: "json",
 					beforeSend: function (xhrObj) {

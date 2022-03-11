@@ -19,7 +19,8 @@
 	require_once("../core/classes/configuration.php");
 	require_once("../core/classes/user_notification.php");
 	require_once("../core/classes/service_log.php");
-	
+	require_once("../core/classes/assign_service.php");
+		
 	//Carga los recursos
     include("../core/__load-resources.php");
 	
@@ -41,12 +42,14 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				//Termina
-				exit(json_encode($result));
+				goto _Exit;
 			}
 			else {
 				$user = $_GET['user'];
@@ -79,21 +82,21 @@
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	if(empty($id)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ID_SERVICE_EMPTY"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Verifica la sesion
@@ -106,7 +109,7 @@
 		//Asigna el mensaje
 		$result["message"] = $check["message"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	$usua = new users($user);
@@ -116,7 +119,7 @@
 		//Asigna el mensaje
 		$result["message"] = "User: " . $usua->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	$service = new service();
@@ -127,7 +130,7 @@
 		//Asigna el mensaje
 		$result["message"] = "Service: " . $service->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Verifica el estado de notificacion
@@ -139,7 +142,7 @@
 		//Asigna el mensaje
 		$result["message"] = "Notification: " . $usnot->error;
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Verifica el proceso
@@ -147,13 +150,13 @@
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["SERVICE_STEP_WRONG"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	if(boolval($usnot->IS_BLOCKED)) {
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["SERVICE_STEP_BLOCKED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 
 	//Si desea cancelar el proceso
@@ -161,8 +164,10 @@
 		$usnot->decline();
 		$result["message"] = $_SESSION["ASSIGN_CANCELED"];
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
+	
+	$sstate = $service->state->getArray();
 	
 	if($step == 1 && $service->state->STEP_ID == 5)
 		//Actualiza el estado del servicio
@@ -188,30 +193,34 @@
 	if($step == 4 && $result["success"]) {
 		$curState = $service->STATE_ID;
 		//Actualiza el estado del servicio
-		$service->updateState($service->state->getIdByStep(7));
+		$service->updateState($sstate[7]);
 		//Si no ha ocurrido un error
 		if($service->nerror > 0) {
 			$result["continue"] = false;
 			$result["message"] .= "<br/>" . $_SESSION["NO_SERVICE_UPDATED"];
-			error_log("SQL No service Updated " . $service->sql . " -> " . $service->error);
+			_error_log($service->error, $service->sql);
 		}
 		else {
+			_error_log("Service updated", $service->sql);
 			//Obtiene la informacion del vehiculo
 			$vehicle = new vehicle();
 			$vehicle->getInformationByUserId($user);
-			if($vehicle->nerror > 0) {
-				error_log("SQL No vehicle found " . $vehicle->sql . " -> " . $vehicle->error);
-			}
+			if($vehicle->nerror > 0)
+				_error_log("No vehicle found " . $vehicle->error, $vehicle->sql);
+			else 
+				_error_log("Vehicle found: " . print_r(get_object_vars($vehicle),true), $vehicle->sql);
 			//Instancia nuevo log
 			$sLog = new service_log();
 			//Log
 			$sLog->setService($service->ID);
 			//Busca el ultimo log
 			$sLog->getLastLog();
+			_error_log("Last log found: " . print_r(get_object_vars($sLog),true), $sLog->sql);
 			//Limpia los campos no requeridos
 			$employee = new employee();
 			$employee->USER_ID = $usua->ID;
 			$employee->getInformationByOtherInfo("USER_ID");
+			_error_log("Employee found: " . print_r(get_object_vars($employee),true), $sLog->sql);
 			//Asigna el ultimo estado
 			$sLog->setInitialState($curState);
 			$sLog->setFinalState($service->STATE_ID);
@@ -234,11 +243,44 @@
 			}
 			else {
 				$result["message"] .= "<br/>" . $_SESSION["SERVICE_ASSIGNED"];
+				
+				$assi = new assign_service();
+				$assi->setService($service->ID);
+				$assi->getInformationByService();
+				if($assi->nerror > 0) {
+					_error_log("Could'nt assign service TBL_ASSIGN_SERVICE: Not Found!", $assi->sql);
+				}
+				else {
+					$chng = false;
+					if($employee->nerror == 0) {
+						$assi->setEmployee($employee->ID);
+						$chng = true;
+					}
+					if($assi->nerror > 0) {
+						_error_log("Could'nt assign employee TBL_ASSIGN_SERVICE: Employee not Found " . $employee->ID . "! " . $assi->error, $assi->sql);
+					}
+					if($vehicle->nerror == 0) {
+						$assi->setVehicle($vehicle->ID);
+						$chng = true;
+					}
+					if($assi->nerror > 0) {
+						_error_log("Could'nt assign vehicle TBL_ASSIGN_SERVICE: Vehicle not Found " . $vehicle->ID . "! " . $assi->error, $assi->sql);
+					}
+					if($chng) {
+						$assi->_modify();
+						if($assi->nerror > 0) {
+							_error_log("Could'nt assign data TBL_ASSIGN_SERVICE: " . $assi->error, $assi->sql);
+						}
+					}
+				}
+				
 			}
-			error_log("Log update " . $sLog->sql);
+			_error_log("Log update:" . print_r(get_object_vars($sLog),true), $sLog->sql);
 		}
 	}
 	
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

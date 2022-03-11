@@ -9,7 +9,7 @@
 	//Variable del codigo
 	$result = array('success' => false,
                     'message' => $_SESSION["NO_DATA_FOR_VALIDATE"],
-                    'link' => 'users.php');
+                    'link' => 'users-manager.php');
 	
 	//Captura las variables
 	if(!isset($_POST['strModel'])) {
@@ -33,6 +33,8 @@
 		
 		//Realiza la operacion
 		require_once("../../classes/users.php");
+		require_once("../../classes/configuration.php");
+		$conf = new configuration("INIT_PASSWORD");
 		
 		//Asigna la informacion
 		$user = new users($datas->txtID);
@@ -47,34 +49,36 @@
 			exit(json_encode($result));
 		}
 
+		_error_log(print_r($datas,true));
+
 		//Actualiza la información
-		$usua->setAccess($datas->cbAccess);
-		$usua->IS_BLOCKED = $datas->cbBlocked == "" ? "FALSE" : strtoupper($datas->cbBlocked);
-		$usua->CHANGE_PASSWORD = strtoupper($datas->cbChangePassword);
-		$usua->setCity($datas->cbCity);
-		$usua->IDENTIFICATION = $datas->cbTBL_SYSTEM_USER_IDENTIFICATION . "-" . $datas->txtTBL_SYSTEM_USER_IDENTIFICATION;
+		$user->setAccess($datas->cbAccess);
+		$user->IS_BLOCKED = $datas->cbBlocked == "" ? "FALSE" : strtoupper($datas->cbBlocked);
+		$user->CHANGE_PASSWORD = strtoupper($datas->cbChangePassword);
+		$user->setCity($datas->cbCity);
+		$user->IDENTIFICATION = $datas->cbTBL_SYSTEM_USER_IDENTIFICATION . "-" . $datas->txtTBL_SYSTEM_USER_IDENTIFICATION;
 		if($datas->hfSocialNetwork == "true") {
 			if($datas->chkUserType == "true") {
-				$usua->FACEBOOK_USER = $datas->txID;
-				$usua->GOOGLE_USER = "";
+				$user->FACEBOOK_USER = $datas->txID;
+				$user->GOOGLE_USER = "";
 			}
 			else {
-				$usua->FACEBOOK_USER = "";
-				$usua->GOOGLE_USER = $datas->txID;
+				$user->FACEBOOK_USER = "";
+				$user->GOOGLE_USER = $datas->txID;
 			}
 		}
 		else {
-			$usua->FACEBOOK_USER = "";
-			$usua->GOOGLE_USER = "";
+			$user->FACEBOOK_USER = "";
+			$user->GOOGLE_USER = "";
 		}
-		$usua->LATITUDE = $datas->hfLATITUDE;
-		$usua->LONGITUDE = $datas->hfLONGITUDE;
-		$usua->ADDRESS = $datas->txtADDRESS;
-		$usua->CELLPHONE = $datas->txtCELLPHONE;
-		$usua->FIRST_NAME = $datas->txtFIRST_NAME;
-		$usua->LAST_NAME = $datas->txtLAST_NAME;
-		$usua->PHONE = $datas->txtPHONE;
-		$usua->THE_PASSWORD = $conf->verifyValue("INIT_PASSWORD");
+		$user->LATITUDE = $datas->hfLATITUDE;
+		$user->LONGITUDE = $datas->hfLONGITUDE;
+		$user->ADDRESS = $datas->txtADDRESS;
+		$user->CELLPHONE = $datas->txtCELLPHONE;
+		$user->FIRST_NAME = $datas->txtFIRST_NAME;
+		$user->LAST_NAME = $datas->txtLAST_NAME;
+		$user->PHONE = $datas->txtPHONE;
+		$user->THE_PASSWORD = $conf->verifyValue("INIT_PASSWORD");
 
 		//Lo Modifica
 		$user->_modify();

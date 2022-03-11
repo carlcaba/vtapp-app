@@ -10,7 +10,7 @@
 	$inter = new interfaces();
 
 	//Define el menu
-	$_SESSION["menu_id"] = $inter->getMenuId(basename(__FILE__));
+	$_SESSION["menu_id"] = $inter->getMenuId(basename($_SERVER['REQUEST_URI']));
 	
 	require_once("core/__check-session.php");
 	
@@ -128,12 +128,14 @@
 								<p class="card-title">
 									<?= $_SESSION["TITLE_PAGE"] ?>
 								</p>
+								<!--
 								<div class="btn-group float-right">
 									<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["MENU_NEW"] ?>" id="btnNewQuota" name="btnNewQuota" class="btn btn-primary pull-right" onclick="show('','new');">
 										<i class="fa fa-plus-circle"></i>
 										<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["MENU_NEW"] ?></span>
 									</button>
 								</div>
+								-->
 							</div>
 							<!-- /.card-header -->
 							<div class="card-body">
@@ -202,6 +204,9 @@
 					"options": "<?= $_SESSION["vtappcorp_referenceid"] ?>"
 				}
 			},
+			"fnInitComplete": function(oSettings, json) {
+				$('[data-toggle="tooltip"]').tooltip();		
+			},			
 			"columns": [
 				{ "data": "QUOTA_ID", "searchable": false, "visible": false, "responsivePriority": 10 },
 				{ "data": "CLIENT_NAME", "responsivePriority": 2 },

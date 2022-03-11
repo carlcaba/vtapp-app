@@ -73,8 +73,8 @@
 									plots: {
 										"my-place": {
 											value: "1",
-											latitude: 4.69604261499948,
-											longitude: -74.1213146119605,
+											latitude: 4.696275939581175, 
+											longitude: -74.12106809728523,
 											href: "#",
 											tooltip: {
 												content: "<span style=\"font-weight:bold;\">Bogotá (111311)</span><br />Population : Here I am"
@@ -90,5 +90,15 @@
 											}
 										}
 									}
-								});							
+								});
+								$("#mapVisitors").on('click', function(e) {
+									var $this = $(this);
+									var coords = $this.data('mapael').mapPagePositionToXY(e.pageX, e.pageY);
+									console.log(coords);
+									var paper = $("#mapVisitors").data("mapael").paper;
+									console.log("X:" + e.pageX);
+									console.log("Y:" + e.pageY);
+									console.log("Extra .x: " + Math.round(1000 * coords.x) / 1000);
+									console.log("Extra .y: " + Math.round(1000 * coords.y) / 1000);
+								});
 							</script>

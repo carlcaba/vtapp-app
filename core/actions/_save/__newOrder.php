@@ -82,7 +82,7 @@
 			$medt->QTY_DELIVERED = 0;
 			$mdet->PRICE = $value["Price"];
 			$mdet->FACTOR = $value["Factor"];
-			$mdet->MONEY_FACTOR = $value["MoneyFactor"];
+			$mdet->money-bill-1_FACTOR = $value["money-bill-1Factor"];
 			$mdet->UNIT = $value["Unit"];
 			$mdet->PROCESSED = "FALSE";
 			$mdet->DELIVERED = "FALSE";
