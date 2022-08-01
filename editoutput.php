@@ -92,7 +92,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-square-pen"></i> <?= $_SESSION["MENU_EDIT"] . " " . $_SESSION["OUTPUT"] ?></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-square-pen"></i> <?= "Editar" . " " . $_SESSION["OUTPUT"] ?></h1>
 						</div>
 						<!-- /.col -->
 <?
@@ -765,7 +765,7 @@
 		});
 	}
 	function deleteItem(id) {
-		$("#spanTitle").html("<?= $_SESSION["INFORMATION"] ?>");
+		$("#spanTitle").html("<?= "Información" ?>");
 		$("#spanTitleName").html("");
 		$("#modalBody").html("<?= $_SESSION["SORRY_NOT_IMPLEMENTED"] ?>");
 		$("#btnActivate").html("<?= $_SESSION["ACCEPT"] ?>");
@@ -777,7 +777,7 @@
 		$("#divActivateModal").modal("toggle");		
 	}
 	function applyToStock() {
-		$("#spanTitle").html("<?= $_SESSION["INFORMATION"] ?>");
+		$("#spanTitle").html("<?= "Información" ?>");
 		$("#spanTitleName").html("");
 		$("#modalBody").html("<?= $_SESSION["APPLY_TO_STOCK_MESSAGE"] . " <br/><br /> " . $_SESSION["MSG_CONFIRM"] ?>");
 		$("#btnActivate").unbind("click");

@@ -76,7 +76,7 @@
 	}
 
 	include_once("__validateSession.php");
-	
+
 	$check = checkSession($user,$token);
 
 	//Verifica si hay error
@@ -132,9 +132,11 @@
 		foreach($datos as $dat)
 			array_push($result["data"],$dat);
 	}
-	if (boolval($debug))
+	if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 		$result["sql"] = $serv->sql;
 
+	goto _Exit;
+	
 	_Exit:
 	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina

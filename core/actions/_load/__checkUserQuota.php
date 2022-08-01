@@ -37,6 +37,7 @@
 		$quota = new quota_employee($userId);
 		
 		$row = $quota->getInformationByOtherInfo();
+		
 		if($quota->nerror > 0) {
 			$result["message"] = $_SESSION["EMPLOYEE_NO_QUOTA"];
 			$result = utf8_converter($result);

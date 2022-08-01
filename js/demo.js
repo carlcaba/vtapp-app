@@ -523,7 +523,12 @@
   })
 
   var active_navbar_color = null
-  const arrMH = $('.main-header')[0].classList;
+  var test = document.getElementsByClassName('main-header')[0]
+  
+  const arrMH = test.classList
+
+  //$('.main-header')[0].classList;
+
   arrMH.forEach(function (className) {
     if (navbar_all_colors.indexOf(className) > -1 && active_navbar_color === null) {
       active_navbar_color = className.replace('navbar-', 'bg-')
@@ -536,7 +541,8 @@
   $navbar_variants.append($navbar_variants_colors)
 
   $container.append($navbar_variants)
-
+	
+	
   // Sidebar Colors
 
   $container.append('<h6>Accent Color Variants</h6>')

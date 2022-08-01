@@ -71,22 +71,22 @@
 	switch($action) {
 		case "new": {
 			$titlepage = substr($_SESSION["MENU_NEW"],-1) == "o" ? substr($_SESSION["MENU_NEW"],0,-1) . "a" : $_SESSION["MENU_NEW"];
-			$text_title =  $_SESSION["NEW_TEXT"];
+			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			break;
 		}
 		case "edit": {
-			$titlepage = $_SESSION["MENU_EDIT"];
-			$text_title =  $_SESSION["EDIT_TEXT"];
+			$titlepage = "Editar";
+			$text_title =  "Modifique la información disponible. No todos los campos son editables. <small>Los campos marcados con * son requeridos</small>";
 			break;
 		}
 		case "delete": {
-			$titlepage = $_SESSION["MENU_DELETE"];
+			$titlepage = "Confirme que desea eliminar este registro.";
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			break;
 		}
 		case "view": {
 			$titlepage = $_SESSION["VIEW"];
-			$text_title =  $_SESSION["INFORMATION"];
+			$text_title =  "Información";
 			
 			$assi->setService($id);
 			$assi->getInformationByService();
@@ -122,6 +122,7 @@
 	//Verifica la pasarela
 	if($gate == "WOMPI") {
 		//Libreria requerida
+		require_once("core/classes/ws_query.php");
 		require_once("core/actions/_save/__wompiGatewayFunctions.php");
 
 		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
@@ -269,7 +270,7 @@
 										<div class="row" id="ZoneREQUESTED">
 											<div class="col-md-6">
 												<label><?= $service->arrColComments["REQUESTED_ZONE"] ?></label>
-												<select class="form-control" id="cbZoneRequest" name="cbZoneRequest" <?= $dataForm["readonly"][$cont++] ?>>
+												<select class="form-control" id="cbZoneRequested" name="cbZoneRequested" <?= $dataForm["readonly"][$cont++] ?>>
 													<?= $service->request_zone->showOptionList(9,$service->request_zone->PARENT_ZONE) ?>
 												</select>
 												<input type="hidden" value="<?= $service->request_zone->PARENT_ZONE ?>" name="hfZoneReqSel" id="hfZoneReqSel" />
@@ -281,7 +282,7 @@
 	$ctrltitle = $_SESSION["SUB_ZONE_NAME"] . " " . implode(" ", $arr);
 ?>												
 												<label><?= $ctrltitle ?></label>												
-												<select class="form-control" id="cbZoneRequestSub" name="cbZoneRequestSub" disabled>
+												<select class="form-control" id="cbZoneRequestedSub" name="cbZoneRequestedSub" disabled>
 													<?= $service->request_zone->showOptionList(9,$service->request_zone->ID,0,false) ?>
 												</select>
 												<input type="hidden" value="<?= $service->request_zone->ID ?>" name="hfSubZoneReqSel" id="hfSubZoneReqSel" />
@@ -490,6 +491,10 @@
 										<input type="hidden" name="hfGateWay" id="hfGateWay" value="<?= $gate ?>" />
 										<input type="hidden" name="hfContinueStep" id="hfContinueStep" value="false" />
 										<input type="hidden" name="hfPayOnDeliver" id="hfPayOnDeliver" value="false" />
+										<input type="hidden" name="hfIsRepeated" id="hfIsRepeated" value="false" />
+										<input type="hidden" name="hfPeriod" id="hfPeriod" value="" />
+										<input type="hidden" name="hfLastDate" id="hfLastDate" value="" />
+										<input type="hidden" name="hfIsQuota" id="hfIsQuota" value="false" />
 									</div>
 								</div>
 							</form>
@@ -580,9 +585,9 @@
 					items.push( "<option value='" + val.id + "'>" + val.label + "</option>" );
 				}
 			});
-			$("#cbZoneRequest").find('option').remove().end().append(items.join(""));
-			$("#cbZoneRequest").val($("#hfZoneReqSel").val());
-			$("#cbZoneRequest").trigger('change');
+			$("#cbZoneRequested").find('option').remove().end().append(items.join(""));
+			$("#cbZoneRequested").val($("#hfZoneReqSel").val());
+			$("#cbZoneRequested").trigger('change');
 			$("#cbZoneDeliver").find('option').remove().end().append(items.join(""));
 			$("#cbZoneDeliver").val($("#hfZoneDelSel").val());
 			$("#cbZoneDeliver").trigger('change');
@@ -690,9 +695,18 @@
 						noty.close();
 						if (data.success) {
 							$("#hfQUOTAID").val(data.quota_id);
+							$("#hfPeriod").val(data.period);							
+							$("#hfIsRepeated").val(data.repeated);
+							$("#hfLastDate").val(data.lastDate);
+							$("#hfIsQuota").val(data.is_quota);
 						}
-						else 
+						else {
 							$("#hfQUOTAID").val("");
+							$("#hfPeriod").val("");							
+							$("#hfIsRepeated").val(false);
+							$("#hfLastDate").val("");
+							$("#hfIsQuota").val(false);
+						}
 					}
 				});
 			}
@@ -797,6 +811,7 @@
 			var val = removeAccents($(obj).val().toUpperCase());
 			var id = $(obj).attr('id');
 			var ref = id.split("_")[0];
+
 			if(val.indexOf("BOGOTA") > -1)
 				$("#" + ref.replace("txt","Zone")).fadeIn();
 			else 
@@ -812,8 +827,8 @@
 			$("#ZoneREQUESTED").fadeOut();
 
 		if($("#hfSubZoneReqSel").val() != "") {
-			$("#cbZoneRequest").trigger("change");
-			$("#cbZoneRequestSub option[value=" + $("#hfSubZoneReqSel").val() + "]").attr('selected','selected').change();
+			$("#cbZoneRequested").trigger("change");
+			$("#cbZoneRequestedSub option[value=" + $("#hfSubZoneReqSel").val() + "]").attr('selected','selected').change();
 		}
 		if($("#hfSubZoneDelSel").val() != "") {
 			$("#cbZoneDeliver").trigger("change");
@@ -994,7 +1009,62 @@
 					$("#divActivateModal").modal("toggle");			
 				}
 				else {
-					if(<?= ($accTok && !$err) ?>) {
+					if($("#hfIsRepeated").val() == "true" && $("#hfPeriod").val() == "N") {
+						$.ajax({
+							url: "core/actions/_save/__newApplyPayment.php",
+							data: { 
+								qid: $("#hfQUOTAID").val(),
+								sid: Math.floor(Math.random() * 100000) + 1,
+								payment: $("#hfIsQuota").val(),
+								value: $("#hfPRICE").val()
+							},
+							dataType: "json",
+							beforeSend: function (xhrObj) {
+								var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+								noty = notify("", "dark", "", message, "", false);												
+							},
+							success: function(data) {
+								if(data.success) {
+									notify("", 'success', "", "<?= $_SESSION["PAYMENT_REGISTERED"] ?>", "");
+									var url = "core/actions/_save/__newService.php";
+									$("#hfPayed").val("true");
+									$("#hfOBJPAY").val(JSON.stringify(transaction));
+									$("#hfQUOTAID").val("");
+									var $frm = $("#frmService");
+									var datasObj = $frm.serializeObject();
+									datasObj = checkSerializedObject(datasObj);
+									var datas = JSON.stringify(datasObj);
+									$.ajax({
+										url: url,
+										data: { 
+											strModel: datas,
+											sid: data.sid,
+											payment: data.payment
+										},
+										dataType: "json",
+										method: "POST",
+										beforeSend: function (xhrObj) {
+											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+											noty = notify("", "dark", "", message, "", false);												
+										},
+										success:function(data) {
+											noty.close();
+											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+											if(data.success) {
+												noty.close();
+												location.href = data.link
+											}
+											noty.close();
+										}
+									});
+								}
+								else {
+									notify("", 'danger', "", "<?= $_SESSION["ERROR_ON_PAYMENT"] ?> <br />State: " + data.error, "");
+								}
+							}
+						});
+					}
+					else if(<?= ($accTok && !$err) ?>) {
 						var reference = "<?= uniqid() ?>";
 						$.getScript("<?= $script ?>", function( data, textStatus, jqxhr ) {
 							var checkout = new WidgetCheckout({
@@ -1150,6 +1220,22 @@
 		if(!datasObj.hasOwnProperty("txtTOTAL_WIDTH")) {
 			datasObj["txtTOTAL_WIDTH"] = $("#txtTOTAL_WIDTH").val();
 		}
+		if($("#hfZoneReqSel").val() == "0") {
+			$("#hfZoneReqSel").val($("#cbZoneRequested option:selected").val());
+			datasObj["hfZoneReqSel"] = $("#hfZoneReqSel").val();
+		}
+		if($("#hfSubZoneReqSel").val() == "0") {
+			$("#hfSubZoneReqSel").val($("#cbZoneRequestedSub option:selected").val());
+			datasObj["hfSubZoneReqSel"] = $("#hfSubZoneReqSel").val();
+		}
+		if($("#hfZoneDelSel").val() == "0") {
+			$("#hfZoneDelSel").val($("#cbZoneDeliver option:selected").val());
+			datasObj["hfZoneDelSel"] = $("#hfZoneDelSel").val();
+		}
+		if($("#hfSubZoneDelSel").val() == "0") {
+			$("#hfSubZoneDelSel").val($("#cbZoneDeliverSub option:selected").val());
+			datasObj["hfSubZoneDelSel"] = $("#hfSubZoneDelSel").val();
+		}		
 		return datasObj;	
 	}
 	</script>

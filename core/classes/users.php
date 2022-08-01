@@ -424,7 +424,46 @@ class users extends table {
         //Define el path
         $path = "img/users/";
         //Define el valor por defecto
-        $name = "user" . $lrgname . ".jpg";
+		//Verifica el acceso del usuario
+		if($this->ACCESS_ID == 70)
+			$name = "msgr";			
+		else
+			$name = "user";
+		$name .= $lrgname . ".jpg";
+        //Recorre el array
+        foreach($ext as $valor) {
+            //Define el nombre
+            $check = $filename . $lrgname . $valor;
+            //Verifica si existe el archivo
+            if(file_exists($path . $check)) {
+                $name = $check;
+                break;
+            }
+        }
+        //Retorna
+        return $path . $name;
+    }
+
+    //Funcion que devuelve el nombre de la imagen del usuario
+    public static function getUserPictureExternal($id, $access, $large = false) {
+        //Define las extensiones a buscar
+        $ext = [".png",".jpg",".gif",".jpeg"];
+		//Nombre del archivo
+		$filename = $id;
+		//Nombre largo
+		$lrgname = "";
+		//Define el nombre de la imagen
+		if($large)
+			$lrgname = "_160x160";
+        //Define el path
+        $path = "img/users/";
+        //Define el valor por defecto
+		//Verifica el acceso del usuario
+		if($access == 70)
+			$name = "msgr";			
+		else
+			$name = "user";
+		$name .= $lrgname . ".jpg";
         //Recorre el array
         foreach($ext as $valor) {
             //Define el nombre
@@ -752,7 +791,7 @@ class users extends table {
 		if(!$this->executeQuery()) {
 			//Genera el error
 			$this->nerror = 10;
-			$this->error = mysql_error();
+			$this->error = mysqli_error($this->conx->conex_id);
 		}
 		else {
 			//Limpia el error
@@ -899,8 +938,8 @@ class users extends table {
 			$this->error = $resource->getResourceByName("ERROR_SENDING_MAIL") . " (" . $e->errorMessage() . ")";
 			$this->nerror = 18;
 		}
-		catch (Exception $e) {
-			$this->error = $resource->getResourceByName("ERROR_SENDING_MAIL") . " (" . $e->errorMessage() . ")";
+		catch (Exception $ex) {
+			$this->error = $resource->getResourceByName("ERROR_SENDING_MAIL") . " (" . $ex->getMessage() . ")";
 			$this->nerror = 30;
 		}
 	}
@@ -1007,6 +1046,7 @@ class users extends table {
 	
 	//Funcion que muestra la forma para asociacion
 	function showUserForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -1049,6 +1089,7 @@ class users extends table {
 	
 	//Funcion que muestra la forma
 	function showForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -1203,58 +1244,6 @@ class users extends table {
 		return $output;
 	}
 
-	//Funcion para listar los usuarios registrados y sin correo alterno
-	function listTable2($tabs = 10) {
-		//Cadena a retornar
-		$return = "";
-		//Arma la cadena con los tabs requeridos
-		for($i=0;$i<$tabs;$i++)
-			$stabs .= "\t";
-		//Arma la sentencia SQL
-		$this->sql = "SELECT U.ID ID_USER, CONCAT(NULLIF(U.FIRST_NAME, ''),IF(NULLIF(U.FIRST_NAME, '') IS NULL,'',' '),NULLIF(U.LAST_NAME, '')) FULL_NAME, U.EMAIL EMAIL, " . 
-					"R.RESOURCE_TEXT ACCESS_NAME, U.REGISTERED_ON REGISTERED_ON, U.IS_BLOCKED IS_BLOCKED, A.ID ACCESS_ID, U.ALTERNATE_EMAIL, U.FIRST_TIME, U.CHANGE_PASSWORD " .
-					"FROM $this->table U " .
-					"INNER JOIN " . $this->access->table . " A ON (U.ACCESS_ID = A.ID) ".
-					"INNER JOIN " . $this->access->resources->table . " R ON (R.LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . " AND R.RESOURCE_NAME = A.RESOURCE_NAME) " .
-					"WHERE U.ALTERNATE_EMAIL = '' OR U.FIRST_TIME OR U.CHANGE_PASSWORD ".
-					"ORDER BY U.REGISTERED_ON DESC";
-		//Recorre los valores
-		foreach($this->__getAllData() as $row) {
-			//Inicia la GUI
-			$return .= "$stabs<tr class=\"even pointer\">\n";
-			$return .= "$stabs\t<td class=\"a-center \">\n";
-			$return .= "$stabs\t\t<input type=\"radio\" class=\"flat\" id=\"optUser\" name=\"table_records\" value=\"" . $this->inter->Encriptar($row[0]) . "\" data-name=\"$row[1]\">\n";
-			$return .= "$stabs\t</td>\n";
-			//Verifica si es nuevo
-			if($row[8])
-				$span = "<span class=\"label label-success pull-right\">" . $_SESSION["NEW_USER"] . "</span>";
-			else
-				$span = "";
-			$return .= "$stabs\t<td class=\" \" title=\"$row[0]\">$row[0] $span</td>\n";
-			$name = ($row[1] == "' '" ? "" : $row[1]);
-            if(!mb_detect_encoding($name, 'utf-8', true)) {
-                //Guarda la informacion en GLOBALS
-                $name = utf8_encode($name);
-            }
-			$return .= "$stabs\t<td class=\" \" title=\"$name\">$name</td>\n";
-			$return .= "$stabs\t<td class=\" \" title=\"$row[2]\">$row[2]</td>\n";
-			$return .= "$stabs\t<td class=\" \" title=\"$row[3]\">$row[3]</td>\n";
-			$return .= "$stabs\t<td class=\" \" title=\"$row[4]\">" . $this->inter->cfecha($row[4],"d m Y"," ",false) . "</td>\n";
-			$return .= "$stabs\t<td class=\" \">" . ($row[5] == 0 ? $_SESSION["MSG_YES"] : $_SESSION["MSG_NO"]) . "</td>\n";
-			$return .= "$stabs\t<td class=\" last\" title=\"$row[7]\">$row[7]\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfLblAlternateEmail\" name=\"hfLblAlternateEmail\" value=\"" . $comments2[1] . "\"/>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfLblEmail\" name=\"hfLblEmail\" value=\"" . $comments[1] . "\"/>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfAlternateEmail\" name=\"hfAlternateEmail\" value=\"$row[7]\"/>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfEmail\" name=\"hfEmail\" value=\"$row[2]\"/>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfFirstTime\" name=\"hfFirstTime\" value=\"$row[8]\"/>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfChangePassword\" name=\"hfChangePassword\" value=\"$row[9]\"/>\n</td>\n";
-			$return .= "$stabs\t\t<input type=\"hidden\" id=\"hfPlaceHolder\" name=\"hfPlaceHolder\" value=\"" . $comments[2] . "\"/>\n</td>\n";
-			$return .= "$stabs</tr>\n";
-		}
-		//Retorna
-		return $return;
-	}
-	
     //Funcion que modifica el email
     function modifyEmail() {
         //Arma la sentencia SQL
@@ -1279,7 +1268,7 @@ class users extends table {
 			$lang = $_SESSION["LANGUAGE"];
 		}
 		//Arma la sentencia SQL
-		$this->sql = "SELECT USER_ID, FULL_NAME, ACCESS_NAME, REGISTERED_ON, AREA_NAME, LAST_LOGIN, LAST_LOGOUT " .
+		$this->sql = "SELECT USER_ID, FULL_NAME, ACCESS_NAME, REGISTERED_ON, AREA_NAME, LAST_LOGIN, LAST_LOGOUT, ACCESS_ID " .
 				"FROM $this->view WHERE IS_BLOCKED = FALSE AND LANGUAGE_ID = $lang AND USER_ID <> '" . $_SESSION["vtappcorp_userid"] . "' ORDER BY REGISTERED_ON DESC";
 		//Variable a devolver
 		$return = "";
@@ -1288,8 +1277,13 @@ class users extends table {
 			//Imagen del usuario
 			$avatar = "img/users/" . $row[0] . ".jpg";
 			$badgeStatus = "";
-			if(!file_exists($avatar))
-				$avatar = "img/users/user.jpg";
+			if(!file_exists($avatar)) {
+				//verifica el tipo de usuario
+				if($row[7] == 70)
+					$avatar = "img/users/msgr.jpg";
+				else
+					$avatar = "img/users/user.jpg";
+			}
 			//Define los datos de login logout
 			if($row[5] && $row[6]) {
 				$login = strtotime($row[5]);
@@ -1310,11 +1304,11 @@ class users extends table {
 					$badgeStatus = "<span class=\"badge badge-danger float-right\">Offline</span>\n";
 			}
 			//Inicia la GUI
-			$return .= "<li><a href=\"javascript:void(0);\" onclick=\"showDirectChat('$row[0]');\">\n";
+			$return .= "<li id=\"li_$row[0]\"><a href=\"javascript:void(0);\" onclick=\"showDirectChat('$row[0]');\">\n";
 			$return .= "<img class=\"contacts-list-img\" src=\"$avatar\">\n";
 			$return .= "<div class=\"contacts-list-info\">\n";
-			$return .= "<span class=\"contacts-list-name\">" . ucwords(strtolower($row[1]));
-			$return .= "<small class=\"contacts-list-date float-right\">" . date("d/M/Y") . "</small>\n";
+			$return .= "<span class=\"contacts-list-name\"><span id=\"spanName_$row[0]\">" . ucwords(strtolower($row[1]));
+			$return .= "</span><small class=\"contacts-list-date float-right\">" . date("d/M/Y") . "</small>\n";
 			$return .= "</span>\n";
 			$return .= "<span class=\"contacts-list-msg\">$row[2] " . ($row[4] ? "($row[4])" : "") . " $badgeStatus</span>\n";
 			$return .= "</div></a></li>\n";
@@ -1324,6 +1318,7 @@ class users extends table {
 	
 	//Funcion que muestra la forma
 	function showProfileForm($disabled, $action = "edit", $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -1392,10 +1387,12 @@ class users extends table {
     //Funcion que verifica usuarios enlinea
     function getOnline($value = "") {
         //Arma la sentencia SQL
-        $this->sql = "SELECT * FROM " . $this->vieol;
+        $this->sql = "SELECT DISTINCT O.* FROM $this->vielo A " .
+						"LEFT JOIN $this->vieol O ON (A.USER_ID = O.USER_ID) " .
+						"WHERE A.ACTION_TAKE = '' AND O.ACCESS_ID = 70";
 		//Verify value
 		if($value != "") {
-			$this->sql .= " WHERE REFERENCE = '$value'";
+			$this->sql .= " AND REFERENCE = '$value'";
 		}
 		//Variable a devolver
 		$return = array();
@@ -1433,7 +1430,7 @@ class users extends table {
 	//Enviar notification a firebase
 	function sendGCM($message, $sid = "") {
 		$id = $this->GOOGLE_USER;
-		if(!boolval($this->conf->verifyValue("PUSHSAFER_ACTIVE"))) {
+		if(!filter_var($this->conf->verifyValue("PUSHSAFER_ACTIVE"), FILTER_VALIDATE_BOOLEAN)) {
 			$url = $this->conf->verifyValue("FIREBASE_SERVER");
 			$notify = array("title" => "Vtapp",
 							"body" => $message);
@@ -1510,7 +1507,7 @@ class users extends table {
 				'c' => "",
 				'd' => $id,
 				'u' => urldecode($url),
-				'ut' => urldecode($urltitle),
+				'ut' => urldecode("VTAPP Notificación"),
 				'p' => $picture,
 				'k' => $pk
 			);
@@ -1536,7 +1533,7 @@ class users extends table {
 						"error" => "",
 						"nerror" => 0,
 						"result" => "");
-		$notify = boolval($this->conf->verifyValue("NOTIFICATION_BY_SMS"));
+		$notify = filter_var($this->conf->verifyValue("NOTIFICATION_BY_SMS"), FILTER_VALIDATE_BOOLEAN);
 		$wsqry = 0;
 		if($notify) {
 			$id = $this->conf->verifyValue("SMS_PREFIX") . $this->CELLPHONE;

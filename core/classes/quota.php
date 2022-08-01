@@ -15,6 +15,7 @@ class quota extends table {
 	var $payment;
 	var $view;
 	var $vie2;
+	var $vie3;
 	
 	//Constructor
 	function __constructor($quota = "") {
@@ -38,6 +39,7 @@ class quota extends table {
 		$this->payment = new payment();
 		$this->view = "VIE_QUOTA_SUMMARY";		
 		$this->vie2 = "VIE_QUOTA_USED";		
+		$this->vie3 = "VIE_QUOTA_REPEATED_SUMMARY";		
 	}
 	
 	//Funcion para Set el tipo
@@ -158,6 +160,7 @@ class quota extends table {
 	
 	//Funcion que despliega los valores en una categoria
 	function showOptionList($tabs = 8,$selected = "") {
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
@@ -183,6 +186,40 @@ class quota extends table {
 		//Retorna
 		return $return;
 	}
+
+	//Funcion que despliega los valores en una categoria
+	function showPeriodOptionList($tabs = 8,$selected = "") {
+		$resources = new resources();
+		$stabs = "";
+		//Arma la cadena con los tabs requeridos
+		for($i=0;$i<$tabs;$i++)
+			$stabs .= "\t";
+		//Arma la sentencia SQL
+		$this->sql = "SELECT RESOURCE_TEXT FROM $resources->table WHERE RESOURCE_NAME = 'PERIOD_DATA'"; 
+        //Obtiene los resultados
+        $rows = $this->__getData();
+		//Convierte a array
+		$arrData = json_decode($rows[0]);
+		//Variable a retornar
+		$return = "";
+		//Recorre los valores
+		foreach($arrData as $row) {
+            if(!mb_detect_encoding($row->text, 'utf-8', true)) {
+                //Guarda la informacion en GLOBALS
+                $row->text = utf8_encode($row->text);
+			}
+			//Si la opcion se encuentra seleccionada
+			if($row->id == $selected)
+				//Ajusta al diseño segun GUI
+				$return .= "$stabs<option value='" . $row->id . "' selected>" . $row->text ."</option>\n";
+			else
+				//Ajusta al diseño segun GUI
+				$return .= "$stabs<option value='" . $row->id . "'>" . $row->text . "</option>\n";
+		}
+		//Retorna
+		return $return;
+	}
+
 	
 	//Funcion para buscar un empleado por otra informacion
     function getInformationByOtherInfo($field = "PARTNER_NAME") {
@@ -219,6 +256,7 @@ class quota extends table {
 
 	function dataForm($action, $tabs = 5) {
 		$resources = new resources();
+		$stabs = "";
 		//Verifica los recursos
 		$this->completeResources();
 		//Arma la cadena con los tabs requeridos
@@ -228,7 +266,8 @@ class quota extends table {
 		if($action == "new") {
 			$readonly = array("", "", "disabled", 
 								"", "",
-								"", "", "", "disabled");
+								"", "", "", "disabled",
+								"", "", "");
 			$actiontext = $_SESSION["MENU_NEW"];
 			$link = "core/actions/_save/__newQuota.php";
 		}
@@ -236,7 +275,8 @@ class quota extends table {
 			$readonly = array("readonly=\"readonly\"", "disabled", "disabled", 
 								"disabled", "disabled",
 								"disabled", "disabled", "", "disabled",
-								"disabled", "disabled", "disabled", "disabled");
+								"disabled", "disabled", "disabled", "disabled",
+								"disabled", "disabled", "disabled");
 			$actiontext = $_SESSION["EDIT"];
 			$link = "core/actions/_save/__editQuota.php";
 		}
@@ -246,7 +286,8 @@ class quota extends table {
 							"disabled", "disabled", "disabled", 
 							"disabled", "disabled", 
 							"disabled", "disabled", "disabled",
-							"disabled", "disabled", "disabled", "disabled");
+							"disabled", "disabled", "disabled", "disabled",
+							"disabled", "disabled", "disabled");
 			$actiontext = ($action == "view") ? $_SESSION["INFORMATION_OF"] : $_SESSION["DELETE"];
 			$link = "core/actions/_save/__deleteQuota.php";
 		}
@@ -263,7 +304,7 @@ class quota extends table {
 		
 	//Funcion que retorna el resumen por categoria
 	function showSummary($aColumnsBD,$sWhere,$sOrder,$sLimit,$options = "") {
-		$fields = ["QUOTA_ID", "CLIENT_NAME", "AMOUNT", "USED", "IS_PAYED", "IS_VERIFIED", "CREDIT_CARD_NUMBER", "CREDIT_CARD_NAME", "QUOTA_TYPE_ID"];
+		$fields = ["QUOTA_ID", "CLIENT_NAME", "AMOUNT", "USED", "IS_PAYED", "IS_VERIFIED", "CREDIT_CARD_NUMBER", "CREDIT_CARD_NAME", "IS_REPEATED",  "QUOTA_TYPE_ID", "PERIOD"];
 		//Verifica las opciones
 		if($options != "") {
 			$sWhere .= " WHERE CLIENT_ID = '$options'";
@@ -308,8 +349,15 @@ class quota extends table {
 						else
 							$pay = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["PAYED"] . "\" ><i class=\"fa fa-check-circle\"></i></button>";
 						$list = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["LIST_SERVICES"] . "\" onclick=\"list('" . $aRow[$i] . "');\"><i class=\"fa fa-list-alt\"></i></button>";
+						
+						if(!filter_var($aRow[8], FILTER_VALIDATE_BOOLEAN)) {
+							$repeat = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["REPEATED_OFF"] . "\" ><i class=\"fa fa-toggle-off\"></i></button>";
+						}
+						else {
+							$repeat = "<button type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["REPEATED_ON"] . "\" ><i class=\"fa fa-repeat\"></i></button>";
+						}
 												
-						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $pay . $list . $view . $edit . $delete . "</div></div>";
+						$action = "<div class=\"btn-toolbar\" role=\"toolbar\"><div class=\"btn-group\">" . $pay . $repeat . $list . $view . $edit . $delete . "</div></div>";
 						$row[$aColumnsBD[$i]] = $aRow[$i];
 						$row[$aColumnsBD[count($aColumnsBD)-1]] = $action;
 					}
@@ -332,6 +380,7 @@ class quota extends table {
 	
 	//Funcion que muestra la forma
 	function showForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -441,6 +490,21 @@ class quota extends table {
 							"actual_balance" => $row[10],
 							"user_id" => $row[11],
 							"user_name" => $row[12]);
+			array_push($result,$data);
+		}
+		return $result;
+	}
+	
+	//Funcion para verificar pagos recurrentes
+	function getQuotaRepeated() {
+		//Define el resultado
+		$result = array();
+		//Arma la sentencia SQL
+		$this->sql = "SELECT * FROM $this->vie3 WHERE DUE_DATE < NOW()";
+		foreach($this->__getAllData() as $row) {					
+			$data = array("qid" => $row[0],
+							"cid" => $row[1],
+							"dat" => $row[2]);
 			array_push($result,$data);
 		}
 		return $result;

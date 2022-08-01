@@ -64,22 +64,22 @@
 	switch($action) {
 		case "new": {
 			$titlepage = $_SESSION["MENU_NEW"];
-			$text_title =  $_SESSION["NEW_TEXT"];
+			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			break;
 		}
 		case "edit": {
-			$titlepage = $_SESSION["MENU_EDIT"];
-			$text_title =  $_SESSION["EDIT_TEXT"];
+			$titlepage = "Editar";
+			$text_title =  "Modifique la información disponible. No todos los campos son editables. <small>Los campos marcados con * son requeridos</small>";
 			break;
 		}
 		case "delete": {
-			$titlepage = $_SESSION["MENU_DELETE"];
+			$titlepage = "Confirme que desea eliminar este registro.";
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			break;
 		}
 		case "view": {
 			$titlepage = $_SESSION["VIEW"];
-			$text_title =  $_SESSION["INFORMATION"];
+			$text_title =  "Información";
 			break;
 		}
 	}
@@ -107,6 +107,7 @@
 	//Verifica la pasarela
 	if($gate == "WOMPI") {
 		//Libreria requerida
+		require_once("core/classes/ws_query.php");
 		require_once("core/actions/_save/__wompiGatewayFunctions.php");
 
 		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
@@ -226,6 +227,25 @@
 											<?= $quota->showField("PAYMENT_ID", $dataForm["tabs"], "fa fa-money-bill-1", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label><?= $quota->arrColComments["IS_REPEATED"] ?> *</label>
+												<div class="input-group">
+													<input id="chkRepeated" name="chkRepeated" type="checkbox" class="form-control" <?= (filter_var($quota->IS_REPEATED, FILTER_VALIDATE_BOOLEAN) ? "checked" : " ") ?> data-toggle="toggle" data-on="<?= $_SESSION["MSG_YES"] ?>" data-off="<?= $_SESSION["MSG_NO"] ?>" data-onstyle="success" data-offstyle="primary" <?= $dataForm["readonly"][$cont++] ?> />
+												</div>
+											</div>
+										</div>
+										<div class="col-md-4">
+											<label><?= $quota->arrColComments["PERIOD"] ?> *</label>
+											<select class="form-control" id="cbPeriod" name="cbPeriod" <?= $dataForm["readonly"][$cont++] ?> <?= (filter_var($quota->IS_REPEATED, FILTER_VALIDATE_BOOLEAN) ? "" : "disabled") ?>>
+												<?= $quota->showPeriodOptionList(9,$quota->PERIOD) ?>
+											</select>
+										</div>
+										<div class="col-md-4">
+											<?= $quota->showField("LAST_DATE", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", (filter_var($quota->IS_REPEATED, FILTER_VALIDATE_BOOLEAN) ? "" : "disabled")) ?>
+										</div>
+									</div>
 <?
 	if($action != "new") {
 ?>
@@ -311,6 +331,10 @@
 	<script src="plugins/jquery.cc.validator/jquery.creditCardValidator.js"></script>
 	<!-- Cleave -->
 	<script src="plugins/cleave/cleave.min.js"></script>
+	<!-- date-range-picker -->
+	<script src="plugins/moment/moment.min.js"></script>
+	<script src="plugins/daterangepicker/daterangepicker.js"></script>
+	
 <?
 	if(!$accTok) {
 ?>
@@ -349,11 +373,51 @@
 				$("#cbClient").trigger("change");		
 			}
 		});
+<?
+	if($_SESSION["LANGUAGE"] != "1") {
+?>
+			$.getJSON("plugins/daterangepicker/lang/<?= $_SESSION["LANGUAGE"] ?>.json", function(json) { 
+				$('#txtLAST_DATE').daterangepicker({
+					locale: json,
+					startDate: "<?= date("Y-m-d") ?>",
+					singleDatePicker: true, 
+					showDropdowns: true,
+					minYear: <?= date("Y") ?>,
+					maxYear: <?= intval(date("Y")) + 2 ?>
+				});
+			});
+<?
+	}
+	else {
+?>		
+			$('#txtLAST_DATE').daterangepicker({
+				startDate: "<?= date("Y-m-d") ?>",
+				singleDatePicker: true, 
+				showDropdowns: true,
+				minYear: <?= date("Y") ?>,
+				maxYear: <?= intval(date("Y")) + 2 ?>
+			});
+<?
+	}
+?>
 		$("#cbQuotaType").on("change", function(e) {
 			var selected = $("option:selected", this);
 			$("#txtAMOUNT").val(selected.data("amount"));
 		});
 		$('[data-toggle="tooltip"]').tooltip();
+		$("#cbPeriod").on("change", function(e) {
+			var selected = $("option:selected", this);
+			$("#txtLAST_DATE").attr("disabled",selected.val() == "N");
+		});		
+		$('#chkRepeated').change(function() {
+			var state = $(this).prop('checked');
+			$("#cbPeriod").attr("disabled", !state);
+			if(state) 
+				$("#cbPeriod").trigger("change");
+			else 
+				$("#txtLAST_DATE").attr("disabled",true);
+			$("#btnPay").attr("disabled",state);
+		})		
 		new Cleave('#txtCREDIT_CARD_NUMBER', {
 			creditCard: true
 		});
@@ -400,8 +464,12 @@
 				var noty;
 				$.ajax({
 					url: url,
-					data: { strModel: datas },
+					data: { 
+						strModel: datas,
+						payment: false
+					},
 					dataType: "json",
+					method: "POST",
 					beforeSend: function (xhrObj) {
 						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
 						noty = notify("", "dark", "", message, "", false);												
@@ -473,6 +541,7 @@
 					strModel: datas,
 					payment: "true"
 				},
+				method: "POST",
 				dataType: "json",
 				beforeSend: function (xhrObj) {
 					var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";

@@ -211,7 +211,6 @@ class quota_employee extends table {
 	
 	//Funcion para buscar un cupo por otra informacion
     function getInformationByOtherInfo($field = "USER_ID", $value = "", $field2 = "", $value2 = "") {
-        //Arma la sentencia SQL
 		if($value == "") {
 			$this->sql = "SELECT ID FROM $this->table WHERE $field = " . $this->_checkDataType($field) . " AND IS_BLOCKED = FALSE";
 		}
@@ -220,7 +219,7 @@ class quota_employee extends table {
 		}
 		if($field2 != "" && $value2 != "") {
 			$this->sql .= " AND $field2 = '$value2'";
-		}			
+		}
         //Obtiene los resultados
         $row = $this->__getData();
         //Registro no existe
@@ -246,8 +245,58 @@ class quota_employee extends table {
         }
 		return $return;
     }
+
+	//Funcion para buscar un cupo por otra informacion
+    function getInformationByOtherInfo2($field = "USER_ID", $value = "", $field2 = "", $value2 = "") {
+		$where = "WHERE IS_BLOCKED = FALSE AND ";
+        //Arma la sentencia SQL
+		if($field == "USER_ID") {
+			if($value == "")
+				$where .= "$field = " . $this->_checkDataType($field);
+			else
+				$where .= "$field = '$value'";
+			if($field2 != "")
+				$where .= "(" . $where . " OR $field IS NULL) AND $field2 = '$value2'";
+		}
+		elseif ($field2 == "USER_ID") {
+			$where .= "($field2 = '$value2' OR $field2 IS NULL)";
+			if($value == "")
+				$where .= " AND $field = " . $this->_checkDataType($field);
+			else
+				$where .= " AND $field = '$value'";
+		}
+		$this->sql = "SELECT IFNULL(QUOTA_EMPLOYEE_ID,QUOTA_ID), IS_REPEATED, PERIOD, LAST_DATE, QUOTA_ID, AMOUNT_ASSIGNED, USED_ASSIGNED " .
+				"FROM $this->view $where ORDER BY AMOUNT_ASSIGNED-USED_ASSIGNED, REGISTERED_ON LIMIT 1" ;
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "0";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = $_SESSION["NOT_REGISTERED"];
+			//Valor a retornar
+			$return = null;
+        }
+        else {
+            //Asigna el ID
+			$return = array("id" => $row[0],
+							"repeated" => $row[1],
+							"period" => $row[2],
+							"last_date" => $row[3],
+							"quota" => $row[0] == $row[4]);
+			$this->AMOUNT = $row[5];
+			$this->USED = $row[6];
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+		return $return;
+    }
 		
 	function dataForm($action, $source, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();

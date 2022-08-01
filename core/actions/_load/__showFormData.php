@@ -1,6 +1,6 @@
 <?
 	//Inicio de sesion
-	session_name('vtappcorp_session');
+	session_name('asimetric_session');
 	session_start();
 	
 	//Inicializa la cabecera
@@ -11,6 +11,7 @@
 	$class = "";
 	$class2 = "";
 	$encr = false;
+	$form = "";
 	
 	//Verifica los datos
 	if(!isset($_POST['txtId'])) {
@@ -19,16 +20,20 @@
 			$id = $_GET['txtId'];
 			$action = $_GET['txtAction'];
             $class = $_GET['txtClass'];
-			$encr = $_GET['encrypted'];
-			$form = $_GET['txtForm'];
+			if(isset($_GET['encrypted']))
+				$encr = $_GET['encrypted'];
+			if(isset($_GET['txtForm']))
+				$form = $_GET['txtForm'];
 		}
 	}
 	else {
 		$id = $_POST['txtId'];
 		$action = $_POST['txtAction'];
 		$class = $_POST['txtClass'];
-		$encr = $_POST['encrypted'];
-		$form = $_POST['txtForm'];
+		if(isset($_POST['encrypted']))
+			$encr = $_POST['encrypted'];
+		if(isset($_POST['txtForm']))
+			$form = $_POST['txtForm'];
 	}
 
 	if(empty($class)) {

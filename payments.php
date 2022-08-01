@@ -50,6 +50,7 @@
 	//Verifica la pasarela
 	if($gate == "WOMPI") {
 		//Libreria requerida
+		require_once("core/classes/ws_query.php");
 		require_once("core/actions/_save/__wompiGatewayFunctions.php");
 
 		$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");

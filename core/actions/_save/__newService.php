@@ -15,6 +15,10 @@
 	//Realiza la operacion
 	require_once("../../classes/service_log.php");
 
+	$rep = false;
+	$sid = 0;
+	$pym = "";
+
 	//Captura las variables
     if(empty($_POST['strModel'])) {
         //Verifica el GET
@@ -24,10 +28,16 @@
         }
         else {
             $strmodel = $_GET['strModel'];
+			$rep = filter_var($_GET['repeated'], FILTER_VALIDATE_BOOLEAN);
+			$sid = intval($_GET["sid"]);
+			$pym = empty($_GET['payment']) ? "" : $_GET['payment'];
         }
     }
     else {
         $strmodel = $_POST['strModel'];
+		$rep = filter_var($_POST['repeated'], FILTER_VALIDATE_BOOLEAN);
+		$sid = intval($_POST["sid"]);
+		$pym = empty($_POST['payment']) ? "" : $_POST['payment'];
     }
 	
     //Si es un acceso autorizado
@@ -49,7 +59,7 @@
 		$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 		$service->REQUESTED_IP = $_SERVER["REMOTE_ADDR"];
 		$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
-		$service->setRequestZone($datas->cbZoneRequestSub, true);
+		$service->setRequestZone($datas->cbZoneRequestedSub, true);
 		$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
 		$service->OBSERVATION = $datas->txtOBSERVATION;
 		$service->DELIVER_TO = $datas->txtDELIVER_TO;
@@ -155,9 +165,30 @@
 			//Pasar estado a Registrado
 			$service->updateState($service->state->getNextState());
 		}
+		
+		//Si es un pago por demanda
+		if($sid != 0 && $pym != "") {
+			//Verifica la informacion del pago para actualizarlo
+			require_once("../../classes/payment.php");
+			$pymt = new payment();
+			$pymt->ID = $pym;
+			$pymt->__getInformation();
+			
+			$pymt->REFERENCE_ID = $service->ID;
+			$pymt->OBSERVATION = "QUOTA PAYED BY DEMAND: $sid";
+			
+			$pymt->_modify();
+			//Si hay error
+			if($pymt->nerror > 0) {
+				_error_log("Error creating payment on quota repeated $sid // $pym: " . $pymt->error . "\nTrace:" . $pymt->sql . " " . print_r(debug_backtrace(2), true)); 
+				//Confirma mensaje al usuario
+				$result['message'] = $pymt->error;
+				$result["sql"] = $pymt->sql;
+			}
+		}
 
 		//Verifica si hubo pago
-		if(boolval($datas->hfPayed)) {
+		if(filter_var($datas->hfPayed, FILTER_VALIDATE_BOOLEAN)) {
 			//Pasar estado a Asignacion
 			if(!$stpAss) {
 				$service->updateState($service->state->getNextState(0,3));
@@ -181,7 +212,7 @@
 		}
 		
 		//En caso que sea Contra entrega
-		if(boolval($datas->hfPayOnDeliver)) {
+		if(filter_var($datas->hfPayOnDeliver, FILTER_VALIDATE_BOOLEAN)) {
 			//Pasar estado a Asignacion
 			$service->updateState($service->state->getNextState(0,3));
 			$stpAss = true;

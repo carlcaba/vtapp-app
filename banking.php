@@ -14,7 +14,7 @@
 	
 	require_once("core/__check-session.php");
 	
-	$result = checkSession("quotas.php",true);
+	$result = checkSession("banking.php",true);
 
 	if($result["success"] !== true) 
 		$inter->redirect($result["link"]);
@@ -110,7 +110,9 @@
 											<th width="10%"><?= $_SESSION["QUOTA_TABLE_TITLE_6"] ?></th>
 											<th width="10%"><?= $_SESSION["QUOTA_TABLE_TITLE_7"] ?></th>
 											<th width="5%"><?= $_SESSION["QUOTA_TABLE_TITLE_8"] ?></th>
+											<th width="10%"><?= $_SESSION["QUOTA_TABLE_TITLE_9"] ?></th>
 											<th width="20%"><?= $_SESSION["ACTIONS_TABLE_TITLE"] ?></th>
+											<th width="5%">Id</th>
 										</tr>
 									</thead>		
 									<tbody>
@@ -153,7 +155,7 @@
 	<script src="js/resources.js"></script>	
 	
     <script>
-	var fields = ["QUOTA_ID", "CLIENT_NAME", "AMOUNT", "USED", "IS_PAYED", "IS_VERIFIED", "CREDIT_CARD_NUMBER", "CREDIT_CARD_NAME", "QUOTA_TYPE_ID"];
+	var fields = ["QUOTA_ID", "CLIENT_NAME", "AMOUNT", "USED", "IS_PAYED", "IS_VERIFIED", "CREDIT_CARD_NUMBER", "CREDIT_CARD_NAME", "IS_REPEATED",  "QUOTA_TYPE_ID", "PERIOD"];
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
         table = $('#tableQuota').DataTable({
@@ -177,7 +179,9 @@
 				{ "data": "IS_VERIFIED", "sClass": "text-center" , "responsivePriority": 5, "render": function (data, type, row) { return data == "1" ? "<?= $_SESSION["MSG_YES"] ?>" : "<?= $_SESSION["MSG_NO"] ?>"; } },
 				{ "data": "CREDIT_CARD_NUMBER", "sClass": "text-center" , "responsivePriority": 7, "render": function (data, type, row) { return data.replace(/(?<=\d{4})\d(?=\d{4})/gm,"X"); } },
 				{ "data": "CREDIT_CARD_NAME", "responsivePriority": 8 },
-				{ "data": "QUOTA_TYPE_ID", "searchable": false, "responsivePriority": 1, "sortable": false }
+				{ "data": "IS_REPEATED", "sClass": "text-center" , "responsivePriority": 5, "render": function (data, type, row) { return data == "1" ? "<?= $_SESSION["MSG_YES"] ?>" : "<?= $_SESSION["MSG_NO"] ?>"; } },
+				{ "data": "PERIOD", "searchable": false, "visible": true, "responsivePriority": 1, "sortable": false },
+				{ "data": "QUOTA_TYPE_ID", "searchable": false, "responsivePriority": 1, "sortable": false, "visible": false }
 			],
 			"autoWidth": false,
 			"processing": true,

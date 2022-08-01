@@ -244,7 +244,7 @@
 	$result["success"] = $class->$method($action);
 
 	if($result["success"] == true) {
-		$result["message"] = $_SESSION["INFORMATION"];
+		$result["message"] = "Información";
 		
 		if(intval($tipo) == 6) {
 			$action->collect = $service->CheckToCollect();
@@ -292,7 +292,7 @@
 	}
 	else {
 		$result["message"] = $class->error;
-		if(boolval($debug)) 
+		if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 			$result["data"] = $class->sql;
 	}
 

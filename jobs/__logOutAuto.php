@@ -101,7 +101,7 @@
 				continue;
 			}
 			//Verifica el estado
-			if(!boolval($usua->ON_LINE)) {
+			if(!filter_var($usua->ON_LINE, FILTER_VALIDATE_BOOLEAN)) {
 				$log = new logs("User " . $usr["uid"] . " not online -> " . $usua->ONLINE);
 				$log->USER_ID = "admin";
 				$log->_add();

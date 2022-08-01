@@ -173,6 +173,7 @@ class interfaces extends table {
 	
 	//Funcion que muestra la barra inferior izquierda
 	function showMenuFooter($tabs = 5) {
+		$stabs = "";
 		$return = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
@@ -222,6 +223,13 @@ class interfaces extends table {
         if($row) {
             $result = $row[0];
         }
+		else {
+			//Arma la sentencia SQL
+			$this->sql = "SELECT ID FROM $this->table WHERE LINK LIKE 'dashboard.php' AND ACCESS_ID <= " . $_SESSION["vtappcorp_useraccessid"];
+			//Obtiene los resultados
+			$row = $this->__getData();
+            $result = $row[0];
+		}
         //Regresa
         return $result;
     }
@@ -271,6 +279,7 @@ class interfaces extends table {
 	//Funcion para mostrar los accesos directos
 	function showDirectAccess($tabs = 8) {
 		$return = "";
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
@@ -386,6 +395,7 @@ class interfaces extends table {
 		$mes2 = $_SESSION["MONTHS"];
 		$mes1 = explode("-",$mes1);
 		$mes2 = explode("-",$mes2);
+		$desfecha = "";
 		//Separa el formato
 		$for = explode(" ",$format);
 		//Verifica el formato requerido
@@ -695,6 +705,7 @@ class interfaces extends table {
 	
 	//Funcion que convierte un array en una linea CSV
 	function array_to_csv($data,$delimeter = ",") {
+		$ret = "";
 		//Concatena los valores del array en una cadena
 		for($i=0;$i<count($data);$i++)
 			$ret.="$data[$i] " . $delimeter;

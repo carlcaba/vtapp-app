@@ -45,6 +45,7 @@
 		$chat->MESSAGE = $datas["txtMESSAGE"];
 		$chat->DELIVERED = "TRUE";
 		$chat->DELIVERED_ON = "NOW()";
+		$chat->SENDER = !is_null($datas["hfSENDER"]) ? $datas["hfSENDER"] : $chat->SENDER;
 		//Si es un cliente
 		$chat->PRIORITY = ($access <= 50) ? "TRUE" : "FALSE";
 		

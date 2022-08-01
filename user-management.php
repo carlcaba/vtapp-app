@@ -48,25 +48,25 @@
 	switch($action) {
 		case "new": {
 			$titlepage = $_SESSION["MENU_NEW"];
-			$text_title =  $_SESSION["NEW_TEXT"];
+			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			$user = new users();
 			break;
 		}
 		case "edit": {
-			$titlepage = $_SESSION["MENU_EDIT"];
-			$text_title =  $_SESSION["EDIT_TEXT"];
+			$titlepage = "Editar";
+			$text_title =  "Modifique la información disponible. No todos los campos son editables. <small>Los campos marcados con * son requeridos</small>";
 			$user = new users($id);
 		break;
 		}
 		case "delete": {
-			$titlepage = $_SESSION["MENU_DELETE"];
+			$titlepage = "Confirme que desea eliminar este registro.";
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			$user = new users($id);
 			break;
 		}
 		case "view": {
 			$titlepage = $_SESSION["VIEW"];
-			$text_title =  $_SESSION["INFORMATION"];
+			$text_title =  "Información";
 			$user = new users($id);
 			break;
 		}

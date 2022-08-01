@@ -88,7 +88,8 @@ function getDistance(p1, p2) {
 }
 
 function removeAccents(str) {
-	return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	//return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+	return str.normalize("NFD").replace(/\p{Diacritic}/gu, "");
 } 
 
 function getResourceValue(value, msg) {
@@ -130,3 +131,17 @@ function showVariables() {
 		}
 	});
 }
+
+function formatDate(date) {
+	var months = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+	if (date === undefined)
+		date = new Date();
+	var mm = date.getMonth() + 1;
+	var dd = date.getDate();
+	var hh = date.getHours();
+	var mi = date.getMinutes();
+	var am = hh >= 12 ? "PM" : "AM";
+	
+	return [dd,months[mm],date.getFullYear(),(hh > 12 ? hh-12 : hh) + ":" + (mi > 9 ? "" : "0") + mi,am].join(' ');	
+}
+

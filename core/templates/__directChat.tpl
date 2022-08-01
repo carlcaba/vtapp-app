@@ -7,7 +7,7 @@
 	$chatBadge = $myChats > 0 ? "<span data-toggle=\"tooltip\" title=\"" . $myChats . " " . $_SESSION["MESSAGES"] . "\" class=\"badge badge-warning\">$chats</span>" : "";
 ?>
 							<!-- DIRECT CHAT -->
-							<div class="card direct-chat direct-chat-warning">
+							<div class="card direct-chat direct-chat-primary" id="directChatCard">
 								<div class="card-header">
 									<h3 class="card-title"><?= $_SESSION["DIRECT_CHAT"] ?></h3>
 									<div class="card-tools">
@@ -17,13 +17,13 @@
 									</div>
 								</div>
 								<!-- /.card-header -->
-								<div class="card-body" id="directChatMessages">
+								<div class="card-body" id="directChatBody">
 <?= $chat->showLastChats() ?>
 								</div>
 								<!-- /.card-body -->
 								<div class="card-footer" id="directChatForm">
 <?
-	if(($myChats + $sentChats) > 0 ) 
+	if(($myChats + $sentChats) > 0) 
 		echo $chat->showForm($userChat);
 ?>
 								</div>

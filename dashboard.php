@@ -1,4 +1,3 @@
-
 <?
 	//Inicio de sesion
 	session_name('vtappcorp_session');
@@ -33,6 +32,8 @@
 	require_once("core/classes/logs.php");
 	$log = new logs();
 	$loadScripts = false;
+	
+	$parentFileName = __FILE__;
 	
 ?>
 <!DOCTYPE html>
@@ -79,10 +80,6 @@
 	<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
 	<!-- FastClick -->
 	<script src="plugins/fastclick/fastclick.js"></script>
-	<!-- AdminLTE App -->
-	<script src="js/adminlte.js"></script>
-	<!-- AdminLTE for demo purposes -->
-	<script src="js/demo.js"></script>
 </head>
 <body class="hold-transition sidebar-mini <?= $skin[2] ?>">
 	<div class="wrapper">
@@ -188,23 +185,21 @@
 										<button type="button" class="btn btn-tool" data-widget="remove"><i class="fa fa-times"></i></button>
 									</div>
 								</div>
-								<!-- /.card-header -->
 								<div class="card-body">
 <?
 	include("core/templates/__contacts.tpl");
 ?>
 								</div>
-								<!-- /.card-body -->
+								<div class="overlay" id="overlayLoadContacts"><i class="fa fa-2x fa-sync-alt fa-spin"></i></div>								
 							</div>
-							<!--/.direct-chat -->
 						</div>
-						<!-- /.col -->
 					</div>
 				</div><!-- /.container-fluid -->
 			</section>
 			<!-- /.content -->
 		</div>
 		<!-- /.content-wrapper -->
+		
 <?
 	include("core/templates/__footer.tpl");
 	include("core/templates/__messages.tpl");
@@ -240,7 +235,7 @@
 			mymap.setView([crd.latitude, crd.longitude], 19);		
 			var popup = L.popup()
 				.setLatLng([crd.latitude, crd.longitude])
-				.setContent("<b><?= $_SESSION["INFORMATION"] ?></b><br /><?= $_SESSION["YOUR_LOCATION"] ?>")
+				.setContent("<b><?= "Información" ?></b><br /><?= $_SESSION["YOUR_LOCATION"] ?>")
 				.openOn(mymap);
 		};
 		function error(err) {
@@ -263,5 +258,15 @@
 	</script>
 	*/
 ?>
+	<!-- AdminLTE App -->
+	<script src="js/adminlte.js"></script>
+	<script src="js/resources.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('#chat-pane-toggle').DirectChat('toggle');
+			if($("#overlayLoadContacts").is(":visible"))
+				$("#overlayLoadContacts").hide();
+		});		
+	</script>
 </body>
 </html>

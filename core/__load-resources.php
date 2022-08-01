@@ -45,6 +45,8 @@
 	//Realiza la carga del lenguaje
     $resources = new resources();
     $resources->loadResources(LANGUAGE);
+	
+	$parentFileName = null;
 
 	//Funcion para agregar el trace de los webservices
 	function addTraceWS($script, $params, $source, $result) {

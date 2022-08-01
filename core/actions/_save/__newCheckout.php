@@ -75,7 +75,7 @@
 	$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 	$service->REQUESTED_IP = $datas->txtREQUESTED_IP;
 	$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
-	$service->setRequestZone($datas->cbZoneRequestSub, true);
+	$service->setRequestZone($datas->cbZoneRequestedSub, true);
 	$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
 	$service->OBSERVATION = $datas->txtOBSERVATION;
 	$service->DELIVER_TO = $datas->txtDELIVER_TO;

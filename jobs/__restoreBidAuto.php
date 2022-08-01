@@ -10,7 +10,7 @@
 	ini_set("log_errors", TRUE);  
 	ini_set('_error_log', $log_file); 
 
-	$_SESSION["vtappcorp_userid"] = "admin";
+	$_SESSION["vtappcorp_userid"] = "jbRestoreAutoBid";
 	
     //Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
@@ -24,14 +24,12 @@
 	require_once("../core/classes/logs.php");
 	require_once("../core/classes/configuration.php");
 
-	ini_set('display_errors', '1');
-	
 	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
 	$conf = new configuration("AUTOBID_ACTIVATED");
 	$active = $conf->verifyValue();
 	
-	if(!boolval($active)) {
+	if(!filter_var($active, FILTER_VALIDATE_BOOLEAN)) {
 		_error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
 		$result["message"] = "AUTOBID_ACTIVATED disabled $active";
 		exit(json_encode($result));
@@ -47,7 +45,7 @@
 	//Si no hay servicios
 	if(count($services) < 1) {
 		$log = new logs("No services not bidded");
-		$log->USER_ID = "admin";
+		$log->USER_ID = "jbRestoreAutoBid";
 		$log->_add();
 		_error_log($log->TEXT_TRANSACTION, $serv->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
@@ -69,7 +67,7 @@
 		//Si hay error
 		if($service->nerror > 0) {
 			$log = new logs("Service " . $srv["sid"] . " not found -> " . $service->error);
-			$log->USER_ID = "admin";
+			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
 			_error_log($log->TEXT_TRANSACTION, $service->sql);
 			$err++;
@@ -79,7 +77,7 @@
 		//Verifica el estado
 		if($service->STATE_ID != $srv["stateid"]) {
 			$log = new logs("Service " . $srv["id"] . " wrong state -> " . $service->STATE_ID . " <> " . $srv["stateid"]);
-			$log->USER_ID = "admin";
+			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
 			_error_log($log->TEXT_TRANSACTION);
 			$err++;
@@ -93,7 +91,7 @@
 		//Si hay error
 		if($service->nerror > 0) {
 			$log = new logs("Service " . $srv["sid"] . " Error on update -> " . $service->error);
-			$log->USER_ID = "admin";
+			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
 			_error_log($log->TEXT_TRANSACTION, $service->sql);
 			$err++;
@@ -101,7 +99,7 @@
 		}
 		else {
 			$log = new logs("Service " . $srv["sid"] . " Updated ok  -> State:" . $srv["service_state"] . " Reg:" . $srv["registered_on"] . " Not: " . $srv["notified_on"] . " Mins: " . $srv["minutes"]);
-			$log->USER_ID = "admin";
+			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
 			_error_log($log->TEXT_TRANSACTION, $service->sql);
 		}
@@ -113,7 +111,7 @@
 		//Si hay error
 		if($usnot->nerror > 0) {
 			$log = new logs("User notification service -> " . $srv["sid"] . " error disabling -> " . $usnot->error);
-			$log->USER_ID = "admin";
+			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
 			_error_log($log->TEXT_TRANSACTION, $usnot->sql);
 			$err++;

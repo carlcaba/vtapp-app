@@ -67,6 +67,7 @@
 		//Verifica la pasarela
 		if($gate == "WOMPI") {
 			//Libreria requerida
+			require_once("../../classes/ws_query.php");
 			require_once("__wompiGatewayFunctions.php");
 
 			require_once("../../classes/configuration.php");
@@ -106,8 +107,9 @@
 					$result["accTok"] = $accTokRet;
 
 					//Si no es null
-					if($accTokRet["token"] != null && $accTok["status"] == "CREATED") {
-						$accTok = $accTokRet["token"]->presigned_acceptance->acceptance_token;
+					if($accTokRet["token"] != null && ($accTokRet["status"] == "CREATED" || $accTokRet["status"] == "Ok")) {
+						//property_exists($accTokRet,"data") && property_exists($accTokRet["data"],"presigned_acceptance")) {
+						$accTok = $accTokRet["token"]->data->presigned_acceptance->acceptance_token;
 					}
 				}
 			}

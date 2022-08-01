@@ -88,6 +88,7 @@ class client_payment extends table {
 
 	//Funcion que despliega los valores en un option
 	function showOptionList($tabs = 8,$selected = 0, $lang = 0) {
+		$stabs = "";
 		//Verifica el lenguaje
 		if($lang == 0) {
 			//Lenguaje establecido
@@ -99,6 +100,11 @@ class client_payment extends table {
 		//Arma la sentencia SQL
 		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
 				"ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE";
+				
+		$this->sql = "SELECT P.CLIENT_PAYMENT_TYPE_ID, P.CLIENT_PAYMENT_TYPE, C.CLIENT_TYPE_ID " .
+					"FROM $this->view P " .
+					"INNER JOIN VIE_CLIENT_TYPE_SUMMARY C " .
+					"ON (SUBSTRING_INDEX(SUBSTRING_INDEX(P.CLIENT_PAYMENT_TYPE, ' ', 1), ' ', -1) = SUBSTRING_INDEX(SUBSTRING_INDEX(C.CLIENT_TYPE, ' ', 1), ' ', -1))";
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -107,13 +113,14 @@ class client_payment extends table {
                 //Guarda la informacion en GLOBALS
                 $row[1] = utf8_encode($row[1]);
             }
+			$data = "data-clienttypeid=\"$row[2]\"";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' selected>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' $data selected>" . $row[1] . "</option>\n";
 			else
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "'>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' $data>" . $row[1] . "</option>\n";
 		}
 		//Retorna
 		return $return == "" ? $this->sql : $return ;

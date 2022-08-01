@@ -248,9 +248,10 @@
 			// Create the autocomplete object, restricting the search predictions to
 			// geographical location types.
 			var element = "txtADDRESS";
-			if(typeof(address) !== "undefined" && address) {
+			if($("#" + address).is(":visible"))
 				element = address;
-			}
+			else if($("#" + alt_address).is(":visible"))
+				element = alt_address;
 
 			autocomplete = new google.maps.places.Autocomplete(
 				document.getElementById(element), {
@@ -288,10 +289,15 @@
 
 		function fillInAddress() {
 			// Get the place details from the autocomplete object.
-			var place = autocomplete.getPlace();
-			if(typeof(place) === "undefined" && !place)
+			var place;
+			var element = "txtADDRESS";
+			if($("#" + address).is(":visible"))
+				place = autocomplete.getPlace();
+			else if($("#" + alt_address).is(":visible"))
 				place = autocomplete2.getPlace();
-				
+			else 
+				place = autocomplete.getPlace();
+			
 			for (var component in componentForm) {
 				document.getElementById(component).value = '';
 				document.getElementById(component).disabled = false;
@@ -304,12 +310,16 @@
 					console.log("No details available for input: '" + place.name + "'");
 				}
 				else {
-					$("#" + alt_address.replace("txt", "hfLATITUDE_")).val(place.geometry.location.lat());
-					$("#" + alt_address.replace("txt", "hfLONGITUDE_")).val(place.geometry.location.lng());
+					if($("#" + address).is(":visible"))
+						element = address;
+					else if($("#" + alt_address).is(":visible"))
+						element = alt_address;			
+					$("#" + element.replace("txt", "hfLATITUDE_")).val(place.geometry.location.lat());
+					$("#" + element.replace("txt", "hfLONGITUDE_")).val(place.geometry.location.lng());
 				}
 				
 				if(place != null) {
-					var typ = alt_address.replace("txt","");
+					var typ = element.replace("txt","");
 					var sele = "";
 					var neigh = "";
 					typ = typ.replace("_ADDRESS","");

@@ -21,7 +21,6 @@ working script @logicaestudio
 /usr/bin/ea-php73 /home/logicaadmin/public_html/vtapp/jobs/__startBidAuto.php >/dev/null 2>&1
 
 
-*/
 
 	echo "Server Home -> " . $_SERVER['HOME'];
 	echo "<br />";
@@ -45,8 +44,36 @@ working script @logicaestudio
 	
 	echo floatval(phpversion());
 	echo "<br />";
+*/
 	
-	echo date("Y-n-j H:i:s");
+	ini_set('display_errors', '1');
+	
+	$date = date("YmdHis");
+	$hex = dechex(round(floatval($date),0));
+	$dec = hexdec($hex);
+	
+	echo $date;
+	echo "<br />";
+	
+	echo $hex;
+	echo "<br />";
+	
+	echo $dec;
+	
+	//Timing executation time of script
+	$startTime = microtime(true); //get time in micro seconds(1 millionth)
+	usleep(250); 
+	$endTime = microtime(true);
+
+	echo "milliseconds to execute:". ($endTime-$startTime)*1000;
+	echo "<br />";
+	
+	echo round(microtime(true) * 1000);
+	echo "<br />";
+	
+	echo floor(microtime(true) * 1000);
+	echo "<br />";
+
 ?>
 
 

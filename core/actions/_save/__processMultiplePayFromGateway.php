@@ -52,7 +52,7 @@
 		$urlTranx = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT") . $conf->verifyValue("PAYMENT_WOMPI_REDIRECT");
 		
 		foreach($datas as $serv) {
-			if(boolval($serv->payed))
+			if(filter_var($serv->payed, FILTER_VALIDATE_BOOLEAN))
 				continue;
 			//Asigna la informacion
 			$service = new service();

@@ -118,7 +118,7 @@
 	if(gettype($estado) == "string")
 		$estado = ($estado === "true");
 
-	if(boolval($debug)) {
+	if(filter_var($debug, FILTER_VALIDATE_BOOLEAN)) {
 		if(is_bool($estado) === false)
 			$result["warning"] = "$estado No es bool";
 		else if(is_bool($estado) === true)
@@ -138,7 +138,7 @@
 	else {
 		$result["message"] = $usua->error;
 	}
-	if(boolval($debug)) 
+	if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 		$result["sql"] = $usua->sql;
 	
 	_Exit:

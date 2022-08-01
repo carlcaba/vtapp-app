@@ -17,7 +17,7 @@
 	
 	//Incluye las clases requeridas
     require_once("connector_db.php");
-	require_once ('apache4log/Logger.php');
+	//require_once ('apache4log/Logger.php');
 
 	//Define la clase
     abstract class table {
@@ -76,7 +76,7 @@
         }
 
 		public static function getTableName() {
-			return $this->table;
+			return self::$table;
 		}
 
         //Funcion que conecta a la BD
@@ -881,7 +881,7 @@
 					}
 				}
 				else {
-					$return .= "$stabs\t\t\t\t<a data-value=\"\" class=\"dropdown-item\" href=\"#\">" . $SESSION["NO_INFORMATION"] . "</a>\n";
+					$return .= "$stabs\t\t\t\t<a data-value=\"\" class=\"dropdown-item\" href=\"#\">" . $_SESSION["NO_INFORMATION"] . "</a>\n";
 				}
 				$return = str_replace("{{VAL_IDENTIFICATION}}",$valId,$return);
                 $return .= "$stabs\t\t\t</div>\n";
@@ -1200,19 +1200,21 @@
 				$msg .= "\nLine " . $prg["line"] . " -> " . $prg["file"] . " : " . $prg["function"];
 			}
 			if(defined("DEBUG")) 
-				if(!boolval(DEBUG))
+				if(!filter_var(DEBUG, FILTER_VALIDATE_BOOLEAN))
 					$msg = "DEBUG disabled!\n\n" . $msg;
 				else
 					$msg = "DEBUG enabled!\n\n" . $msg;
 			else
 				$msg = "DEBUG not defined!\n\n" . $msg;
-
+			
+			/*
 			if($log) {
 				Logger::configure($_SERVER['DOCUMENT_ROOT'] . '/config.xml');
 				$logger = Logger::getLogger("VTAPPLogger");
 				$logger->debug($msg);
 			}
 			else 
+			*/
 				error_log($msg);
 		}
 	}	

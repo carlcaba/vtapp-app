@@ -148,7 +148,7 @@ class external_session extends table {
 			$this->nerror = 20;
 		}
 		else {
-			if(!boolval($this->IS_BLOCKED)) {
+			if(!filter_var($this->IS_BLOCKED, FILTER_VALIDATE_BOOLEAN)) {
 				//Asigna la informacion
 				$this->setAccess($this->ACCESS_ID);
 				$this->setClient($this->CLIENT_ID);

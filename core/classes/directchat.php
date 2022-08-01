@@ -4,6 +4,7 @@
 
 //Incluye las clases dependientes
 require_once("table.php");
+require_once("users.php");
 
 class directchat extends table {
 	var $view;
@@ -110,7 +111,7 @@ class directchat extends table {
 			$lang = $_SESSION["LANGUAGE"];
 		}
 		//Arma la sentencia SQL
-		$this->sql = "SELECT ID, SENDER, DESTINY, MESSAGE, PRIORITY, REGISTERED_ON, USER_NAME " .
+		$this->sql = "SELECT ID, SENDER, DESTINY, MESSAGE, PRIORITY, REGISTERED_ON, USER_NAME, ACCESS_ID " .
 				"FROM $this->view WHERE DESTINY = " . $this->_checkDataType("DESTINY") . " AND READED = FALSE " .
 				"ORDER BY REGISTERED_ON DESC LIMIT 5";
 		$chats = "";
@@ -122,8 +123,13 @@ class directchat extends table {
 			$priority = $row[4] == 1 ? " <span class=\"float-right text-sm text-danger\"><i class=\"fa fa-star\"></i></span>" : "";
 			//Imagen del usuario
 			$avatar = "img/users/" . $row[1] . ".jpg";
-			if(!file_exists($avatar))
-				$avatar = "img/users/user.jpg";
+			if(!file_exists($avatar)) {
+				//verifica el tipo de usuario
+				if($row[7] == 70)
+					$avatar = "img/users/msgr.jpg";
+				else
+					$avatar = "img/users/user.jpg";
+			}
 			$time = strtotime($row[5]);
 			$elap = explode(" ", $this->elapsedTime($time));
 			
@@ -141,13 +147,13 @@ class directchat extends table {
 		}
 		if($total > 0) {
 			$return = $chats;
-			$return .= "<a href=\"$linkTo\" class=\"dropdown-item dropdown-footer\">" . $_SESSION["SEE_ALL"] . " " . $_SESSION["MESSAGES"] . "</a>\n";
+			$return .= "<a href=\"$linkTo\" class=\"dropdown-item dropdown-footer\" id=\"aStartChat\">" . $_SESSION["SEE_ALL"] . " " . $_SESSION["MESSAGES"] . "</a>\n";
 		}
 		else {
 			$return = "<div class=\"dropdown-divider\"></div>\n" .
 						"<a href=\"#\" class=\"dropdown-item text-center\">" . $_SESSION["DONT_HAVE"] . " " . $_SESSION["MESSAGES"] . "</a>\n" .
 						"<div class=\"dropdown-divider\"></div>\n" .						
-						"<a href=\"directchat.php\" class=\"dropdown-item dropdown-footer\">" . $_SESSION["START_A_CHAT"] . "</a>\n";
+						"<a href=\"directchat.php\" class=\"dropdown-item dropdown-footer\" id=\"aStartChat\">" . $_SESSION["START_A_CHAT"] . "</a>\n";
 		}
 		if(!$refresh) {
 			$return = "<div class=\"dropdown-menu dropdown-menu-lg dropdown-menu-right\" id=\"topAreaDirectChat\">\n" .
@@ -159,11 +165,11 @@ class directchat extends table {
 	
 	//Funcion para mostrar la forma
 	function showForm($userChat = "") {
-		$result = "<form action=\"#\" method=\"post\">\n";
+		$result = "<form method=\"post\" id=\"frmDirectChat\" onsubmit=\"return sendDirectChat();\">\n";
 		$result .= "<div class=\"input-group\">\n";
 		$result .= "<input type=\"text\" placeholder=\"" . $_SESSION["TYPE_MESSAGE"] . "\" class=\"form-control\" id=\"txtMESSAGE\" name=\"txtMESSAGE\">\n";
 		$result .= "<span class=\"input-group-append\">\n";
-		$result .= "<button type=\"button\" class=\"btn btn-warning\" id=\"btnSendDirectChat\" name=\"btnSendDirectChat\" onclick=\"sendDirectChat();\">" . $_SESSION["SEND"] . "</button>\n";
+		$result .= "<button type=\"button\" class=\"btn btn-success\" id=\"btnSendDirectChat\" name=\"btnSendDirectChat\" onclick=\"sendDirectChat();\">" . $_SESSION["SEND"] . "</button>\n";
 		$result .= "<input type=\"hidden\" id=\"txtDESTINY\" name=\"txtDESTINY\" value=\"$userChat\" />\n";
 		$result .= "</span>\n</div>\n</form>\n";
 		return $result;
@@ -180,7 +186,7 @@ class directchat extends table {
 		$this->sql = "SELECT ID, SENDER, DESTINY, MESSAGE, PRIORITY, REGISTERED_ON, USER_NAME " .
 				"FROM $this->view WHERE READED = FALSE AND $sWhere ORDER BY REGISTERED_ON DESC";
 		//Variable a retornar
-		$result = "";
+		$result = "<div class=\"direct-chat-messages\" id=\"directChatMessages\">\n";
 		$total = 0;
 		$lastuser = "";
 		//Recorre los valores
@@ -236,6 +242,7 @@ class directchat extends table {
 			$result .= "</div>\n";
 		}
 		//Default message
+		/*
 		if($total == 0) {
 			$result .= "<div class=\"direct-chat-msg\">\n<div class=\"direct-chat-info clearfix\">\n";
 			$result .= "<span class=\"direct-chat-name float-left\"> Admin</span>\n";
@@ -246,7 +253,42 @@ class directchat extends table {
 		else {
 			$result .= "<input type=\"hidden\" id=\"hfLastChatUser\" name=\"hfLastChatUser\" value=\"$lastuser\" />\n";
 		}
-		return $result; 
+		*/
+		return $result . "</div>\n";  
+	}
+	
+	//Funcion para mostrar los usuarios en linea
+	function getUsersOnLine() {
+		///Arma la sentencia SQL
+		$this->sql = "SELECT USER_ID, FULL_NAME, EMAIL, ACCESS_NAME, LAST_LOGIN, ACCESS_ID " .
+				"FROM VIE_USER_SUMMARY WHERE ON_LINE = TRUE ORDER BY 1 DESC";
+		//Variable a retornar
+		$result = "<div class=\"direct-chat-contacts\">\n<ul class=\"contacts-list\">";
+		$total = 0;
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			$total++;
+			$result .= "<li>\n";
+			$result .= "<a href=\"#\">\n";
+			$result .= "<img class=\"contacts-list-img\" src=\"" . users::getUserPictureExternal($row[0],$row[5]) . "\" alt=\"$row[0]\">\n";
+			$result .= "<div class=\"contacts-list-info\">\n";
+			$result .= "<span class=\"contacts-list-name\">\n";
+			$result .= "$row[1]\n";
+			$result .= "<small class=\"contacts-list-date float-right\">" . date("Y-m-d", strtotime($row[4])) . "</small>\n";
+			$result .= "</span>\n";
+			$result .= "<span class=\"contacts-list-msg\">$row[3] - $row[2]</span>\n";
+			$result .= "</div>\n";
+			$result .= "</a>\n";
+			$result .= "</li>\n";
+		}
+		//Default message
+		if($total == 0) {
+			$result .= "<li>\n";
+			$result .= "No hay usuarios conectados";
+			$result .= "</li>\n";
+		}
+		return $result . "</ul>\n</div>\n";
+		
 	}
 }
 

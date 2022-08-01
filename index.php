@@ -130,7 +130,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="h5ModalLabel"><?= $_SESSION["INFORMATION"] ?></h5>
+					<h5 class="modal-title" id="h5ModalLabel"><?= "Información" ?></h5>
 				</div>
 				<div class="modal-body" id="divBodyModalChangePassword"></div>
 				<div class="modal-footer">
@@ -146,6 +146,8 @@
 	<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 	<!-- iCheck -->
 	<script src="plugins/iCheck/icheck.min.js"></script>
+	<!-- Resources -->
+	<script src="js/resources.js"></script>
 	
 	<script>
 		$(function () {

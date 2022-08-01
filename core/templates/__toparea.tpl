@@ -9,7 +9,7 @@
 	$totalNoti = $noti->getTotalCount();
 	$totalChat = $chat->getTotalCount();
 	$badgeNoti = ($totalNoti == 0) ? "" : "<span class=\"badge badge-warning navbar-badge\">$totalNoti</span>\n";
-	$badgeChat = ($totalChat == 0) ? "" : "<span class=\"badge badge-danger navbar-badge\">$totalChat</span>\n";
+	$badgeChat = ($totalChat == 0) ? "" : "<span class=\"badge badge-danger navbar-badge\" id=\"spanMessages\">$totalChat</span>\n";
 ?>
 		<div class="preloader flex-column justify-content-center align-items-center">
 			<img class="animation__shake" src="img/logo/logo_app.png" alt="VtappLogo" height="143" width="136">
@@ -39,7 +39,7 @@
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item dropdown">
-					<a class="btn btn-primary" href="my-services.php" role="button">
+					<a class="btn btn-warning" href="my-services.php" role="button">
 						<i class="fa fa-motorcycle"></i>
 						<?= $_SESSION["MY_SERVICES"] ?>
 					</a>				
@@ -71,7 +71,7 @@
 				</li>
 				<!-- Loguot -->
 				<li class="nav-item">
-					<a class="nav-link" href="core/__exit.php" title="<?= $_SESSION["LOGOUT"] ?>"><i class="fa fa-sign-out"></i></a>
+					<a class="nav-link" href="#" onclick="exit();" title="<?= $_SESSION["LOGOUT"] ?>"><i class="fa fa-sign-out"></i></a>
 				</li>
 			</ul>
 		</nav>
@@ -106,6 +106,10 @@
 					}
 				}
 			});
-		}	
+		}
+		function exit() {
+			localStorage.clear();
+			location.href = "core/__exit.php";
+		}
 	</script>
     <!-- End Header Top Area -->

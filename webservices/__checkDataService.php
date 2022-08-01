@@ -134,12 +134,12 @@
 	$result["success"] = count($datos) > 0;
 
 	if($result["success"] == true) {
-		$result["message"] = $_SESSION["INFORMATION"];
+		$result["message"] = "Información";
 		$result["data"] = $datos;
 	}
 	else {
 		$result["message"] = $_SESSION["NO_INFORMATION"];
-		if(boolval($debug))
+		if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 			$result["data"] = $class->sql;
 	}
 

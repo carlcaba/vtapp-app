@@ -15,7 +15,7 @@
 					</a>
 				</div>
 				<div class="col-sm-3" align="center">
-					<a href="#" class="nav-link ">
+					<a href="terms.php" class="nav-link ">
 						<p><i class="nav-icon fa fa-book"></i> <?= $_SESSION["TERMS_AND_CONDITIONS"] ?></p>
 					</a>
 				</div>
@@ -68,6 +68,7 @@
 	<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
 	<!-- FastClick -->
 	<script src="plugins/fastclick/fastclick.js"></script>
+
 	<!-- AdminLTE App -->
 	<script src="js/adminlte.js"></script>
 	<!-- AdminLTE for demo purposes -->

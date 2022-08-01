@@ -34,13 +34,13 @@
 	}
 		
 	//Si es un acceso autorizado
-	//if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
+	if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')) {
 		if($client == "") {
 			$result = utf8_converter($result);
 			exit(json_encode($result));
 		}
 		
-		if($user != "") {
+		if($user != "" && $_SESSION["vtappcorp_useraccess"] != "GOD" && $_SESSION["vtappcorp_useraccess"] != "ADM") {
 			$usua = new users($user);
 			if (!preg_match('/^\{?[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}\}?$/', strtoupper($id))) {
 				$id = $usua->REFERENCE;
@@ -56,10 +56,10 @@
 		$quota = new quota_employee();
 		//Verifica la fuente
 		if($user != "") {
-			$row = $quota->getInformationByOtherInfo("CLIENT_ID",$client,"USER_ID",$user);
+			$row = $quota->getInformationByOtherInfo2("CLIENT_ID",$client,"USER_ID",$user);
 		}
 		else {
-			$row = $quota->getInformationByOtherInfo("CLIENT_ID",$client);
+			$row = $quota->getInformationByOtherInfo2("CLIENT_ID",$client);
 		}
 		
 		//Si no hay cupo asignado
@@ -78,15 +78,17 @@
 			exit(json_encode($result));
 		}
 
-		$result["quota_id"] = $quota->ID;
+		$result["quota_id"] = $row["id"];
+		$result["repeated"] = filter_var($row["repeated"], FILTER_VALIDATE_BOOLEAN);
+		$result["period"] = $row["period"];
+		$result["lastDate"] = $row["last_date"];
+		$result["is_quota"] = $row["quota"];
 		$result["message"] = "";
 		$result["success"] = true;
-		/*
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];
 	}
-	*/
 	$result = utf8_converter($result);
 	//Termina
 	exit(json_encode($result));

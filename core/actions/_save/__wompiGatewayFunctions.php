@@ -6,13 +6,29 @@
 						"status" => "",
 						"message" => "");
 		$url .= $pubkey;
+		$wsqry = 0;
 		try {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url); 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			curl_setopt($ch, CURLOPT_HTTPHEADER, array('accept: application/json'));
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);		
+			
+			//Add trace
+			$ws = new ws_query();
+			$ws->WEBSERVICE = "getAcceptanceToken";
+			$ws->PARAMS = $url;
+			$ws->CALLED_FROM = basename(__FILE__, '.php');
+			$ws->RETURNED = "";
+			$ws->REGISTERED_ON = "NOW()";
+			$ws->REGISTERED_BY = "notifier";
+			$ws->_add();
+			if($ws->nerror == 0)
+				$wsqry = $ws->ID;
+			else 
+				$wsqry = -1;
+
 			$dataToReturn = curl_exec($ch);
 
 			if($dataToReturn === false) {
@@ -30,6 +46,14 @@
 			$result['success'] = false;
 			$result['message'] = "Error getting acceptance token: " . $ex->getMessage();
 		}
+		//Complete trace
+		if($wsqry > 0) {
+			$ws->ID = $wsqry;
+			$ws->RETURNED = json_encode($result);
+			$ws->MODIFIED_ON = "NOW()";
+			$ws->MODIFIED_BY = "notifier";
+			$ws->updateResult();
+		}
 		return $result;
 	}
 	
@@ -45,10 +69,8 @@
 						"exp_month" => explode("/",$quota->DATE_EXPIRATION)[0], 
 						"exp_year" => explode("/",$quota->DATE_EXPIRATION)[1], 
 						"card_holder" => $quota->CREDIT_CARD_NAME); 
-		$accTok = null;
 		$headers = array ('authorization: Bearer ' . $pubkey);
-		$status = "";
-		$transaction = "";
+		$wsqry = 0;
 		try {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $urlToken);
@@ -58,6 +80,21 @@
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($cardData));
+			
+			//Add trace
+			$ws = new ws_query();
+			$ws->WEBSERVICE = "getCardToken";
+			$ws->PARAMS = json_encode($cardData);
+			$ws->CALLED_FROM = basename(__FILE__, '.php');
+			$ws->RETURNED = "";
+			$ws->REGISTERED_ON = "NOW()";
+			$ws->REGISTERED_BY = "notifier";
+			$ws->_add();
+			if($ws->nerror == 0)
+				$wsqry = $ws->ID;
+			else 
+				$wsqry = -1;
+			
 			$tokenCard = curl_exec($ch);
 
 			if($tokenCard === false) {
@@ -76,19 +113,29 @@
 			$result['success'] = false;
 			$result['message'] = "Error getting card token: " . $ex->getMessage();
 		}
+		//Complete trace
+		if($wsqry > 0) {
+			$ws->ID = $wsqry;
+			$ws->RETURNED = json_encode($result);
+			$ws->MODIFIED_ON = "NOW()";
+			$ws->MODIFIED_BY = "notifier";
+			$ws->updateResult();
+		}
 		return $result;
 	}
 	
-	function generateTransaction($quota, $token, $accTok, $urlTranx, $pubkey, $urlRet) {
+	function generateTransaction($quota, $token, $accTok, $urlTranx, $pubkey, $urlRet, $value = null) {
 		$result = array("success" => true,
 						"transaction" => null,
 						"status" => "",
 						"message" => "");
 		$transaction = "";
+		if($value == null)
+			$value = $quota->AMOUNT;
 		$headers = array ('authorization: Bearer ' . $pubkey);
 		//Arma la trama de la transaccion
 		$dataTx = array("acceptance_token" => $accTok,
-						"amount_in_cents" => ($quota->AMOUNT * 100),
+						"amount_in_cents" => (round(floatval($value),2) * 100),
 						"currency" => "COP",
 						"customer_email" => $quota->client->EMAIL,
 						"payment_method" => array("type" => "CARD",
@@ -96,7 +143,8 @@
 													"installments" => $quota->DIFERRED_TO),
 						//"payment_source_id" => 1234,
 						"redirect_url" =>  $urlRet,
-						"reference" => $quota->ID,
+						//Se agrega un hexadecimal correspondiente a la fecha y hora para distinguirlo en caso que la referencia ya haya sido usada
+						"reference" => $quota->ID . "-" . dechex(round(floatval(date("YmdHis")),0)),
 						"customer_data" => array("phone_number" => $quota->client->CELLPHONE,
 													"full_name" => $quota->CREDIT_CARD_NAME),
 						"shipping_address" => array("address_line_1" => $quota->client->ADDRESS,
@@ -108,6 +156,7 @@
 													"phone_number" => $quota->client->CELLPHONE_CONTACT,
 													"postal_code" => "110011")
 					);
+		$wsqry = 0;
 		try {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $urlTranx);
@@ -117,6 +166,20 @@
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($dataTx));
+			
+			//Add trace
+			$ws = new ws_query();
+			$ws->WEBSERVICE = "generateTransaction";
+			$ws->PARAMS = json_encode($dataTx);
+			$ws->CALLED_FROM = basename(__FILE__, '.php');
+			$ws->RETURNED = "";
+			$ws->REGISTERED_ON = "NOW()";
+			$ws->REGISTERED_BY = "notifier";
+			$ws->_add();
+			if($ws->nerror == 0)
+				$wsqry = $ws->ID;
+			else 
+				$wsqry = -1;
 			
 			$transaction = curl_exec($ch);
 
@@ -155,6 +218,14 @@
 				$result['message'] = "Error generating transaction: No transaction response";
 			}
 		}
+		//Complete trace
+		if($wsqry > 0) {
+			$ws->ID = $wsqry;
+			$ws->RETURNED = json_encode($result);
+			$ws->MODIFIED_ON = "NOW()";
+			$ws->MODIFIED_BY = "notifier";
+			$ws->updateResult();
+		}
 		return $result;
 	}
 	
@@ -165,13 +236,29 @@
 						"message" => "");
 		$url .= $id;
 		$headers = array ('authorization: Bearer ' . $pubkey, 'accept: application/json');
+		$wsqry = 0;
 		try {
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url); 
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);			
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);	
+
+			//Add trace
+			$ws = new ws_query();
+			$ws->WEBSERVICE = "checkTransaction";
+			$ws->PARAMS = $url;
+			$ws->CALLED_FROM = basename(__FILE__, '.php');
+			$ws->RETURNED = "";
+			$ws->REGISTERED_ON = "NOW()";
+			$ws->REGISTERED_BY = "notifier";
+			$ws->_add();
+			if($ws->nerror == 0)
+				$wsqry = $ws->ID;
+			else 
+				$wsqry = -1;
+
 			$dataToReturn = curl_exec($ch);
 
 			if($dataToReturn === false) {
@@ -193,6 +280,15 @@
 			$result['success'] = false;
 			$result['message'] = "Error checking transaction: " . $ex->getMessage();
 		}
+		//Complete trace
+		if($wsqry > 0) {
+			$ws->ID = $wsqry;
+			$ws->RETURNED = json_encode($result);
+			$ws->MODIFIED_ON = "NOW()";
+			$ws->MODIFIED_BY = "notifier";
+			$ws->updateResult();
+		}
 		return $result;
 	}
+
 ?>

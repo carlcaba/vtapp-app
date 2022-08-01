@@ -9,18 +9,7 @@
 	header('Access-Control-Allow-Origin: *');
 	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
-	header('Content-Type: application/json');	
-	
-	//Incluye las clases necesarias
-	require_once("../core/classes/resources.php");
-	require_once("../core/classes/interfaces.php");
-	require_once("../core/classes/users.php");
-	require_once("../core/classes/external_session.php");
-	require_once("../core/classes/configuration.php");
-	require_once("../core/classes/user_notification.php");
-	require_once("../core/classes/service_log.php");
-	require_once("../core/classes/assign_service.php");
-		
+
 	//Carga los recursos
     include("../core/__load-resources.php");
 	
@@ -29,20 +18,22 @@
 					'message' => $_SESSION["NO_DATA_FOR_VALIDATE"],
 					'continue' => false,
 					"description" => "");
-					
+
+	require_once("../core/classes/resources.php");
 	$reso = new resources();
 	$result["description"] = $reso->getResourceByName(explode(".",basename(__FILE__))[0],2);
+
+	require_once("../core/classes/configuration.php");
+	$config = new configuration("DEBUGGING");
+	$debug = $config->verifyValue();
 	
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+
 	$user = "";
 	$token = "";
 	$step = 1;
 	$id = "";
 	$cancel = false;
-	
-	$config = new configuration("DEBUGGING");
-	$debug = $config->verifyValue();
-	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -74,9 +65,59 @@
 		$token = $vars['token'];
 		$step = $vars['step'];
 		$id = $vars['id'];
-		$cancel = (isset($vars['cancel']) ? boolval($vars['cancel']) : $cancel);
+		$cancel = (isset($vars['cancel']) ? filter_var($vars['cancel'], FILTER_VALIDATE_BOOLEAN) : $cancel);
+	}	
+	
+	$filemode = 'w';
+	$file = './lockedServices.cas';
+	$addedService = false;
+	try {
+		//Verificar que no esté bloqueado el servicio
+		if(intval($step) == 4) {
+			header('Content-Type: text/plain');
+			//Verifica si existe el archivo
+			if(file_exists($file)) {
+				$contents = file_get_contents($file);
+				//Busca el valor en el archivo
+				if(strpos($contents, $id) !== false) {
+					//Confirma mensaje al usuario
+					$result['message'] = $_SESSION["SERVICE_ALREADY_ASSIGNED"];
+					//Termina
+					goto _Exit;
+				}
+				else 
+					$filemode = 'a';
+			}			
+			else
+				goto _CreateFile;
+		}
+		else 
+			goto _ContinueProcess;
+
+		_CreateFile:
+		//Abrir el archivo
+		$fp = fopen($file,$filemode);
+		//Escribir el ID
+		fwrite($fp,$id);
+		//Cerrar el archivo
+		fclose($fp);
+		$addedService = true;
+	}
+	catch (Exception $ex) {
+		_error_log("Error during file " . $file . ": " . $ex->getMessage());
 	}
 	
+	_ContinueProcess:
+	header('Content-Type: application/json');	
+	
+	//Incluye las clases necesarias
+	require_once("../core/classes/interfaces.php");
+	require_once("../core/classes/users.php");
+	require_once("../core/classes/external_session.php");
+	require_once("../core/classes/user_notification.php");
+	require_once("../core/classes/service_log.php");
+	require_once("../core/classes/assign_service.php");
+		
 	//Verifica la informacion
 	if(empty($user)) {
 		//Confirma mensaje al usuario
@@ -111,7 +152,7 @@
 		//Termina
 		goto _Exit;
 	}
-
+	
 	$usua = new users($user);
 	$usua->__getInformation();
 	//Si hay error
@@ -129,6 +170,16 @@
 	if($service->nerror > 0) {
 		//Asigna el mensaje
 		$result["message"] = "Service: " . $service->error;
+		//Termina
+		goto _Exit;
+	}
+	
+	_error_log("Service actual state " . print_r($service->state,true));
+	
+	//Verifica el estado del servicio
+	if(intval($service->state->ID_STATE) >= 7) {
+		//Confirma mensaje al usuario
+		$result['message'] = $_SESSION["SERVICE_ALREADY_ASSIGNED"];
 		//Termina
 		goto _Exit;
 	}
@@ -152,7 +203,7 @@
 		//Termina
 		goto _Exit;
 	}
-	if(boolval($usnot->IS_BLOCKED)) {
+	if(filter_var($usnot->IS_BLOCKED, FILTER_VALIDATE_BOOLEAN)) {
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["SERVICE_STEP_BLOCKED"];
 		//Termina
@@ -238,7 +289,7 @@
 			//Si se genera error
 			if($sLog->nerror > 0) {
 				$result["message"] .= "<br/>" . $_SESSION["ERROR"] . " " . $_SESSION["SERVICES"] . ": " . $sLog->error;
-				if(boolval($debug))
+				if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 					$result["sql_DEBUGGER"] = $sLog->sql; 
 			}
 			else {
@@ -280,6 +331,19 @@
 	}
 	
 	_Exit:
+	if($addedService) {
+		//Modifica la cabecera
+		header('Content-Type: text/plain');
+		//Lee el archivo
+		$contents = file_get_contents($file);
+		//Elimina la informacion del servicio
+		$contents = str_replace($id,'',$contents);
+		//Lo sobreescribe
+		file_put_contents($file,$contents);
+		//Cambia la cabecera
+		header('Content-Type: application/json');	
+	}
+	
 	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));

@@ -83,7 +83,7 @@
 							<div class="card-header">
 								<p class="card-title">
 									<?= $_SESSION["TITLE_PAGE"] ?>
-									<div class="btn-group pull-right">
+									<div class="btn-group float-right">
 										<button type="button" data-toggle="tooltip" data-placement="top" title="<?= $_SESSION["MENU_NEW"] ?>" id="btnNewResource" name="btnNewResource" class="btn btn-primary pull-right" onclick="show('','new');">
 											<i class="fa fa-plus-square"></i>
 											<span class="d-none d-sm-none d-md-none d-lg-block d-xl-inline-block"><?= $_SESSION["MENU_NEW"] ?></span>

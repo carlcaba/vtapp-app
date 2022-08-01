@@ -69,12 +69,13 @@
 		$pdr = $service->deliver_zone->getParentZoneName();
 		$body .= "<strong>" . $_SESSION["SERVICE_TABLE_TITLE_7"] . ":</strong> " . $service->DELIVER_ADDRESS . "<br />";
 		$body .= "<strong>" . $_SESSION["SERVICE_TABLE_TITLE_8"] . ":</strong> " . $service->deliver_zone->ZONE_NAME . " ($pdr)<br />";
+		$body .= "<strong>" . $_SESSION["CLIENT_TABLE_TITLE_4"] . ":</strong> " . $service->DELIVER_CELLPHONE . "<br />";
 		$body .= "<strong>" . $_SESSION["SERVICE_TABLE_TITLE_3"] . ":</strong> " . $service->REQUESTED_BY . "<br />";
 		$body .= "<strong>" . $_SESSION["CLIENT"] . ":</strong> " . $service->client->CLIENT_NAME . "<br />";
 		$body .= "<strong>" . $_SESSION["AREA_TABLE_TITLE_8"] . ":</strong> " . date("d-M-Y h:nn", strtotime($service->REGISTERED_ON)) . "<br />";
 		$body .= "<strong>" . $_SESSION["PACKAGE_TYPE"] . ":</strong> " . $service->type->getResource() . "<br />";
 		if($aRow[15] != "")
-			$body .= sprintf($_SESSION["DELIVER_TIME"], $aRow[15], $aRow[16]) . "<br />";
+			$body .= sprintf($_SESSION["DELIVER_TIME"], $aRow[15]) . "<br />";
 		if($aRow[17] != "")
 			$body .= "<strong>" . $_SESSION["CLIENT_PAYMENT_TYPE"] . ":</strong> " . $aRow[17] . "<br />";
 		if($aRow[18] != "")
@@ -97,9 +98,9 @@
 		}
 		
 		$nxtstate = $service->state->getNextState();
-		$body .= "<br /><small><strong>" . $_SESSION["NEXT_STATE"] . ":</strong> " . $service->state->getResourceById($nxtstate) . "</small><br />";		
-		$body .= "<small><strong>" . $_SESSION["AREA_TABLE_TITLE_1"] . ":</strong> $id</small><br />";		
-		$body .= "<small><strong>" . $_SESSION["TIME_FOR_DELIVER"] . ":</strong> $deltime</small><br />";		
+		$body .= "<small><strong>" . $_SESSION["NEXT_STATE"] . ":</strong> " . $service->state->getResourceById($nxtstate) . "</small><br />";		
+		$body .= "<small><strong>" . $_SESSION["AREA_TABLE_TITLE_1"] . ":</strong> " . $aRow[19] . "</small><br />";		
+		$body .= "<small><strong>" . $_SESSION["TIME_FOR_DELIVER"] . ":</strong> " . $aRow[16] . "</small><br />";		
 		
 		//Verifica el estado para activar o desactivar
 		if($service->IS_BLOCKED)
@@ -125,7 +126,7 @@
 			$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["ASSIGN"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $service->ID . "');\" $actBid><i class=\"fa fa-motorcycle\"></i></button>";
 		}
 		else {
-			$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["INFORMATION"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $service->ID . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
+			$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . "Información" . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . "Información" . "\" onclick=\"information('" . $service->ID . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
 		}
 		$history = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["TIMELINE"] . "\" type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["TIMELINE"] . "\" onclick=\"location.href = 'service-log.php?id=" . $service->ID . "';\"><i class=\"fa fa-history\"></i></button>";
 		

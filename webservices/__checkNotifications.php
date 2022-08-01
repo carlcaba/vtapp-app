@@ -108,7 +108,7 @@
 	$result["notifications"] = $usnot->getUnread();
 	$result["data"] = $usnot->getDataUnread();
 
-	if(boolval($debug))
+	if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 		$result["notifications"] = rand(5, 75);
 	
 	//Realiza la accion

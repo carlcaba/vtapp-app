@@ -15,7 +15,7 @@
 	//Realiza la operacion
 	require_once("../../classes/quota.php");
 
-	$paymentType = "false";
+	$paymentType = false;
 	
 	//Captura las variables
 	if(empty($_POST['strModel'])) {
@@ -26,12 +26,12 @@
 		}
 		else {
 			$strmodel = $_GET['strModel'];
-			$payment = $_GET['payment'];
+			$paymentType = $_GET['payment'] == "true";
 		}
 	}
 	else {
 		$strmodel = $_POST['strModel'];
-		$payment = $_POST['payment'];
+		$paymentType = $_POST['payment'] == "true";
 	}
 	
 	//Si es un acceso autorizado
@@ -54,6 +54,55 @@
 		$quota->DIFERRED_TO = $datas->txtDIFERRED_TO;
 		$quota->PAYMENT_ID = "";
 		$quota->IS_PAYED = "FALSE";
+		$quota->IS_REPEATED = (empty($datas->chkRepeated)) ? "FALSE" : (($datas->chkRepeated == "on") ? "TRUE" : "FALSE");
+		$quota->PERIOD = (empty($datas->cbPeriod)) ? "NULL" : $datas->cbPeriod;
+		if(!empty($datas->txtLAST_DATE)) {
+			switch ($datas->cbPeriod) {
+				case "N":
+					$datas->txtLAST_DATE = "NULL";
+					break;
+				case "D":
+					$datas->txtLAST_DATE = "NOW()";
+					break;
+				case "S":
+					$datas->txtLAST_DATE = date("Y-m-d",strtotime("next Monday"));
+					break;
+				case "Q":
+					if(intval(date("d")) > 15)
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . "-" . date('m', strtotime('+1 month')). '-01'));
+					else
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . "-" . date('m'). '-15'));
+					break;
+				case "M":
+					$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . "-" . date('m', strtotime('+1 month')). '-01'));
+					break;
+				case "T":
+					if(intval(date("m")) < 4)
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-04-01'));
+					else if(intval(date("m")) < 7)
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-07-01'));
+					else if(intval(date("m")) < 10)
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-10-01'));
+					else
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-01-01'));
+					break;
+				case "S":
+					if(intval(date("m")) < 7)
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-07-01'));
+					else 
+						$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y') . '-01-01'));
+					break;
+				case "A":
+					$datas->txtLAST_DATE = date("Y-m-d", strtotime(date('Y',strtotime('next year')) . '-01-01'));
+					break;
+			}
+			if($datas->cbPeriod != "N" && $datas->cbPeriod != "D") {
+				$time = strtotime($datas->txtLAST_DATE);
+				if($time < strtotime(date("Y-m-d")))
+					$datas->txtLAST_DATE = intval(date("Y",$time)) + 1 . "-" . date("m-d",$time);
+			}
+		}
+		$quota->LAST_DATE = (empty($datas->txtLAST_DATE)) ? "NULL" : $datas->txtLAST_DATE;
 		$quota->IS_VERIFIED = strtoupper($datas->hfValidCard);
 		$quota->IS_BLOCKED = "FALSE";
 
@@ -69,18 +118,26 @@
 			//Termina
 			exit(json_encode($result));
 		}
+
+		if($quota->IS_REPEATED == "FALSE")
+			$paymentType = true;
+		else 
+			if($quota->PERIOD != "N")
+				$paymentType = false;
 		
 		//Cambia el resultado
 		$result['success'] = true;
-		$result['message'] = $paymentType == "false" ? $_SESSION["QUOTA_REGISTERED"] : $quota->ID;
+		$result['message'] = !$paymentType ? $_SESSION["QUOTA_REGISTERED"] : $quota->ID;
+		$result["debug"] = $paymentType . " - " . $quota->IS_REPEATED . " : " . $quota->PERIOD; 
 		
 		require_once("../../classes/configuration.php");
 		$conf = new configuration("PAYMENT_GATEWAY");
 		$gate = $conf->verifyValue();
 		
 		//Verifica la pasarela
-		if($gate == "WOMPI") {
+		if($gate == "WOMPI" && $paymentType) {
 			//Libreria requerida
+			require_once("../../classes/ws_query.php");
 			require_once("__wompiGatewayFunctions.php");
 
 			$pubkey = $conf->verifyValue("PAYMENT_WOMPI_PUBLIC_KEY");
@@ -119,8 +176,9 @@
 					$result["accTok"] = $accTokRet;
 
 					//Si no es null
-					if($accTokRet["token"] != null && $accTok["status"] == "CREATED") {
-						$accTok = $accTokRet["token"]->presigned_acceptance->acceptance_token;
+					if($accTokRet["token"] != null && ($accTokRet["status"] == "CREATED" || $accTokRet["status"] == "Ok")) {
+						//property_exists($accTokRet,"data") && property_exists($accTokRet["data"],"presigned_acceptance")) {
+						$accTok = $accTokRet["token"]->data->presigned_acceptance->acceptance_token;
 					}
 				}
 			}

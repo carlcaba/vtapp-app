@@ -364,3 +364,7 @@ label .glyphicon {
 .highlight {
 	animation: highlight 1s;
 }
+
+#directChatBody {
+	overflow: hidden !important;
+}

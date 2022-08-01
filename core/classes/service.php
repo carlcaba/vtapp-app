@@ -307,7 +307,7 @@ class service extends table {
 	//Funcion para contar los asociados
 	function getTotalCount() {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT COUNT(SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE ";
+		$this->sql = "SELECT COUNT(DISTINCT SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE ";
 		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
 			$this->sql .= "AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
@@ -651,10 +651,9 @@ class service extends table {
 	//Funcion para verificar datos adicionales
 	function getAditionalData() {
 		$fields = ["SERVICE_ID", "CLIENT_NAME", "REQUESTED_BY", "REQUESTED_ADDRESS", "ZONE_NAME_REQUEST", "DELIVER_TO", "DELIVER_ADDRESS", "ZONE_NAME_DELIVERY", 
-				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE", "DATE_FORMAT(STR_TO_DATE(TIME_START_TO_DELIVER,'%H'),'%l %p')", "DATE_FORMAT(STR_TO_DATE(TIME_FINISH_TO_DELIVER,'%H'),'%l %p')", "CLIENT_PAYMENT_TYPE", "PARTNER_NAME"];
+				"DELIVERY_TYPE_NAME", "PRICE", "SERVICE_STATE_NAME", "NOTIFIED", "PAYED", "ICON_STATE", "ID_STATE", "DATE_FORMAT(SUBTIME(STR_TO_DATE(TIME_START_TO_DELIVER,'%H'),'00:30:00'),'%l:%i %p')", "DATE_FORMAT(STR_TO_DATE(TIME_FINISH_TO_DELIVER,'%H'),'%l:%i %p')", "CLIENT_PAYMENT_TYPE", "PARTNER_NAME", "NUMERIC_ID"];
 		$this->sql = "SELECT DISTINCT " . str_replace(" , "," ",implode(", ",$fields)) . " FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
 		$row = $this->__getData();
-		_error_log("Nothing",$this->sql);
 		return $row;
 	}
 
@@ -716,7 +715,7 @@ class service extends table {
 							$result .= "<button type=\"button\" title=\"" . $_SESSION["TIMELINE"] . "\" class=\"btn btn-tool\" onclick=\"location.href='service-log.php?id=$row[0]'\">\n";
 								$result .= "<i class=\"fa fa-history\"></i>\n";
 							$result .= "</button>\n";
-							$result .= "<button type=\"button\" class=\"btn btn-tool\" title=\"". $_SESSION["INFORMATION"] . "\">\n";
+							$result .= "<button type=\"button\" class=\"btn btn-tool\" title=\"". "Información" . "\">\n";
 								$result .= "<i class=\"fa fa-info\"></i>\n";
 							$result .= "</button>\n";
 							$result .= "<button type=\"button\" title=\"" . $_SESSION["DELETE"] . "\" class=\"btn btn-tool\" data-card-widget=\"remove\">\n";
@@ -824,7 +823,7 @@ class service extends table {
 							$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["ASSIGN"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["ASSIGN"] . "\" onclick=\"assign('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-motorcycle\"></i></button>";
 						}
 						else {
-							$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["INFORMATION"] . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . $_SESSION["INFORMATION"] . "\" onclick=\"information('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
+							$assign = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . "Información" . "\" type=\"button\" class=\"btn btn-default\" name=\"assBtn" . $aRow[0] . "\" id=\"assBtn" . $aRow[0] . "\" title=\"" . "Información" . "\" onclick=\"information('" . $aRow[$i] . "');\" $actBid><i class=\"fa fa-street-view\"></i></button>";
 						}
 						$history = "<button data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"" . $_SESSION["TIMELINE"] . "\" type=\"button\" class=\"btn btn-default\" title=\"" . $_SESSION["TIMELINE"] . "\" onclick=\"location.href = 'service-log.php?id=" . $aRow[$i] . "';\"><i class=\"fa fa-history\"></i></button>";
 						
@@ -900,7 +899,8 @@ class service extends table {
 							"LAT_REQUEST_END,LAT_REQUEST_INI,LON_DELIVERY_END,LON_DELIVERY_INI,LON_REQUEST_END,LON_REQUEST_INI,OBSERVATION,PRICE,QUANTITY,REGISTERED_BY," .
 							"REGISTERED_ON,REQUEST_CITY_ID,REQUEST_CITY_NAME,REQUEST_COUNTRY,REQUESTED_ADDRESS,REQUESTED_BY,REQUESTED_CELLPHONE,REQUESTED_EMAIL,REQUESTED_PHONE,REQUESTED_ZONE," .
 							"ROUND_TRIP,SERVICE_ID,SERVICE_STATE_NAME,STATE_ID,TIME_FINISH_TO_DELIVER,TIME_START_TO_DELIVER,TOTAL_HEIGHT,TOTAL_LENGTH,TOTAL_WEIGHT,TOTAL_WIDTH," . 
-							"USER_ID,VEHICLE_TYPE_ID,VEHICLE_TYPE_NAME,ZONE_NAME_DELIVERY,ZONE_NAME_REQUEST,CLIENT_PAYMENT_TYPE_ID,CLIENT_PAYMENT_TYPE,IS_MARCO,QUOTA_AVAILABLE " .
+							"USER_ID,VEHICLE_TYPE_ID,VEHICLE_TYPE_NAME,ZONE_NAME_DELIVERY,ZONE_NAME_REQUEST,CLIENT_PAYMENT_TYPE_ID,CLIENT_PAYMENT_TYPE,IS_MARCO,QUOTA_AVAILABLE, " .
+							"TIMESTAMP_START_TO_PICK, TIMESTAMP_START_TO_DELIVER, TIMESTAMP_FINISH_TO_DELIVER " .
 					"FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
 		//Variable a retornar
 		$return = array();
@@ -962,8 +962,19 @@ class service extends table {
 					break;
 				}
 				case 2: {
-					$times = array(5,15,30,45,60);
+					$times = array();
+					$timePick = strtotime(date("Y-m-d") . " " . $row[60]);
+					$timeRequest = strtotime(date("Y-m-d") . " " . $row[61]);
+					for($i=0;$i<5;$i++) {
+						$tm = mt_rand($timePick,$timeRequest);
+						array_push($times,date("h:i A",$tm));
+					}
+					$times[mt_rand(0,4)] =  date("h:i A",$timePick);
 					foreach($times as $key => $value) {
+						array_push($validate, array("id" => ($key + 1) ,
+													"text" => $value,
+													"valid" => $value == date("h:i A",$timePick)));
+						/*
 						if($key+1 < count($times)) {
 							array_push($validate, array("id" => ($key + 1) ,
 														"text" => sprintf($_SESSION["TIME_PICK_UP"],$value,$times[$key+1],$_SESSION["MINUTES"]),
@@ -974,6 +985,7 @@ class service extends table {
 														"text" => sprintf($_SESSION["TIME_PICK_UP_MORE"],1,$_SESSION["HOUR"]),
 														"valid" => false));
 						}
+						*/
 					}
 
 					//Agrega los campos del paso
@@ -992,12 +1004,26 @@ class service extends table {
 					break;
 				}
 				case 3: {
+					/*
 					$maxtime = mktime($this->TIME_FINISH_TO_DELIVER,0,0,intval(date("m")),intval(date("d")),intval(date("Y")));
 					$now = mktime(intval(date("H")),0,0,intval(date("m")),intval(date("d")),intval(date("Y")));
 					$hourdiff = round(($maxtime - $now)/3600, 1);
 					$times = array(1,2,3);
 					$istrue = false;
+					*/
+					$times = array();
+					$timePick = strtotime(date("Y-m-d") . " " . $row[61]);
+					$timeRequest = strtotime(date("Y-m-d") . " " . $row[62]);
+					for($i=0;$i<3;$i++) {
+						$tm = mt_rand($timePick,$timeRequest);
+						array_push($times,date("h:i A",$tm));
+					}
+					$times[mt_rand(0,2)] = date("h:i A",$timeRequest);
 					foreach($times as $key => $value) {
+						array_push($validate, array("id" => ($key + 1) ,
+													"text" => $value,
+													"valid" => $value == date("h:i A",$timeRequest)));
+						/*
 						if($key == 0) {
 							array_push($validate, array("id" => ($key + 1),				
 														"text" => $value . " " . $_SESSION["HOUR"],
@@ -1008,6 +1034,7 @@ class service extends table {
 														"text" => sprintf($_SESSION["TIME_PICK_UP"],$times[$key - 1],$value,$_SESSION["HOURS"]),
 														"valid" => (($key == 2 && $hourdiff > $value) ? true : $hourdiff == $value)));
 						}
+						*/
 					}
 					$parZoneD = $this->deliver_zone->getParentZone();
 
@@ -1217,7 +1244,8 @@ class service extends table {
 							"notified_on" => $row[4],
 							"minutes" => intval($row[5]),
 							"new_stateid" => $row[7],
-							"notification_id" => $row[8]);
+							"notification_id" => $row[8],
+							"service_due" => intval($row[9]) == 1);
 			array_push($return,$data);
 		}
 		return $return;

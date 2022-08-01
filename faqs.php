@@ -26,12 +26,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link href="css/faqs.css" rel="stylesheet">
 <?
 	include("core/templates/__header.tpl");
 ?>
-	<!-- DataTables -->
-	<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap4.css">
-	<link rel="stylesheet" href="plugins/datatables/extensions/Responsive/css/responsive.bootstrap4.min.css">
 </head>
 <body class="hold-transition sidebar-mini <?= $skin[2] ?>">
 	<div class="wrapper">
@@ -74,13 +72,34 @@
 			</div>
 			<!-- /.content-header -->
 			<section class="content">
-				<div class="row">
+				<div class="container-fluid">
+					<!-- Row -->
+					<div class="row">
+						<div class="col-xl-12 pa-0">
+							<div class="mt-sm-60 mt-30">
+								<div class="hk-row">
+									<div class="col-xl-3">
+										<div class="card">
+											<h4 class="card-header"><?= $_SESSION["CATEGORY"] ?></h4>
+<?
+	$faqs->listCategories();
+?>
+										</div>
+									</div>
+									<div class="col-xl-9">
 <?
 	$faqs->listFAQS();
 ?>
-					<input type="hidden" name="hfAnswer" id="hfAnswer" value="false" />
-					<input type="hidden" name="hfQId" id="hfQId" value="0" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /Row -->
 				</div>
+				<!-- END TICKET -->
+				<input type="hidden" name="hfAnswer" id="hfAnswer" value="false" />
+				<input type="hidden" name="hfQId" id="hfQId" value="0" />
 				<div class="row">
 					<div class="col-12 mt-3 text-center">
 						<p class="lead">
@@ -105,7 +124,33 @@
 
     <script>
 		$(document).ready(function() {
-			$('#accordion').on('shown.bs.collapse', function (e) {
+			var searchTerm, panelContainerId;
+			$.expr[":"].containsCaseInsensitive = function (n, i, m) {
+				return jQuery(n).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+					/*|| 
+					jQuery(n).html().toUpperCase().indexOf(m[3].toUpperCase()) >= 0 || 
+					jQuery(n).textContent().toUpperCase().indexOf(m[3].toUpperCase()) >= 0; */
+			};
+			$('#txtSearchFAQ').bind('enterKey', function () {
+				searchTerm = $(this).val();
+				$("div[id^='acc'] > .card").each(function () {
+					panelContainerId = $(this).attr('id');
+					$(panelContainerId + ":not(:containsCaseInsensitive(" + searchTerm + "))").hide("slow");
+					$(panelContainerId + ":containsCaseInsensitive(" + searchTerm + ")").show();
+				});
+			});
+			$('#txtSearchFAQ').on('change keyup', function (e) {
+				if(e.keyCode == 13)	{
+					$(this).trigger("enterKey");
+				}
+			});				
+			$(".lst-category").on("click", function (e) {
+				var data = $(this).data("category");
+				$(this).addClass('active').siblings('li').removeClass('active');
+				$(".card.card-lg:visible").hide("slow");
+				$('.card.card-lg[data-category="' + data + '"]').show();
+			});
+			$("div[id^='acc']").on('shown.bs.collapse', function (e) {
 				var id = $(document).find("[href='#" + $(e.target).attr('id') + "']").data("id");
 				$.ajax({
 					url:'core/actions/_save/__newFaqView.php',
@@ -136,6 +181,7 @@
 					$("#txtQuestion").attr("placeholder","<?= $_SESSION["QUESTION_PLACEHOLDER"] ?>");					
 				}
 				$("#txtQuestion").val("");
+				$("#txtQuestion").focus();
 			});
 		});
 		function Save() {

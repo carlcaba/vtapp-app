@@ -78,22 +78,22 @@
 	switch($action) {
 		case "new": {
 			$titlepage = $_SESSION["MENU_NEW"];
-			$text_title =  $_SESSION["NEW_TEXT"];
+			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			break;
 		}
 		case "edit": {
-			$titlepage = $_SESSION["MENU_EDIT"];
-			$text_title =  $_SESSION["EDIT_TEXT"];
+			$titlepage = "Editar";
+			$text_title =  "Modifique la información disponible. No todos los campos son editables. <small>Los campos marcados con * son requeridos</small>";
 			break;
 		}
 		case "delete": {
-			$titlepage = $_SESSION["MENU_DELETE"];
+			$titlepage = "Confirme que desea eliminar este registro.";
 			$text_title =  $_SESSION["DELETE_TEXT"];
 			break;
 		}
 		case "view": {
 			$titlepage = $_SESSION["VIEW"];
-			$text_title =  $_SESSION["INFORMATION"];
+			$text_title =  "Información";
 			break;
 		}
 	}
@@ -228,7 +228,7 @@
 										</div>
 										<div class="col-md-2">
 											<div class="form-group">
-												<label><?= $client->arrColComments["CLIENT_PAYMENT_TYPE_ID"] ?> *</label>
+												<label><?= $_SESSION["CONTRACT"] ?> *</label>
 												<select class="form-control" id="cbClientPaymentType" name="cbClientPaymentType" <?= $dataForm["readonly"][$cont++] ?>>
 													<?= $client->client_payment->showOptionList(9,$client->client_payment->ID) ?>
 												</select>
@@ -328,7 +328,6 @@
     <script>
 	var pymtype = JSON.parse('<?= $pymtype ?>');
 	$(document).ready(function() {
-		$("#cbClientType").trigger("change");
 		$('[data-toggle="tooltip"]').tooltip();
 		$("#cbClientType").on("change", function () {
 			var value = $(this).val();
@@ -336,18 +335,10 @@
 			$("#cbPaymentType").find("option[data-client-type='" + value + "']").removeAttr("disabled");
 			$("#cbPaymentType").find("option[data-client-type!='" + value + "']").attr("disabled","disabled");
 			$('#cbPaymentType option:not([disabled]):first').attr('selected', 'selected');
-			$("#cbPaymentType").trigger("change");
-		});
-		$("#cbPaymentType").on("change", function () {
-			var value = $(this).val();
-			var datatype = $("#cbPaymentType option:selected").data("clientType");
-			var pyytype = pymtype.find((o) => { return (o["payment"] == value && o["client"] == datatype); });
-			if (typeof(pyytype) != "undefined") {
-				$("#cbClientPaymentType").removeAttr("disabled");
-				$("#cbClientPaymentType").find("option[value='" + pyytype["type"] + "']").removeAttr("disabled");
-				$("#cbClientPaymentType").find("option[value!='" + pyytype["type"] + "']").attr("disabled","disabled");
-				$('#cbClientPaymentType option:not([disabled]):first').attr('selected', 'selected');
-			}
+
+			$("#cbClientPaymentType").find("option[data-clienttypeid='" + value + "']").removeAttr("disabled");
+			$("#cbClientPaymentType").find("option[data-clienttypeid!='" + value + "']").attr("disabled","disabled");
+			$('#cbClientPaymentType option:not([disabled]):first').attr('selected', 'selected');
 		});
 		$("#btnSave").on("click", function(e) {
 			var form = document.getElementById('frmClient');
@@ -394,6 +385,7 @@
 			});
 			$("#divActivateModal").modal("toggle");			
 		});
+		$("#cbClientType").trigger("change");
 	});
 	
     </script>

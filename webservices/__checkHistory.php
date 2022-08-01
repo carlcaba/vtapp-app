@@ -129,7 +129,7 @@
 	
 	if(isset($datos["success"])) {
 		$result["message"] = $datos["message"];
-		if(boolval($debug)) 
+		if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 			$result["sql"] = $serv->sql;
 	}
 	else {
