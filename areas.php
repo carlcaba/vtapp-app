@@ -127,7 +127,7 @@
 
 <?
 	$title = $_SESSION["AREA"];
-	$icon = "<i class=\"fa fa-sitemap\"></i>";
+	$icon = "<i class=\"fa $pageIcon\"></i>";
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
 	
@@ -137,6 +137,7 @@
 	$saveUpload = "core/actions/_save/__saveUploadedAreas.php";
 	include("core/templates/__modalUpload.tpl");
 ?>
+
 
     <!-- Data Table JS
 		============================================ -->

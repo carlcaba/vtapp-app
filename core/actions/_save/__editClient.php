@@ -50,7 +50,7 @@
 		
 		//Actualiza la información
 		$client->EMAIL = $datas->txtEMAIL;
-		$client->setClientType($datas->cbPaymentType);
+		$client->setClientType($datas->cbClientType);
 		$client->setClientPaymentType($datas->cbClientPaymentType);
 		$client->IDENTIFICATION = $datas->cbTBL_CLIENT_IDENTIFICATION . "-" . $datas->txtTBL_CLIENT_IDENTIFICATION;
 		$client->ADDRESS = $datas->txtADDRESS;

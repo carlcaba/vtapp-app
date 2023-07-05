@@ -22,7 +22,7 @@ class external_session extends table {
 	//Constructor anterior
 	function external_session ($external_session  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_EXTERNAL_SESSION");
+		parent::table("TBL_EXTERNAL_SESSION");
 		//Inicializa los atributos
 		$this->ID = $external_session == "" ? "UUID()" : $external_session;
 		$this->REGISTERED_ON = "NOW()";

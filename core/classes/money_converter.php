@@ -17,7 +17,7 @@ class money-bill-1_converter extends table {
 	//Constructor anterior
 	function money-bill-1_converter() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_money-bill-1_CONVERTER");
+		parent::table("TBL_money-bill-1_CONVERTER");
 		//Inicializa los atributos
 		$this->DATERATE = "CURDATE()";
 		$this->REGISTERED_ON = "NOW()";

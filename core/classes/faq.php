@@ -17,7 +17,7 @@ class faq extends table {
 	//Constructor anterior
 	function faq($faq = 0) {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_FAQ");
+		parent::table("TBL_SYSTEM_FAQ");
 		//Inicializa los atributos
 		$this->ID = $faq;
 		$this->REGISTERED_ON = "NOW()";

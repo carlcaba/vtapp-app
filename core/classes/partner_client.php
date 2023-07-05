@@ -24,7 +24,7 @@ class partner_client extends table {
 	//Constructor anterior
 	function partner_client($partner_client = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PARTNER_CLIENT");
+		parent::table("TBL_PARTNER_CLIENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

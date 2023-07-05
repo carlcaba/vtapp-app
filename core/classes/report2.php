@@ -19,7 +19,7 @@ class report2 extends table {
 	//Constructor anterior
 	function report2() {
 		//Llamado al constructor padre
-		parent::tabla("VIE_REPORT2_SUMMARY");
+		parent::__constructor("VIE_REPORT2_SUMMARY");
 		//Inicializa los atributos
 		//Relaciones con otras clases
 		$this->movement = new movement_detail();

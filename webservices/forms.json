@@ -1,0 +1,46 @@
+    "txtName": "OSCAR CABRERA",
+    "txtEmail": "oscaba@gmail.com",
+    "txtPhone": "3103406739",
+
+
+{
+    "txtCompany": "LOGICA ESTUDIO",
+    "txtBrand": "",
+    "txtId": "890150120",
+    "txtPartner": "INTERRAPIDISIMO",
+    "txtBrandPartner": "",
+    "txtNamePartner": "OMAR GAMEZ",
+    "txtEmailPartner": "ogamez@inter.com",
+    "txtPhonePartner": "3002764204",
+    "hfType": "afilia-una-empresa"
+}
+{
+    "txtCompany": "SERVIENTREGA",
+    "txtBrand": "",
+    "txtId": "870451231",
+    "chkCity": "BOG",
+    "cbMainCity": "BTA",
+    "cbEmployee": "50",
+    "cbContract": "TF",
+    "cbClients": "1",
+    "hfType": "quiero-ser-aliado"
+}
+{
+    "txtId": "79854652",
+    "txtBrand": "",
+    "cbPackage": "40",
+    "cbType": "ENP",
+    "hfType": "envios-por-demanda-usuario"
+}
+{
+    "txtCompany": "LOGICA ESTUDIO",
+    "txtBrand": "",
+    "cbPackage": "80",
+    "cbType": "ENP",
+    "hfType": "envios-por-demanda"
+}
+{
+    "txtCompany": "LOGICA ESTUDIO",
+    "cbPackage": "120",
+    "hfType": "mensajeria-a-la-medida"
+}

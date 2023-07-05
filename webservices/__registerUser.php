@@ -1,6 +1,6 @@
 <?
 	//Web service que registra un usuario desde portal
-	//LOGICA ESTUDIO 2021
+	//LOGICA ESTUDIO 2023
 	
 	//Inicio de sesion
 	session_name('vtappcorp_session');
@@ -10,11 +10,12 @@
 	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
+
+	$uid = uniqid();
 	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/interfaces.php");
-	require_once("../core/classes/external_session.php");
 	
 	//Carga los recursos
     include("../core/__load-resources.php");
@@ -30,78 +31,111 @@
 	
 	$name = "";
 	$lname = "";
+	$fullname = "";
 	$phone = "";
 	$email = "";
 	$company = "";
 	$ident = "";
 	$partner = "";
-	$pack = "";
 	$type = "";
-	$docs = "";
-	$password = "";
-	$confirm = "";
+	$brand = "";
+	$partnerbrand = "";
+	$namepartner = "";
+	$emailpartner = "";
+	$phonepartner = "";
+	$city = "";
+	$cities = "";
+	$employees = "";
+	$contract = "";
+	$clients = false;
+	$pack = "";
+	$dtype = "";
 	
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
-		if(!isset($_POST['name'])) {
-			if(!isset($_GET['name'])) {
+		if(!isset($_POST['strModel'])) {
+			if(!isset($_GET['strModel'])) {
 				//Termina
 				goto _Exit;
 			}
 			else {
-				$name = $_GET["name"];
-				$lname = $_GET["lname"];
-				$phone = $_GET["phone"];
-				$email = $_GET["email"];
-				$company = $_GET["company"];
-				$ident = $_GET["ident"];
-				$partner = $_GET["partner"];
-				$pack = $_GET["pack"];
-				$type = $_GET["type"];
-				$docs = $_GET["docs"];
-				$password = $_GET["password"];
-				$confirm = $_GET["confirm"];
+				$strModel = $_GET["strModel"];
 			}
 		}
 		else {
-			$name = $_POST["name"];
-			$lname = $_POST["lname"];
-			$phone = $_POST["phone"];
-			$email = $_POST["email"];
-			$company = $_POST["company"];
-			$ident = $_POST["ident"];
-			$partner = $_POST["partner"];
-			$pack = $_POST["pack"];
-			$type = $_POST["type"];
-			$docs = $_POST["docs"];
-			$password = $_POST["password"];
-			$confirm = $_POST["confirm"];
+			$strModel = $_POST["strModel"];
 		}
 	} 
 	else {
 		//Captura las variables
 		parse_str(file_get_contents("php://input"),$vars);
-		$name = $var["name"];
-		$lname = $var["lname"];
-		$phone = $var["phone"];
-		$email = $var["email"];
-		$company = $var["company"];
-		$ident = $var["ident"];
-		$partner = $var["partner"];
-		$pack = $var["pack"];
-		$type = $var["type"];
-		$docs = $var["docs"];
-		$password = $var["password"];
-		$confirm = $var["confirm"];
+		$strModel = $vars["strModel"];
 	}
-	
+
+	$errMsg = "";
+
+	//Asigna la informacion
+	$datas = json_decode($strModel);
+
+	switch(json_last_error()) {
+		case JSON_ERROR_NONE:
+			$errMsg = "";
+			break;
+		case JSON_ERROR_DEPTH:
+			$errMsg = 'Excedido tamaño máximo de la pila';
+			break;
+		case JSON_ERROR_STATE_MISMATCH:
+			$errMsg = 'Desbordamiento de buffer o los modos no coinciden';
+			break;
+		case JSON_ERROR_CTRL_CHAR:
+			$errMsg = 'Encontrado carácter de control no esperado';
+			break;
+		case JSON_ERROR_SYNTAX:
+			$errMsg = 'Error de sintaxis, JSON mal formado';
+			break;
+		case JSON_ERROR_UTF8:
+			$errMsg = 'Caracteres UTF-8 malformados, posiblemente codificados de forma incorrecta';
+			break;
+		default:
+			$errMsg = 'Error desconocido en JSON';
+			break;
+	}
+
+	if($errMsg != "") {
+		$result["message"] = "Ocurrio un error al deserializar la información enviada. $errMsg";
+		goto _Exit;
+	}
+
+	//Ajusta la información de acuerdo a la peticion
+	$fullname = $datas->txtName;
+	$name = explode(" ",$datas->txtName)[0];
+	$lname = explode(" ",$datas->txtName)[1];
+	$phone = $datas->txtPhone;
+	$email = $datas->txtEmail;
+	$company = $datas->txtCompany;
+	$ident = $datas->txtId;
+	$partner = $datas->txtPartner;
+	$type = $datas->hfType;
+	$brand = $datas->txtBrand;
+	$partnerbrand = $datas->txtBrandPartner;
+	$namepartner = $datas->txtNamePartner;
+	$emailpartner = $datas->txtEmailPartner;
+	$phonepartner = $datas->txtPhonePartner;
+	$cities = $datas->chkCity;
+	$city = $datas->cbMainCity;
+	$employees = $datas->cbEmployee;
+	$contract = $datas->cbContract;
+	$clients = filter_var($datas->cbClients,FILTER_VALIDATE_BOOLEAN);
+	$pack = $datas->cbPackage;
+	$dtype = $datas->cbType;
+
 	//Verifica la informacion
-	if(empty($name)) {
+	if(empty($fullname)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["NAME_EMPTY"];
 		//Termina
@@ -119,40 +153,143 @@
 		//Termina
 		goto _Exit;
 	}
-	if(empty($company)) {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["COMPANY_EMPTY"];
-		//Termina
-		goto _Exit;
+	$createUser = true;
+	$createClient = true;
+	$createPartner = false;
+	$userId = $ident;
+	$pymttype = "5";
+	$clitype = "2";
+	
+	$checkUser = true;
+	$checkClient = true;
+	$checkPartner = false;
+	switch($type) {
+		case "afilia-una-empresa": {
+			if(empty($company)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["COMPANY_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($ident)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["IDENTIFICATION_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($partner)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["PARTNER_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($namepartner)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["CONTACT_PARTNER_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($emailpartner)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["EMAIL_PARTNER_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($phonepartner)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["PHONE_PARTNER_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			$createPartner = true;
+			$checkPartner = true;
+			$clitype = "1";
+			break;
+		}
+		case "quiero-ser-aliado": {
+			if(empty($company)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["COMPANY_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			if(empty($ident)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["IDENTIFICATION_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			$createClient = false;
+			$createPartner = true;
+			$checkPartner = true;
+			$clitype = "1";
+			break;
+		}
+		case "envios-por-demanda-usuario": {
+			if(empty($ident)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["IDENTIFICATION_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			$company = $fullname;
+			$pymttype = "3";
+			break;
+		}
+		case "envios-por-demanda": {
+			if(empty($company)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["COMPANY_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			$userId = explode("@",$email)[0];
+			$pymttype = "3";
+			break;
+		}
+		case "mensajeria-a-la-medida": {
+			if(empty($company)) {
+				//Confirma mensaje al usuario
+				$result['message'] = $_SESSION["COMPANY_EMPTY"];
+				//Termina
+				goto _Exit;
+			}
+			$userId = explode("@",$email)[0];
+			$pymttype = "4";
+			$clitype = "3";
+			break;
+		}
+		default: {
+			//Confirma mensaje al usuario
+			$result['message'] = $_SESSION["ERRORS_ON_INFORMATION"];
+			//Termina
+			goto _Exit;
+			break;
+		}
 	}
-	if(empty($ident)) {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["IDENTIFICATION_EMPTY"];
-		//Termina
-		goto _Exit;
-	}
-	if(empty($password)) {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["PASSWORD_EMPTY_2"];
-		//Termina
-		goto _Exit;
-	}
-	if(strlen($confirm) ) {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["CONFIRM_PASSWORD_EMPTY"];
-		//Termina
-		goto _Exit;
-	}
+
+	//PLAN B
+	$result["data"] = array("createUser" =>	 $createUser,
+							"createClient" => $createClient,
+							"createPartner" => $createPartner,
+							"userId" => $userId,
+							"pymType" => $pymttype,
+							"cliType" => $clitype,
+							"checkUser" => $checkUser,
+							"checkClient" => $checkClient,
+							"checkPartner" => $checkPartner);
+
+	$result["message"] = $_SESSION["USER_REGISTERED"];
+	$result["success"] = true;
+						
+	goto _Exit;
+
+	//End PLAN B
 
 	//Verifica la longitud de la contraseña
 	require_once("../core/classes/configuration.php");
-	$conf = new configuration("PASSWORD_MIN_LEN");
-	if(strlen($password) < $conf->verifyValue()) {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["PASSWORD_LENGTH"];
-		//Termina
-		goto _Exit;
-	}
+	$conf = new configuration("INIT_PASSWORD");
+	$password = $conf->verifyValue();
 	
 	$site = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT");
 
@@ -193,18 +330,12 @@
 	}
 	
 	//Verifica el aliado
-	if($partner != "") {
+	if($checkPartner) {
 		require_once("../core/classes/partner.php");
 		$partn = new partner();
 		$partn->PARTNER_NAME = strtoupper($partner);
 		$partn->getInformationByOtherInfo();
-		//Si hay error
-		if($partn->nerror != 0) {
-			//Asigna el mensaje
-			$result["message"] = $_SESSION["PARTNER_NAME_NOT_REGISTERED"];
-			//Termina
-			goto _Exit;
-		}
+		$createPartner = $partn->nerror > 0;
 	}
 	
 	$type = strpos("Natural",$type) > -1 ? "CC" : "NIT";
@@ -212,12 +343,12 @@
 	//Crea el cliente
 	$clien = new client();
 	$clien->CLIENT_NAME = strtoupper($company);
-	$clien->PAYMENT_TYPE_ID = 1;
+	$clien->setClientPaymentType(1);
 	$clien->CLIENT_PAYMENT_TYPE_ID = 4;
 	$clien->IDENTIFICATION = $type . "-" . $ident; 
 	$clien->ADDRESS = "NOT DEFINED";
 	$clien->CELLPHONE = $phone;
-	$clien->CITY_ID = 1;
+	$clien->setCity(1);
 	$clien->EMAIL = strtolower($email);
 	$clien->CONTACT_NAME = strtoupper($name) . " " . strtoupper($lname);
 	$clien->EMAIL_CONTACT = $clien->EMAIL;
@@ -234,7 +365,7 @@
 	}
 
 	//Asigna los datos
-	$usua = new user();
+	$usua = new users();
 	$usua->ID = explode("@",strtolower($email))[0];
 	$usua->PASSWORD = $password;
 	$usua->FIRST_NAME = strtoupper($name);

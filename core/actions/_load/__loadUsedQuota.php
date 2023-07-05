@@ -35,6 +35,7 @@
 		$result["success"] = true;
 		$result["data"] = $datas;
 		$result["message"] = "ok";
+		$result["sql"] = $quota->sql;
 	}
 	else {
 		$result = $_SESSION["ACCESS_NOT_AUTHORIZED"];

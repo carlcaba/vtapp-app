@@ -20,7 +20,7 @@ class zone extends table {
 	//Constructor anterior
 	function zone ($zone  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_ZONE");
+		parent::table("TBL_SYSTEM_ZONE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

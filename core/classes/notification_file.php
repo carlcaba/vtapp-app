@@ -17,7 +17,7 @@ class notification_file extends table {
 	//Constructor anterior
 	function notification_file($text = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_NOTIFICATION_FILE");
+		parent::table("TBL_SYSTEM_NOTIFICATION_FILE");
 		//Inicializa los atributos
 		$this->ID = 'UUID()';
 		$this->DESCRIPTION = $text;

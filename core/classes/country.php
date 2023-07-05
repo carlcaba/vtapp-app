@@ -16,7 +16,7 @@ class country extends table {
 	//Constructor anterior
 	function country($pais = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_COUNTRY");
+		parent::table("TBL_SYSTEM_COUNTRY");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION["vtappcorp_userid"];

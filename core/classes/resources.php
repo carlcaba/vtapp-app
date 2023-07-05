@@ -18,7 +18,7 @@ class resources extends table {
 	//Constructor anterior
 	function resources($resource = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_RESOURCE");
+		parent::table("TBL_SYSTEM_RESOURCE");
 		//Inicializa los atributos
 		$this->RESOURCE_NAME = $resource;
 		$this->LANGUAGE_ID = $_SESSION["LANGUAGE"];

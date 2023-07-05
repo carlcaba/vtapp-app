@@ -11,6 +11,8 @@
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
 	
+	$uid = uniqid();
+	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/users.php");
@@ -31,13 +33,13 @@
 	$reso = new resources(basename(__FILE__));
 	$result["description"] = $reso->getResourceByName(explode(".",basename(__FILE__))[0],2);
 						
-	$user = "";
+	$usuario = "";
 	$pass = "";
 	
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -51,70 +53,74 @@
 				*/
 			}
 			else {
-				$user = $_GET['user'];
+				$usuario = $_GET['user'];
 				$pass = $_GET['pass'];
 			}
 		}
 		else {
-			$user = $_POST['user'];
+			$usuario = $_POST['user'];
 			$pass = $_POST['pass'];
 		}
 	} 
 	else {
 		//Captura las variables
 		parse_str(file_get_contents("php://input"),$vars);
-		$user = $vars['user'];
+		$usuario = $vars['user'];
 		$pass = $vars['pass'];
 	}
 	
 	//Verifica la informacion
-	if(empty($user)) {
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
-		exit;		
-		/*
-		//Confirma mensaje al usuario
+	if(empty($usuario)) {
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
-		//Termina
-		exit(json_encode($result));
-		*/
+		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
+		goto _Exit;		
 	}
 	if(empty($pass)) {
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["PASSWORD_EMPTY"]);
-		exit;		
-		/*
-		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["PASSWORD_EMPTY"];
-		//Termina
-		exit(json_encode($result));
-		*/
+		header("HTTP/1.1 400 Bad Request " . $_SESSION["PASSWORD_EMPTY"]);
+		goto _Exit;		
 	}
 
 	//Instancia la clase usuario
-	$usua = new users($user);
+	$usua = new users($usuario);
 	$conf = new configuration("WEB_SITE");
 	$website = $conf->verifyValue();
 	$siteroot = $conf->verifyValue("SITE_ROOT");
 
 	//Asigna los valores
 	$usua->THE_PASSWORD = $pass;
+
+	_error_log(print_r($usua->arrColDatas,true));
+
 		
 	//Valida la contrase�a
 	$usua->check(true);
 	
 	//Si hay error
 	if($usua->nerror > 0) {
-		header("HTTP/1.1 403 Forbidden " . $usua->error);
-		exit;		
-		/*
-		//Confirma mensaje al usuario
 		$result['message'] = $usua->error;
-		//Termina
-		exit(json_encode($result));
-		*/
+		goto _Exit;		
+	}
+	
+	_error_log("Verificar estado del usuario: " . print_r($usua->arrColDatas,true),$usua->sql);
+	
+	_error_log(filter_var($usua->ON_LINE, FILTER_VALIDATE_BOOLEAN));
+	
+	if(filter_var($usua->ON_LINE, FILTER_VALIDATE_BOOLEAN) || intval($usua->ON_LINE) == 1) {
+		$result['message'] = $_SESSION["MESSENGER_LOGGED_ON"];
+		goto _Exit;		
+	}
+	
+	_error_log(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN));
+
+	if(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN) || intval($usua->LOGGED) == 1) {
+		$result['message'] = $_SESSION["MESSENGER_ALREADY_LOGGED"];
+		goto _Exit;		
 	}
 	
 	//Crea el nuevo LOG
 	$log = new logs("LOGIN");
+	$log->USER_ID = $usuario;
 	//Adiciona la transaccion
 	$log->Login();
 	//Si hubo error
@@ -166,7 +172,8 @@
 								 "image" => $website . $siteroot . $usua->getUserPicture(true),
 								 "vehicles" => $dataV);
 	
-	$idws = updateTraceWS($idws, json_encode($result));
+	_Exit:
+	$idws = updateTraceWS($idws, json_encode($result));	
 	//Termina
 	exit(json_encode($result));
 ?>

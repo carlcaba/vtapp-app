@@ -24,7 +24,7 @@ class quota_employee extends table {
 	//Constructor anterior
 	function quota_employee ($user  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_QUOTA_EMPLOYEE");
+		parent::table("TBL_QUOTA_EMPLOYEE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

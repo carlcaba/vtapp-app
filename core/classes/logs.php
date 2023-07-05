@@ -18,7 +18,7 @@ class logs extends table {
 	//Constructor anterior
 	function logs($trx = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_LOG");
+		parent::table("TBL_SYSTEM_LOG");
 		//Inicializa los atributos
 		$this->USER_IP = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
 		$this->USER_ID = ($_SESSION['vtappcorp_userid'] === NULL) ? "visitante" : $_SESSION['vtappcorp_userid'];
@@ -27,6 +27,17 @@ class logs extends table {
 		$this->view = "VIE_LOG_SUMMARY";
 		$this->table2 = "TBL_SYSTEM_TRACE";
 		$this->vie2 = "VIE_LOGIN_SUMMARY";
+	}
+	
+	function _add($verify = true, $getid = true) {
+		//Llama al add parent
+		parent::_add($verify, $getid);
+		if($this->TEXT_TRANSACTION == "AUTO-LOGOFF") {
+			//Arma la sentencia de insercion
+			$this->sql = "UPDATE TBL_SYSTEM_USER SET LOGGED = FALSE WHERE ID = " . $this->_checkDataType("USER_ID");
+			//La ejecuta
+			$this->executeQuery();
+		}
 	}
 	
 	function Login($data = "") {
@@ -42,6 +53,10 @@ class logs extends table {
 			//La ejecuta
 			$this->executeQuery();
 		}
+		//Arma la sentencia de insercion
+		$this->sql = "UPDATE TBL_SYSTEM_USER SET LOGGED = TRUE WHERE ID = " . $this->_checkDataType("USER_ID");
+		//La ejecuta
+		$this->executeQuery();
 	}
 
 	function Logout($data = "") {
@@ -57,6 +72,10 @@ class logs extends table {
 			//La ejecuta
 			$this->executeQuery();
 		}
+		//Arma la sentencia de insercion
+		$this->sql = "UPDATE TBL_SYSTEM_USER SET LOGGED = FALSE WHERE ID = " . $this->_checkDataType("USER_ID");
+		//La ejecuta
+		$this->executeQuery();
 	}
 	
 	function LoginStats($arr) {

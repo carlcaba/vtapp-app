@@ -15,7 +15,7 @@ class ws_query extends table {
 	//Constructor anterior
 	function ws_query($wsqy = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_WS_QUERY");
+		parent::table("TBL_SYSTEM_WS_QUERY");
 	}
 
 	//Modifica el resultado

@@ -1,5 +1,6 @@
 <?
 	$skin = explode(",",$_SESSION["vtappcorp_skin"]);
+	//$skin[2] = "dark-mode";
 ?>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<!-- Meta, title, CSS, favicons, etc. -->

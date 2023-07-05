@@ -19,7 +19,7 @@ class color extends table {
 	//Constructor anterior
 	function color ($color = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_COLOR");
+		parent::table("TBL_SYSTEM_COLOR");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

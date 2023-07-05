@@ -22,7 +22,7 @@ class area extends table {
 	//Constructor anterior
 	function area($area = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_AREA");
+		parent::table("TBL_AREA");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

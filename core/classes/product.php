@@ -27,7 +27,7 @@ class product extends table {
 	//Constructor anterior
 	function product($product  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PRODUCT");
+		parent::table("TBL_PRODUCT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

@@ -11,6 +11,8 @@
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
 	
+	$uid = uniqid();
+	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/users.php");
@@ -29,58 +31,62 @@
 	$reso = new resources(basename(__FILE__));
 	$result["description"] = $reso->getResourceByName(explode(".",basename(__FILE__))[0],2);
 						
-	$user = "";
+	$usuario = "";
 	$token = "";
 	
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
 				header("HTTP/1.1 400 Bad Request " . $result["message"]);
-				exit;		
+				goto _Exit;		
 			}
 			else {
-				$user = $_GET['user'];
+				$usuario = $_GET['user'];
 				$token = $_GET['token'];
 			}
 		}
 		else {
-			$user = $_POST['user'];
+			$usuario = $_POST['user'];
 			$token = $_POST['token'];
 		}
 	} 
 	else {
 		//Captura las variables
 		parse_str(file_get_contents("php://input"),$vars);
-		$user = $vars['user'];
+		$usuario = $vars['user'];
 		$token = $vars['token'];
 	}
 	
 	//Verifica la informacion
-	if(empty($user)) {
+	if(empty($usuario)) {
+		$result["message"] = $_SESSION["USERNAME_EMPTY"];
 		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
-		exit;		
+		goto _Exit;		
 	}
 	if(empty($token)) {
+		$result["message"] = $_SESSION["TOKEN_EMPTY"];
 		header("HTTP/1.1 400 Bad Request " . $_SESSION["TOKEN_EMPTY"]);
-		exit;		
+		goto _Exit;		
 	}
 
 	//Instancia la clase usuario
-	$usua = new users($user);
+	$usua = new users($usuario);
 	$conf = new configuration("WEB_SITE");
 	$website = $conf->verifyValue();
 	$siteroot = $conf->verifyValue("SITE_ROOT");
 
 	//Si hay error
 	if($usua->nerror > 0) {
+		$result["message"] = $usua->error;
 		header("HTTP/1.1 403 Forbidden " . $usua->error);
-		exit;		
+		//Termina
+		goto _Exit;
 	}
 
 	$exts = new external_session($token);
@@ -90,31 +96,35 @@
 	//Si hay error
 	if($exts->nerror > 0) {
 		$result["message"] = $exts->error;
+		header("HTTP/1.1 400 Bad Request " . $exts->error);
 		//Termina
-		exit(json_encode($result));
+		goto _Exit;
 	}
 	
 	//Verifica el usuario
 	if($exts->USER_ID == $usua->ID) {
 		//Actualiza la sesión externa
 		$exts->logOut();
-		//Usuario sale de enlinea
-		$usua->setOnline(false);
 	}
-	
-	//Crea el nuevo LOG
-	$log = new logs("LOGOUT");
-	//Adiciona la transaccion
-	$log->Logout();
-	//Si hubo error
-	if($log->nerror > 0)
-		//Confirma al usuario
-		$result['message'] = $log->error;
 	
 	//Cambia el resultado
 	$result['success'] = true;
 	$result['message'] = $_SESSION["LOGOUT_OK"];
 	
+	_Exit:
+	//Crea el nuevo LOG
+	$log = new logs("LOGOUT");
+	$log->USER_ID = $usuario;
+	//Adiciona la transaccion
+	$log->Logout();
+	//Si hubo error
+	if($log->nerror > 0)
+		//Confirma al usuario
+		$result['message'] .= $log->error;
+
+	//Usuario sale de enlinea
+	$usua->setOnline(false);
+
 	$idws = updateTraceWS($idws, json_encode($result));
 	//Termina
 	exit(json_encode($result));

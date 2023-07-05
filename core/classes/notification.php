@@ -20,7 +20,7 @@ class notification extends table {
 	//Constructor anterior
 	function notification ($type = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_NOTIFICATION");
+		parent::table("TBL_SYSTEM_NOTIFICATION");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

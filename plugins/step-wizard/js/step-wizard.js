@@ -56,12 +56,11 @@ $(document).ready(function () {
 				isValid = $("#hfContinueStep").val() == "true";
 				placeHolder = $("#txtDELIVER_CELLPHONE").attr("placeholder");
 			}
-			else if(nextStepId == "step-3") {
-				$('#cbDeliverType').trigger("change");
-				$("#cbDeliverTime").trigger("change");
-				$("#cbClient").trigger("change");			
+			else if(curStepBtn == "step-3") {
+				$("#hfCheck").val("true");
+				validation();
 			}
-			else if(nextStepId == "step-4") {
+			if(nextStepId == "step-4") {
 				$('#txtTOTAL_WIDTH').trigger("change");
 				$("#txtTOTAL_HEIGHT").trigger("change");
 				$("#txtTOTAL_LENGTH").trigger("change");			

@@ -20,6 +20,8 @@
 	$select = "true";
 	$action = "view";
 	$pid = "";
+	$gtw = true;
+	$bid = true;
 	//Captura las variables
 	if(empty($_POST['distance'])) {
 		//Verifica el GET
@@ -34,6 +36,8 @@
 			$select = !empty($_GET['select']) ? $_GET['select'] : $select;
 			$action = $_GET['action'];
 			$pid = $_GET["pid"];
+			$gtw = filter_var($_GET["gtw"], FILTER_VALIDATE_BOOLEAN);
+			$bid = filter_var($_GET["bid"], FILTER_VALIDATE_BOOLEAN);
 		}
 	}
 	else {
@@ -43,6 +47,8 @@
 		$select = !empty($_POST['select']) ? $_POST['select'] : $select;
 		$action = $_POST['action'];
 		$pid = $_POST["pid"];
+		$gtw = filter_var($_POST["gtw"], FILTER_VALIDATE_BOOLEAN);
+		$bid = filter_var($_POST["bid"], FILTER_VALIDATE_BOOLEAN);
 	}
 		
 	//Si es un acceso autorizado
@@ -62,6 +68,17 @@
 		$buttons .= "<i class=\"fa fa-floppy-o\"></i>\n";
 		$buttons .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\"> " . $_SESSION["SAVE"] . "</span>\n";
 		$buttons .= "</button>\n";
+
+		$gateway = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["GO_TO_PAY"] . "\" id=\"btnPayment\" name=\"btnPayment\" class=\"btn btn-warning pull-right\" onclick=\"payment();\">\n";
+		$gateway .= "<i class=\"fa fa-money-bill-1\"></i>\n";
+		$gateway .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["GO_TO_PAY"] . "</span>\n";
+		$gateway .= "</button>\n";
+
+		$ondeliver = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["SYSTEM_PAYMENT_TYPE_6"] . "\" id=\"btnOnDeliver\" name=\"btnOnDeliver\" class=\"btn btn-info pull-right\" onclick=\"onDeliver();\">\n";
+		$ondeliver .= "<i class=\"fa fa-gift\"></i>\n";
+		$ondeliver .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["SYSTEM_PAYMENT_TYPE_6"] . "</span>\n";
+		$ondeliver .= "</button>\n";		
+
 		if($pid != "" && $action == "view") {
 			$buttons = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["CANCEL"] . "\" id=\"btnReturn\" name=\"btnReturn\" class=\"btn btn-warning pull-right\" onclick=\"history.back();\">\n";
 			$buttons .= "<i class=\"fa fa-arrow-left\"></i>\n";
@@ -93,37 +110,41 @@
 				$result["employee_id"] = true;
 			}
 			
-			$quot = new quota_employee();
-			$quot->getInformationByOtherInfo("USER_ID", $_SESSION["vtappcorp_userid"],"CLIENT_ID",$client);
-			if($quot->nerror == 0) {
-				if($quot->AMOUNT > $quot->USED) {
-					$quota = $quot->ID;
-					$balance = $quot->AMOUNT - $quot->USED;
+			$pmnttype = $ptcl->client->PAYMENT_TYPE_ID;
+			
+			if(!$gtw) {
+				$quot = new quota_employee();
+				$quot->getInformationByOtherInfo("USER_ID", $_SESSION["vtappcorp_userid"],"CLIENT_ID",$client);
+				if($quot->nerror == 0) {
+					if($quot->AMOUNT > $quot->USED) {
+						$quota = $quot->ID;
+						$balance = $quot->AMOUNT - $quot->USED;
+					}
+					else {
+						$buttons = $gateway;
+						$change = true;
+					}
 				}
+				/*
 				else {
-					$buttons = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["GO_TO_PAY"] . "\" id=\"btnPayment\" name=\"btnPayment\" class=\"btn btn-warning pull-right\" onclick=\"payment();\">\n";
-					$buttons .= "<i class=\"fa fa-money-bill-1\"></i>\n";
-					$buttons .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["GO_TO_PAY"] . "</span>\n";
-					$buttons .= "</button>\n";
-					$change = true;
+					$buttons = $gateway;
 				}
+				*/
 			}
 			else {
-				$buttons = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["GO_TO_PAY"] . "\" id=\"btnPayment\" name=\"btnPayment\" class=\"btn btn-warning pull-right\" onclick=\"payment();\">\n";
-				$buttons .= "<i class=\"fa fa-money-bill-1\"></i>\n";
-				$buttons .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["GO_TO_PAY"] . "</span>\n";
-				$buttons .= "</button>\n";
+				$buttons = $gateway;
+				$pmnttype = 3;
 			}
 			
-			if($ptcl->client->CLIENT_PAYMENT_TYPE_ID == 3) {
-				$buttons = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["SYSTEM_PAYMENT_TYPE_3"] . "\" id=\"btnOnDeliver\" name=\"btnOnDeliver\" class=\"btn btn-info pull-right\" onclick=\"onDeliver();\">\n";
+			if($ptcl->client->client_type->CLIENT_TYPE_ID == 4) {
+				$buttons = "<button type=\"button\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"" . $_SESSION["SYSTEM_PAYMENT_TYPE_6"] . "\" id=\"btnOnDeliver\" name=\"btnOnDeliver\" class=\"btn btn-info pull-right\" onclick=\"onDeliver();\">\n";
 				$buttons .= "<i class=\"fa fa-gift\"></i>\n";
-				$buttons .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["SYSTEM_PAYMENT_TYPE_3"] . "</span>\n";
+				$buttons .= "<span class=\"d-none d-sm-none d-md-none d-lg-block d-xl-inline-block\">" . $_SESSION["SYSTEM_PAYMENT_TYPE_6"] . "</span>\n";
 				$buttons .= "</button>\n";
 			}
 		}
 		
-		$datos = $rate->selectPartner($distance,$round == "true",$filter,$quota,$balance,(($quot == null) ? $quot : $quot->quota->type->discountType()));
+		$datos = $rate->selectPartner($distance,$round == "true",$filter,$quota,$balance,(($quot == null) ? $quot : $quot->quota->type->discountType()),$pmnttype);
 		
 		if($rate->nerror > 0) {
 			$result["message"] = $_SESSION["NO_INFORMATION"];
@@ -138,6 +159,7 @@
 		$result["sql"] = $datos["sql"];
 		$result["success"] = true;
 		$result["change"] = $change;
+		$result["notification"] = $datos["notification"];
 	}
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];

@@ -18,7 +18,7 @@ class category extends table {
 	//Constructor anterior
 	function category($category = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_CATEGORY");
+		parent::table("TBL_CATEGORY");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

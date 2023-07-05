@@ -16,7 +16,7 @@ class address_type extends table {
 	//Constructor anterior
 	function address_type() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_ADDRESS_TYPE");
+		parent::table("TBL_SYSTEM_ADDRESS_TYPE");
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos

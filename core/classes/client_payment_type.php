@@ -14,13 +14,13 @@ class client_payment_type extends table {
 	
 	//Constructor
 	function __constructor($client_payment_type = "") {
-		$this->category($client_payment_type);
+		$this->client_payment_type($client_payment_type);
 	}
 	
 	//Constructor anterior
 	function client_payment_type($client_payment_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_PAYMENT_TYPE");
+		parent::table("TBL_SYSTEM_PAYMENT_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
@@ -149,7 +149,7 @@ class client_payment_type extends table {
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
 		//Arma la sentencia SQL
-		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, A.CLIENT_TYPE_ID FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
+		$this->sql = "SELECT A.ID, R.RESOURCE_TEXT, A.CLIENT_TYPE_ID, A.CONTRACT FROM $this->table A INNER JOIN " . $this->resources->table . " R " .
 				"ON (R.RESOURCE_NAME = A.RESOURCE_NAME) WHERE R.LANGUAGE_ID = $lang AND A.IS_BLOCKED = FALSE ORDER BY R.RESOURCE_TEXT"; 
 		//Variable a retornar
 		$return = "";
@@ -157,15 +157,15 @@ class client_payment_type extends table {
 		foreach($this->__getAllData() as $row) {
             if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS
-                $row[1] = utf8_encode($row[1]);
+                $row[1] = mb_convert_encoding($row[1],"UTF-8");
             }
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' data-client-type='" . $row[2] . "' selected>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' data-client-type='" . $row[2] . "' data-contract='" . $row[3] . "' selected>" . $row[1] . "</option>\n";
 			else
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' data-client-type='" . $row[2] . "'>" . $row[1] . "</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' data-client-type='" . $row[2] . "' data-contract='" . $row[3] . "'>" . $row[1] . "</option>\n";
 		}
 		//Retorna
 		return $return;
@@ -237,6 +237,7 @@ class client_payment_type extends table {
 	
 	//Funcion que muestra la forma
 	function showForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -278,7 +279,7 @@ class client_payment_type extends table {
 			$cont++;
 		}
 
-		$return .= $this->showField("RESOURCE_NAME", "$stabs\t", "", "", $showvalue, $this->getResource(), false, "9,9,12", $readonly[$cont++], $reso);
+		$return .= $this->showField("RESOURCE_NAME", "$stabs\t", "", "", $showvalue, $this->getResource(), false, "9,9,12", $readonly[$cont++]);
 		
 		if($viewData) {
 			$return .= $this->showField("REGISTERED_ON", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);
@@ -304,6 +305,35 @@ class client_payment_type extends table {
 		$return .= "$stabs</form>\n";
 		//Retorna
 		return $return;
+	}
+	
+	function getByName($name) {
+		//Arma la sentencia SQL
+		$this->sql = "SELECT T.ID, T.CLIENT_TYPE_ID FROM $this->table T INNER JOIN " . $this->resources->table . " R ON (R.RESOURCE_NAME = T.RESOURCE_NAME AND R.LANGUAGE_ID = 2) " .
+					"WHERE R.RESOURCE_TEXT LIKE '$name' AND T.IS_BLOCKED = FALSE";
+        //Obtiene los resultados
+        $row = $this->__getData();
+		//Valor a retornar
+		$result = -1; 
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "0";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = "Selección $name " . $_SESSION["NOT_REGISTERED"];
+        }
+        else {
+            //Asigna el ID
+            $this->ID = $row[0];
+			$result = $row[1];
+            //Llama el metodo
+            $this->__getInformation();
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+		return $result;
 	}
 	
 }

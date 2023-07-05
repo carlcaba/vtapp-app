@@ -62,7 +62,7 @@
 		}
 		
 		//Actualiza la información
-		$client->setClientType($datas->cbPaymentType);
+		$client->setClientType($datas->cbClientType);
 		$client->setClientPaymentType($datas->cbClientPaymentType);
 		$client->IDENTIFICATION = $datas->cbTBL_CLIENT_IDENTIFICATION . "-" . $datas->txtTBL_CLIENT_IDENTIFICATION;
 		$client->ADDRESS = $datas->txtADDRESS;
@@ -95,7 +95,7 @@
 		
 		$error = false;
 		//Si tiene un aliado asociado
-		if($datas->hfIdAliado != "") {
+		if($datas->hfIdAliado != "" && $datas->hfPartner) {
 			//Realiza la operacion
 			require_once("../../classes/partner_client.php");
 			$partner = new partner_client();

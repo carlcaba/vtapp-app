@@ -11,6 +11,8 @@
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
 	
+	$uid = uniqid();
+	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/users.php");
@@ -35,7 +37,7 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -122,15 +124,21 @@
 	//Obtiene la informacion
 	$datos = $serv->listServices($sid,$usid,$user,false,0,$debug);
 	$result["data"] = array();
-	
+
 	if(isset($datos["success"])) {
 		$result["message"] = $datos["message"];
 	}
 	else {
 		$result["success"] = true;
 		$result["message"] = $_SESSION["WEBSERVICE_SUCCESS"];
-		foreach($datos as $dat)
-			array_push($result["data"],$dat);
+		foreach($datos as $dat) {
+			if(!array_key_exists("ACCUMULATED_MONEY", $dat))
+				array_push($result["data"],$dat);
+			else {
+				$result["money"] = $dat;
+				break;
+			}
+		}
 	}
 	if(filter_var($debug, FILTER_VALIDATE_BOOLEAN))
 		$result["sql"] = $serv->sql;

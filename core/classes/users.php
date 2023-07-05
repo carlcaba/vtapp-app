@@ -21,7 +21,7 @@ class users extends table {
 	var $adminMail;
 	var $view;
 	var $vieol;
-	var $vielo;
+	var $vieac;
 	var $city;
 	
 	//Constructor
@@ -32,7 +32,7 @@ class users extends table {
 	//Constructor anterior
 	function users($user = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_USER");
+		parent::table("TBL_SYSTEM_USER");
 		//Clases relacionadas
 		$this->conf = new configuration("INIT_PASSWORD");
 		//Inicializa los atributos
@@ -49,7 +49,7 @@ class users extends table {
 		$this->adminMail = "carlos.cabrera@vtapp.logicaestudio.com";
 		$this->view = "VIE_USER_SUMMARY";
 		$this->vieol = "VIE_USERS_ONLINE_SUMMARY";
-		$this->vielo = "VIE_USERS_ACTIONS";
+		$this->vieac = "VIE_USERS_ACTIONS";
 		if($user != "")
 			$this->__getInformation();
 	}
@@ -1268,7 +1268,7 @@ class users extends table {
 			$lang = $_SESSION["LANGUAGE"];
 		}
 		//Arma la sentencia SQL
-		$this->sql = "SELECT USER_ID, FULL_NAME, ACCESS_NAME, REGISTERED_ON, AREA_NAME, LAST_LOGIN, LAST_LOGOUT, ACCESS_ID " .
+		$this->sql = "SELECT USER_ID, FULL_NAME, ACCESS_NAME, REGISTERED_ON, AREA_NAME, LAST_LOGIN, LAST_LOGOUT, ACCESS_ID, ON_LINE " .
 				"FROM $this->view WHERE IS_BLOCKED = FALSE AND LANGUAGE_ID = $lang AND USER_ID <> '" . $_SESSION["vtappcorp_userid"] . "' ORDER BY REGISTERED_ON DESC";
 		//Variable a devolver
 		$return = "";
@@ -1284,24 +1284,18 @@ class users extends table {
 				else
 					$avatar = "img/users/user.jpg";
 			}
+			if(filter_var($row[8], FILTER_VALIDATE_BOOLEAN)) 
+				$badgeStatus = "<span class=\"badge badge-success float-right\">Online</span>\n";
+			else
+				$badgeStatus = "<span class=\"badge badge-danger float-right\">Offline</span>\n";
 			//Define los datos de login logout
 			if($row[5] && $row[6]) {
 				$login = strtotime($row[5]);
 				$logout = strtotime($row[6]);
-				//Si esta online
-				if($login > $logout) 
-					$badgeStatus = "<span class=\"badge badge-success float-right\">Online</span>\n";
-				else
-					$badgeStatus = "<span class=\"badge badge-danger float-right\">Offline</span>\n";
 			}
 			else if($row[5]) {
 				$login = strtotime($row[5]);
 				$logout = strtotime(date("Y-m-d H:i:s") . " -15 minutes");
-				//Si esta online
-				if($login > $logout) 
-					$badgeStatus = "<span class=\"badge badge-success float-right\">Online</span>\n";
-				else
-					$badgeStatus = "<span class=\"badge badge-danger float-right\">Offline</span>\n";
 			}
 			//Inicia la GUI
 			$return .= "<li id=\"li_$row[0]\"><a href=\"javascript:void(0);\" onclick=\"showDirectChat('$row[0]');\">\n";
@@ -1378,16 +1372,16 @@ class users extends table {
 	
     //Funcion que activa o inactiva usuario en linea
     function setOnline($value) {
-        //Arma la sentencia SQL
-        $this->sql = "UPDATE " . $this->table . " SET ON_LINE = " . ($value ? "TRUE" : "FALSE")  . " WHERE ID = " . $this->_checkDataType("ID");
-        //Verifica que no se presenten errores
-        $this->executeQuery();
+		//Arma la sentencia SQL
+		$this->sql = "UPDATE " . $this->table . " SET ON_LINE = " . ($value ? "TRUE" : "FALSE")  . " WHERE ID = " . $this->_checkDataType("ID");
+		//Verifica que no se presenten errores
+		$this->executeQuery();
     }
 
     //Funcion que verifica usuarios enlinea
     function getOnline($value = "") {
         //Arma la sentencia SQL
-        $this->sql = "SELECT DISTINCT O.* FROM $this->vielo A " .
+        $this->sql = "SELECT DISTINCT O.* FROM $this->vieac A " .
 						"LEFT JOIN $this->vieol O ON (A.USER_ID = O.USER_ID) " .
 						"WHERE A.ACTION_TAKE = '' AND O.ACCESS_ID = 70";
 		//Verify value
@@ -1412,7 +1406,7 @@ class users extends table {
     //Funcion que verifica usuarios para logout
     function getConnectedUsers() {
         //Arma la sentencia SQL
-        $this->sql = "SELECT * FROM " . $this->vielo . " WHERE ACTION_TAKE <> ''";
+        $this->sql = "SELECT * FROM " . $this->vieac . " WHERE ACTION_TAKE <> ''";
 		//Variable a devolver
 		$return = array();
 		//Recorre los valores
@@ -1426,6 +1420,41 @@ class users extends table {
 		}
 		return $return;
     }	
+
+    //Funcion que verifica usuarios enlinea
+    function getOnlineWS($value = "") {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT * FROM $this->vieol";
+		//Verify value
+		if($value != "") {
+			$this->sql .= " WHERE PARTNER_ID = '$value'";
+		}
+		//Variable a devolver
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			//Imagen del usuario
+			$avatar = "img/users/" . $row[0] . ".jpg";
+			if(!file_exists($avatar)) {
+				//verifica el tipo de usuario
+				if($row[5] == 70)
+					$avatar = "img/users/msgr.jpg";
+				else
+					$avatar = "img/users/user.jpg";
+			}
+			//Arma la respuesta
+			$data = array("uid" => $row[0],
+							"fbid" => $row[2],
+							"partner_id" => $row[6],
+							"partner_name" => $row[7],
+							"access_id" => intval($row[5]),
+							"img" => $avatar,
+							"active_notifications" => intval($row[4]));
+			array_push($return,$data);
+		}
+		return $return;
+    }
+
 
 	//Enviar notification a firebase
 	function sendGCM($message, $sid = "") {

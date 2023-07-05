@@ -18,7 +18,7 @@ class payment_type extends table {
 	//Constructor anterior
 	function payment_type($payment_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PAYMENT_TYPE");
+		parent::table("TBL_PAYMENT_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

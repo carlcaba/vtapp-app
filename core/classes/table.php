@@ -6,14 +6,15 @@
 	define("LANGUAGE",2);
 	$_SESSION["LANGUAGE"] = 2;
 	setlocale(LC_TIME, "es_ES.UTF-8");
-	date_default_timezone_set('America/Bogota');
+    date_default_timezone_set('America/Bogota');
 	$log_file = "./my-errors.log"; 
-	ini_set('display_errors', '0');
+	ini_set('display_errors', '1');
 	ini_set("log_errors", TRUE);  
-	ini_set('_error_log', $log_file); 
+	ini_set('error_log', $log_file); 
 
+    error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);	
 	//error_reporting(E_ALL | E_STRICT);	
-	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
+	//error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
 	
 	//Incluye las clases requeridas
     require_once("connector_db.php");
@@ -40,10 +41,10 @@
 
 		//Constructor
 		function __constructor($Tabla = "") {
-			$this->tabla($Tabla);
+			$this->table($Tabla);
 		}
         //Constructor de la clase
-        function tabla($TableName) {
+        function table($TableName) {
             //Inicializa los atributos
             $this->nerror = 0;
             $this->error = "";
@@ -616,6 +617,11 @@
                 $this->connectIt();
             //Realiza la consulta
             $this->conx->do_query($this->sql);
+			//Verifica errores
+			if($this->conx->Errno > 0) {
+				$this->error = $this->conx->Error;
+				$this->nerror = $this->conx->Errno;
+			}
         }
 
         //Funcion que ejecuta una consulta DDL
@@ -662,16 +668,23 @@
 			$row = null;
 			//Verifica la sentencia SQL
 			if($this->sql != "") {
-				//Realiza la consulta
-				$this->doQuery($reconnect);
-				//Asigna el resultado
-				$row = mysqli_fetch_row($this->conx->query_id);
-				if($row == null)
-					//Log error
-					_error_log("SQL: " . $this->sql);
-				else 
-					//Lo convierte
-					$row = utf8_converter($row);
+				try {
+					//Realiza la consulta
+					$this->doQuery($reconnect);
+					//Asigna el resultado
+					$row = mysqli_fetch_row($this->conx->query_id);
+					if($row === null)
+						//Log error
+						_error_log($this->error,$this->sql);
+					else 
+						//Lo convierte
+						$row = utf8_converter($row);
+				}
+				catch (Exception $ex) {
+					$this->nerror = 150;
+					$this->error = $ex->getMessage();
+					_error_log($this->error,$this->sql);
+				}
 			}
 			//Retorna el valor de la consulta
             return $row;
@@ -1038,14 +1051,7 @@
 	
 	if (!function_exists("Encriptar")) {
 		function Encriptar($cadena) {
-			$key = "logicaestudio.com";
-			// # return mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
-			//   return openssl_encrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv);
-			/*if(function_exists("mcrypt_encrypt"))
-				$encrypted = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $cadena, MCRYPT_MODE_CBC, md5(md5($key))));
-			else
-			*/				
-				if(function_exists("openssl_encrypt")) {
+			if(function_exists("openssl_encrypt")) {
 				if(!function_exists("secured_encrypt")) {
 					function secured_encrypt($data) {
 						if(!defined('FIRSTKEY'))
@@ -1071,13 +1077,6 @@
 		 
 	if (!function_exists("Desencriptar")) {
 		function Desencriptar($cadena) {
-			$key = "logicaestudio.com";
-			//# return mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
-			//  return openssl_decrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv);
-			/*if(function_exists("mcrypt_decrypt"))
-				$decrypted = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($cadena), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
-			else 
-			*/
 			if(function_exists("openssl_decrypt")) {
 				if(!function_exists("secured_decrypt")) {
 					function secured_decrypt($input) {

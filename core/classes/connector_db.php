@@ -10,8 +10,8 @@ class connector_db {
 	var $user;
 	var $password;
 	var $port;
-	var $datas = array("prod" => array("db" => "vtappcorp",
-										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
+	var $datas = array("prod" => array("db" => "ubio-db-dev",
+										"host" => "mysqlf-ubio-ubio-eastus-dev.mysql.database.azure.com",
 										"port" => 3306,
 										"user" => "vtapp_user",
 										"pass" => "Vt4ppC0rp0r1t3$"),
@@ -65,15 +65,15 @@ class connector_db {
 										"user" => "logicaad_vtapp_5",
 										"pass" => "Vt4ppC0rp0r1t3$"),
 	//PRODUCTION ALTERNATE CONNECTIONS
-						"prod0" => array("db" => "vtappcorp",
-										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
+						"prod0" => array("db" => "ubio-db-dev",
+										"host" => "mysqlf-ubio-ubio-eastus-dev.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "vtapp_user",
+										"user" => "vtapp_user_1",
 										"pass" => "Vt4ppC0rp0r1t3$"),
-						"prod1" => array("db" => "vtappcorp",
-										"host" => "db-eastus-vtapp-portal.mysql.database.azure.com",
+						"prod1" => array("db" => "ubio-db-dev",
+										"host" => "mysqlf-ubio-ubio-eastus-dev.mysql.database.azure.com",
 										"port" => 3306,
-										"user" => "vtapp_user",
+										"user" => "vtapp_user_2",
 										"pass" => "Vt4ppC0rp0r1t3$")
 						);
 
@@ -81,7 +81,7 @@ class connector_db {
 	var $conex_id = 0;
 	var $query_id = 0;
 	
-	var $env = "deve";
+	var $env = "prod";
 	var $maxAlt = 0;
 	/* numero de error y texto error */
 	var $Errno = 0;
@@ -108,7 +108,7 @@ class connector_db {
 	
 	//Constructor anterior
     function connector_db() {
-		$this->env = "deve";
+		$this->env = "prod";
 		$this->conex_id = 0;
 		$this->maxAlt = $this->getMaxAlternateConnections();
 		foreach($this->datas as $key => $value) {
@@ -195,6 +195,8 @@ class connector_db {
 			}
 			//Hacer el UTF-8
 			@mysqli_query($this->conex_id, "SET NAMES 'ISO 8859-1'");
+			//Cambiar el timezone
+			@mysqli_query($this->conex_id, "SET TIME_ZONE = '" . date_default_timezone_get() . "'");
 		}
 		/* Si hemos tenido �xito conectando devuelve el identificador de la conexi�n, sino devuelve 0 */
 		return $this->conex_id;

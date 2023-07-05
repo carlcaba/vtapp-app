@@ -594,7 +594,7 @@
 			$('#cbProduct').focus();
 	}
 	function deleteItem(id) {
-		$("#spanTitle").html("<?= $_SESSION["INFORMATION"] ?>");
+		$("#spanTitle").html("<?= "Información" ?>");
 		$("#spanTitleName").html("");
 		$("#modalBody").html("<?= $_SESSION["SORRY_NOT_IMPLEMENTED"] ?>");
 		$("#btnActivate").html("<?= $_SESSION["ACCEPT"] ?>");

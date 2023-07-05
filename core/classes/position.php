@@ -20,7 +20,7 @@ class position extends table {
 	//Constructor anterior
 	function position($position = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_POSITION");
+		parent::table("TBL_POSITION");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

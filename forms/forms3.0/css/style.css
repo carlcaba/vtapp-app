@@ -1,0 +1,509 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@1,300&family=Rambla:ital@1&family=Roboto&display=swap');	
+body {
+	margin:  0;
+}
+.page-content {
+	width: 100%;
+    height: 100%;
+	margin:  0 auto;
+	background-image: -moz-linear-gradient(40deg, #029bc5, #c7d300);
+    background-image: -webkit-linear-gradient(40deg, #029bc5, #c7d300);
+    background-image: -ms-linear-gradient(40deg, #029bc5, #c7d300);
+	display: flex; 
+	display: -webkit-flex;
+	justify-content: center;
+	-o-justify-content: center;
+	-ms-justify-content: center;
+	-moz-justify-content: center;
+	-webkit-justify-content: center;
+	align-items: center;
+	-o-align-items: center;
+	-ms-align-items: center;
+	-moz-align-items: center;
+	-webkit-align-items: center;
+}
+.form-v7-content  {
+	width: 910px;
+	margin: 105px 0;
+	font-family: 'Mulish', sans-serif;
+	position: relative;
+	border-radius: 35px 0px 0px 0px;
+	display: flex;
+	display: -webkit-flex;
+}
+/*Estilos de la imagen a la izquierda*/
+.form-v7-content .form-left {
+	position: relative;
+	color: #0097C7;
+	border-radius: 35px 0 0 0;
+	font-weight: 100;
+    width: 92.5%;
+    margin-top: 32px;
+}
+.form-v7-content .form-left img {
+	width: 100%;
+}
+/*Estilos de los textos de la izquierda*/
+.form-v7-content .form-left .text-1 {
+	position: absolute;
+	font-family: Rambla;
+	font-weight: 700;
+	line-height: 32px;
+	text-align: right;
+	width: 250px;
+	margin-top: 60px;
+}
+.form-v7-content .form-left .text-2 {
+	position: absolute;
+	font-family: mulish;
+	color: #868686;
+	text-align: right;
+	width: 100%;
+	margin-top: 32px;
+	width: 200px;
+}
+.form-v7-content .form-left .text-1 {
+	font-size: 36px;
+	top: 20px;
+	right: 20px;
+}
+.form-v7-content .form-left .text-2 {
+	font-size: 16px;
+	top: 430px;
+	text-align: left;
+	left: 40px;
+	padding: 0 20px 0 0;
+}
+/*Estilos de los textos de la linea inferior*/
+.form-v7-content .form-left .text-2::after {
+	position: absolute;
+	content: "";
+	background: #aed208;
+	height: 1px;
+	width: 228px;
+	bottom: -10%;
+	left: 50%;
+	transform: translateX(-50%);
+	-o-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	opacity: 0.5;
+}
+/*Estilos de la caja a la derecha*/
+.form-v7-content .form-detail {
+    padding: 53px 50px 41px;
+	position: relative;
+	border-radius: 0px 0 20px 20px;
+	width: 100%;
+	background: #fff;
+	box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+	-o-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+	-ms-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+	-moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+	-webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+}
+.form-v7-content h5{
+	font-weight: 400;
+	text-align: left;
+	color: #014e63;
+}
+
+a {
+  color: #839e06;
+	font-weight: 900;
+}
+/* Responsive */
+@media screen and (max-width: 991px) {
+	.form-v7-content {
+		margin: 80px 20px;
+		flex-direction:  column;
+		-o-flex-direction:  column;
+		-ms-flex-direction:  column;
+		-moz-flex-direction:  column;
+		-webkit-flex-direction:  column;
+	}
+	.form-v7-content .form-left {
+		width: 100%;
+		margin-bottom: -5px;
+	}
+	.form-v7-content .form-detail {
+		padding: 50px;
+	    width: auto;
+	}
+	.form-v7-content .form-detail .register {
+		margin-bottom: 80px;
+	}
+}
+@media screen and (max-width: 767px) {
+	
+}
+
+@media screen and (max-width: 575px) {
+	.form-v7-content .form-detail {
+		padding: 20px 20px;
+	    width: auto;
+	}
+	.form-v7-content .form-detail .register {
+		float: none;
+		margin-bottom: 10px;
+	}
+	.form-v7-content .form-detail .form-row-last p {
+	    margin-left: 0px;
+	    margin-bottom: 50px;
+	}
+}
+/*Estilos formulario multipaso*/
+
+.msform {
+    text-align: center;
+    position: relative;
+    margin-top: 10px;
+}
+
+.msform fieldset .form-card {
+    background: white;
+    border: 0 none;
+    border-radius: 0px;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    padding: 10px 30px 10px 20px;
+    box-sizing: border-box;
+    width: 94%;
+    margin: 0 3% 20px 3%;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+}
+
+.msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+
+    /*stacking fieldsets above each other*/
+    position: relative;
+}
+
+/*Hide all except first fieldset*/
+.msform fieldset:not(:first-of-type) {
+    display: none;
+}
+
+.msform fieldset .form-card {
+    text-align: left;
+	font-family: roboto;
+    color: #9E9E9E;
+}
+
+.msform input, .msform textarea {
+    padding: 0px 8px 4px 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    border-radius: 30px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: mulish;
+    color: #014e63;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+.msform input:focus, .msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none;
+    font-weight: bold;
+    border-bottom: 2px solid skyblue;
+    outline-width: 0;
+}
+fieldset.group  { 
+  margin: 0; 
+  padding: 0; 
+  margin-bottom: 1.25em; 
+  padding: .125em;
+} 
+
+fieldset.group legend { 
+  margin: 0; 
+  padding: 0; 
+  font-weight: bold;
+  margin-left: 0px; 
+  font-size: 100%; 
+  color: black; 
+} 
+
+
+ul.checkbox  { 
+  margin: 0; 
+  padding: 0; 
+  margin-left: 0px; 
+  list-style: none; 
+}
+.checkbox {
+  column-count: 2;
+}
+/*Green Buttons*/
+.msform .action-button {
+    width: auto;
+    background: #c7d300;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 30px;
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: 10px 5px;
+}
+
+.msform .action-button:hover, .msform .action-button:focus {
+	background-color: #839e06;
+}
+
+/*Previous Buttons*/
+.msform .action-button-previous {
+    width: auto;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 30px;
+    cursor: pointer;
+    padding: 10px 15px;
+    margin: 10px 5px;
+}
+
+.msform .action-button-previous:hover, .msform .action-button-previous:focus {
+    background-color: #616161;
+}
+
+/*Dropdown List Exp Date*/
+select.list-dt {
+    border: none;
+	width: 100%;
+    box-sizing: border-box;
+    font-family: mulish;
+    color: #9e9e9e;
+    font-size: 16px;	
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    padding: 3px 5px 5px 5px;
+    margin: -5px 0px 20px 0px;
+}
+
+select.list-dt:focus {
+    border-bottom: 2px solid #aed208;
+}
+
+/*The background card*/
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+/*FieldSet headings*/
+.fs-title {
+    font-size: 25px;
+    color: #029bc5;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/*progressbar*/
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey;
+}
+
+#progressbar .active {
+    color: #029bc5;
+}
+
+#progressbar li {
+    list-style-type: none;
+	font-family: Roboto;
+    font-size: 12px;
+    width: 25%;
+    float: left;
+    position: relative;
+	z-index: 2;
+}
+
+/*Icons in the ProgressBar*/
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f007";
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f14b";
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f09d";
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c";
+}
+
+/*iconops ProgressBar before any progress*/
+#progressbar li:before {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    display: block;
+    font-size: 38px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px;
+}
+
+/*ProgressBar connectors*/
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 33px;
+    z-index: -1;
+}
+
+/*Color number of the step and the connector before it*/
+#progressbar li.active:before, #progressbar li.active:after {
+    background: #029bc5;
+}
+
+/*Imaged Radio Buttons*/
+.radio-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.radio {
+    display:inline-block;
+    width: 204;
+    height: 104;
+    border-radius: 0;
+    background: lightblue;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    cursor:pointer;
+    margin: 8px 2px; 
+}
+
+.radio:hover {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.radio.selected {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+/*Fit image in bootstrap div*/
+.fit-image{
+    width: 100%;
+    object-fit: cover;
+}
+
+.fa-2xl {
+    font-size: 4em !important;
+}
+
+.visible {
+    visibility: visible;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.text-center {
+    text-align: center !important;
+}
+  
+.ul-checkbox {
+    column-count: 2 !important;
+    column-gap: 2rem !important;
+    list-style: none !important;
+}
+
+.container {
+    display: block;
+    font-family: mulish;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+  
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+  
+.checkmark {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+}
+
+.container input:checked ~ .checkmark {
+    background-color: #007bff;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.container .checkmark:after {
+    left: 7px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+p.page-content {
+    color: #000000 !important;
+    font-style: italic !important;
+}

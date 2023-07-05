@@ -18,7 +18,7 @@ class configuration extends table {
 	//Constructor anterior
 	function configuration($key = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_CONFIGURATION");
+		parent::table("TBL_SYSTEM_CONFIGURATION");
 		//Inicializa los atributos
 		$this->KEY_NAME = $key;
 		//Especifica los valores unicos

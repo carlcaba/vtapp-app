@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ubioforms</title>
+    <link rel="stylesheet" href="style.css">
+    <style type="text/css">
+    body,td,th {
+    font-family: "Noto Sans JP", sans-serif;
+}
+    </style>
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+
+<meta charset="utf-8">
+</head>
+
+<body>
+    <div class="testbox">
+        <form action="/">
+            <h1 style="color: #0099c6">Quiero ser un aliado</h1>
+        
+            <h4>Nombre empresa de mensajería <span>*</span></h4>
+          <input name="" type="text" required="required" placeholder="Nombre empresa de mensajería" />
+         
+			 <h4>Nombre de contacto <span>*</span></h4>
+          <input name="" type="text" required="required" placeholder="Nombre de contacto" />
+			
+			<h4>Teléfono de contacto <span>*</span></h4>
+          <input type="email" name="email" placeholder="Teléfono de contacto*" />
+			
+			<h4>Confirme teléfono de contacto <span>*</span></h4>
+          <input type="email" name="email" placeholder="Confirme teléfono de contacto*" />
+			
+			<h4>Correo de contacto&nbsp;<span>*</span></h4>
+			
+            <input name="" type="text" required="required" placeholder="Correo de contacto" />
+			
+		  <h4>Cuidades donde tienes operación</h4>
+          <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="cd">
+             <tr>
+               <td><label>
+                 <input name="cuidades" type="checkbox" class="first-col" id="cuidades_0" value="Bogotá">
+                 Bogota</label></td>
+             </tr>
+             <tr>
+               <td><label>
+                 <input name="cuidades" type="checkbox" class="first-col" id="cuidades_1" value="Medellin">
+                 Medellin</label></td>
+             </tr>
+			  <tr>
+               <td><label>
+                 <input name="cuidades" type="checkbox" class="first-col" id="cuidades_2" value="Cali">
+                 Cali</label></td>
+             </tr>
+			  <tr>
+               <td><label>
+                 <input name="cuidades" type="checkbox" class="first-col" id="cuidades_3" value="B7quilla">
+                 B/quilla</label></td>
+             </tr>
+          </table>
+
+			
+			<h4>Cantidad de mensajeros que vincularás</h4>
+            <select>
+                <option disabled value="">Elija un valor</option>
+                <option value="1-10">1-10</option>
+                <option value="11-30">11-30</option>
+                <option value="31-50">31-50</option>
+                <option value="Más de 50">Más de 50</option>
+            </select>
+			
+			<h4>Ciudad de operacion principal</h4>
+            <select>
+                <option disabled value="">Elija un valor</option>
+                <option value="Bogotá">Bogotá</option>
+                <option value="Medellín">Medellín</option>
+                <option value="Cali">Cali</option>
+                <option value="B/quilla">B/quilla</option>
+            </select>
+			
+			<h4>Modalidad de contratación</h4>
+            <select>
+                <option disabled value="">Elija un valor</option>
+                <option value="Fijo">Fijo</option>
+                <option value="Indefinido">Indefinido</option>
+                <option value="Destajo">Destajo</option>
+            </select>
+			
+			<h4>¿Deseas vincular clientes propios en UBIO?</h4>
+            <select>
+              <option value="Si">Si</option>
+              <option value="No">No</option>
+            </select>
+			
+			<p>Nota* UBIO no vincula mensajeros particulares o sin contrato con alguna empresa de mensajeria legalmente constituida, si desea trabajar con UBIO, pongase en contacto con una de nuestras empresas de mensajeria Aliada/ Para conocer nuestros aliados haga <a href="https://www.ubio.com.co">click aqui</a></p>
+		  <h4>Acepto terminos y condiciones <span>*</span></h4><input name="terminos" type="checkbox" id="terminos" checked="checked">    
+			
+          <div class="btn-block">
+                    <button type="submit" href="/">Enviar
+                  </button>
+          </div> 
+        </form>
+    </div>
+</body>
+
+</html>

@@ -14,6 +14,8 @@
 	
     //Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
+	
+	$uid = uniqid();
 
     //Variable del codigo
     $result = array('success' => false,
@@ -22,11 +24,11 @@
 	//Realiza la operacion
 	require_once("../core/classes/quota.php");
 
-	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
 	$quota = new quota();
 
-	_error_log("Getting quota with past due " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting quota with past due " . date("Ymd H:i:s"));
 
 	//Obtiene la informacion de los cupos vencidos
 	$quotas = $quota->getQuotaRepeated();
@@ -36,12 +38,12 @@
 		$log = new logs("No quotas past dued");
 		$log->USER_ID = "admin";
 		$log->_add();
-		_error_log($log->TEXT_TRANSACTION, $serv->sql);
+		_error_log("$uid - " . $log->TEXT_TRANSACTION, $serv->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
 
-	_error_log("Getting configuration " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting configuration " . date("Ymd H:i:s"));
 
 	require_once("../core/classes/configuration.php");
 	$conf = new configuration("PAYMENT_GATEWAY");
@@ -63,14 +65,14 @@
 	
 	$count = 0;
 	$err = 0;	
-	_error_log("Processing quotas " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Processing quotas " . date("Ymd H:i:s"));
 
 	$success = false;
 	$message = "";
 
 	foreach($quotas as $quot) {
 		$count++;
-		_error_log("Processing quota " . $quot["qid"] . " start at " . date("Ymd H:i:s"));
+		_error_log("$uid - " . "Processing quota " . $quot["qid"] . " start at " . date("Ymd H:i:s"));
 		//Consulta la informacion del cupo
 		$quota->ID = $quot["qid"];
 		//Busca la informacion
@@ -80,7 +82,7 @@
 			$log = new logs("Quota " . $quot["qid"] . " not found -> " . $quota->error);
 			$log->USER_ID = "admin";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $quota->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $quota->sql);
 			$err++;
 			//continua
 			continue;
@@ -100,7 +102,7 @@
 			$log = new logs($msg);
 			$log->USER_ID = "admin";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $quota->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $quota->sql);
 			$err++;
 			//continua
 			continue;
@@ -114,7 +116,7 @@
 		
 		//Verifica la pasarela
 		if($gate == "WOMPI") {
-			_error_log("Processing quota " . $quot["qid"] . " payment step 1 " . date("Ymd H:i:s"));
+			_error_log("$uid - " . "Processing quota " . $quot["qid"] . " payment step 1 " . date("Ymd H:i:s"));
 			//Step 1
 			//Obtiene el token de la tarjeta
 			$tokenRet = getCardToken($quota,$urlToken,$pubkey);
@@ -126,7 +128,7 @@
 			//Proceso de solicitud de acceptance token
 			//Verifica si hay no error, para obtener el acceptance token
 			if($success && $tokenRet["status"] == "CREATED") {
-				_error_log("Processing quota " . $quot["qid"] . " payment step 2 " . date("Ymd H:i:s"));
+				_error_log("$uid - " . "Processing quota " . $quot["qid"] . " payment step 2 " . date("Ymd H:i:s"));
 				//Obtiene el acceptance token
 				$accTokRet = getAcceptanceToken($urlAccToken, $pubkey);
 
@@ -146,7 +148,7 @@
 				$log = new logs("Quota " . $quot["qid"] . " error on payment step 1 -> " . $message);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION);
 				$err++;
 				//continua
 				continue;
@@ -156,7 +158,7 @@
 			//Generar transaccion
 			//Verifica si hay no error, para generar la transaccion
 			if($success) {
-				_error_log("Processing quota " . $quot["qid"] . " payment step 3 and 4 " . date("Ymd H:i:s"));
+				_error_log("$uid - " . "Processing quota " . $quot["qid"] . " payment step 3 and 4 " . date("Ymd H:i:s"));
 				//Genera la transaccion
 				$createTx = generateTransaction($quota, $tokenRet["token"], $accTok, $urlTranx, $prvkey, $urlRet);
 				//Actualiza la respuesta
@@ -167,7 +169,7 @@
 				$log = new logs("Quota " . $quot["qid"] . " error on payment step 2 -> " . $message);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION);
 				$err++;
 				//continua
 				continue;
@@ -176,7 +178,7 @@
 			//Step 5
 			//Guarda registro del pago
 			if($success) {
-				_error_log("Processing quota " . $quot["qid"] . " create payment record " . date("Ymd H:i:s"));
+				_error_log("$uid - " . "Processing quota " . $quot["qid"] . " create payment record " . date("Ymd H:i:s"));
 				//Asigna la informacion
 				$transObj = $createTx["transaction"];
 				$payment = new payment();
@@ -220,7 +222,7 @@
 					$log = new logs("Quota " . $quot["qid"] . " error registering payment step 5 -> " . $message);
 					$log->USER_ID = "admin";
 					$log->_add();
-					_error_log($log->TEXT_TRANSACTION);
+					_error_log("$uid - " . $log->TEXT_TRANSACTION);
 					$err++;
 				}
 				//Verifica el estado de la transaccion
@@ -244,7 +246,7 @@
 					$log = new logs("Quota " . $quot["qid"] . " error on payment step 5 -> " . $message);
 					$log->USER_ID = "admin";
 					$log->_add();
-					_error_log($log->TEXT_TRANSACTION);
+					_error_log("$uid - " . $log->TEXT_TRANSACTION);
 					$err++;
 					//continua
 					continue;
@@ -254,7 +256,7 @@
 				$log = new logs("Quota " . $quot["qid"] . " error on payment step 3 and 4 -> " . $message);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION);
 				$err++;
 				//continua
 				continue;

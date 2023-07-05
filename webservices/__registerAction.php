@@ -11,6 +11,8 @@
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
 	
+	$uid = uniqid();
+	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
 	require_once("../core/classes/interfaces.php");
@@ -39,7 +41,7 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -259,7 +261,7 @@
 			$usua->sendMail($body, $to, $subject);
 			if($usua->nerror > 0) {
 				$action->{"notification"} = $usua->error;
-				_error_log($usua->error);
+				_error_log("$uid - " . $usua->error);
 			}
 			else {
 				$action->{"notification"} = $reso->getResourceByName("NOTIFICATION_SENT") . " (TO: $to SUBJECT: $subject BODY: $body)"; 

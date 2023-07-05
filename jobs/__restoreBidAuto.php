@@ -14,6 +14,8 @@
 	
     //Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
+	
+	$uid = uniqid();
 
     //Variable del codigo
     $result = array('success' => false,
@@ -24,20 +26,20 @@
 	require_once("../core/classes/logs.php");
 	require_once("../core/classes/configuration.php");
 
-	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
 	$conf = new configuration("AUTOBID_ACTIVATED");
 	$active = $conf->verifyValue();
 	
 	if(!filter_var($active, FILTER_VALIDATE_BOOLEAN)) {
-		_error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
+		_error_log("$uid - " . "AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
 		$result["message"] = "AUTOBID_ACTIVATED disabled $active";
 		exit(json_encode($result));
 	}
 
 	$serv = new service();
 
-	_error_log("Getting services not bidded " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting services not bidded " . date("Ymd H:i:s"));
 
 	//Obtiene la informacion de los servicios por notificar
 	$services = $serv->getNotBidded();
@@ -47,7 +49,7 @@
 		$log = new logs("No services not bidded");
 		$log->USER_ID = "jbRestoreAutoBid";
 		$log->_add();
-		_error_log($log->TEXT_TRANSACTION, $serv->sql);
+		_error_log("$uid - " . $log->TEXT_TRANSACTION, $serv->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
@@ -56,7 +58,7 @@
 	$err = 0;
 	$reso = new resources();
 	
-	_error_log("Processing " . count($services) . " record(s) " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Processing " . count($services) . " record(s) " . date("Ymd H:i:s"));
 	
 	foreach($services as $srv) {
 		$count++;
@@ -69,7 +71,7 @@
 			$log = new logs("Service " . $srv["sid"] . " not found -> " . $service->error);
 			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $service->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $service->sql);
 			$err++;
 			//continua
 			continue;
@@ -79,7 +81,7 @@
 			$log = new logs("Service " . $srv["id"] . " wrong state -> " . $service->STATE_ID . " <> " . $srv["stateid"]);
 			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION);
 			$err++;
 			//continua
 			continue;
@@ -93,7 +95,7 @@
 			$log = new logs("Service " . $srv["sid"] . " Error on update -> " . $service->error);
 			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $service->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $service->sql);
 			$err++;
 			continue;
 		}
@@ -101,7 +103,7 @@
 			$log = new logs("Service " . $srv["sid"] . " Updated ok  -> State:" . $srv["service_state"] . " Reg:" . $srv["registered_on"] . " Not: " . $srv["notified_on"] . " Mins: " . $srv["minutes"]);
 			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $service->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $service->sql);
 		}
 		
 		//Verifica 
@@ -113,13 +115,13 @@
 			$log = new logs("User notification service -> " . $srv["sid"] . " error disabling -> " . $usnot->error);
 			$log->USER_ID = "jbRestoreAutoBid";
 			$log->_add();
-			_error_log($log->TEXT_TRANSACTION, $usnot->sql);
+			_error_log("$uid - " . $log->TEXT_TRANSACTION, $usnot->sql);
 			$err++;
 		}
 	}
 	$reso->RESOURCE_NAME = "PROCESS_COMPLETED";
 
-	_error_log($reso->getResourceByName() . "(" . $count . "/" . $err . ") at " . date("Ymd H:i:s"));
+	_error_log("$uid - " . $reso->getResourceByName() . "(" . $count . "/" . $err . ") at " . date("Ymd H:i:s"));
 
 	//Cambia el resultado
 	$result['success'] = true;

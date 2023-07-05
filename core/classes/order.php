@@ -23,7 +23,7 @@ class order extends table {
 	//Constructor anterior
 	function order($order = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_ORDER");
+		parent::table("TBL_ORDER");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

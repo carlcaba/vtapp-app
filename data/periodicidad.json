@@ -1,0 +1,26 @@
+[{
+        "id": "N",
+        "text": "Por demanda"
+    }, {
+        "id": "D",
+        "text": "Diario"
+    }, {
+        "id": "S",
+        "text": "Semanal"
+    }, {
+        "id": "Q",
+        "text": "Quincenal"
+    }, {
+        "id": "M",
+        "text": "Mensual"
+    }, {
+        "id": "T",
+        "text": "Trimestral"
+    }, {
+        "id": "S",
+        "text": "Semestral"
+    }, {
+        "id": "A",
+        "text": "Anual"
+    }
+]

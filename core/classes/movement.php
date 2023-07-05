@@ -21,7 +21,7 @@ class movement extends table {
 	//Constructor anterior
 	function movement($movement = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_MOVEMENT");
+		parent::table("TBL_MOVEMENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

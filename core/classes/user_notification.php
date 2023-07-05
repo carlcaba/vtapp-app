@@ -20,7 +20,7 @@ class user_notification extends table {
 	//Constructor anterior
 	function user_notification($usr = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_NOTIFICATION");
+		parent::table("TBL_NOTIFICATION");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

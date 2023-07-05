@@ -35,15 +35,6 @@
 		From_ Sender
 		Image From: Image from
 		Color: color
-		
-				var res_type 		= response.type;
-				var user_message 	= response.message;
-				var user_name 		= response.name;
-				var user_color 		= response.color;
-				var user_to			= response.to;
-				var user_image 		= response.image;
-				var from			= response.from;
-				var image_from		= response.from_image;		
 	*/
 	
 	if(isset($usrx)) 
@@ -305,14 +296,14 @@
 			
 			try {
 				websocket = new WebSocket(wsUri); 
+				websocket.onopen = wsOO;
+				websocket.onmessage = wsSM;
+				websocket.onerror = wsOE;
+				websocket.onclose = wsOC;
 			}
 			catch(error) {
 				notify("", 'danger', "", "<i class=\"fa-solid fa-land-mine-on\"></i> <?= $_SESSION["DIRECTCHAT_NOT_AVAILABLE"] ?>", "");				
 			}
-			websocket.onopen = wsOO;
-			websocket.onmessage = wsSM;
-			websocket.onerror = wsOE;
-			websocket.onclose = wsOC;
 
 			$("#txtMESSAGE").on("keydown", function( event ) {
 				event.preventDefault();
@@ -322,32 +313,6 @@
 			});
 			 
 			function sendDirectChat() {
-				/*
-				if(!$("#txtMESSAGE") && $("#txtMESSAGE").val() != "")
-					return false;
-
-				if(!$("#txtDESTINY"))
-					if($("#txtDESTINY").val() != "") {
-						if(!$("#hfLastChatUser") || $("#hfLastChatUser").val() != "")
-							return false;
-						$("#txtDESTINY").val($("#hfLastChatUser").val());
-					}
-				var datas = {
-					txtMESSAGE: $("#txtMESSAGE").val(),
-					txtDESTINY: $("#txtDESTINY").val()
-				};
-				$.ajax({
-					url: "core/actions/_save/__newDirectChat.php",
-					data: { strModel: datas },
-					dataType: "json",
-					success: function(data){
-						$("#directChatMessages").load("core/actions/_load/__loadDirectChat.php", { idUserDestiny: $("#txtDESTINY").val() });
-						$("#txtMESSAGE").val("");
-						$("#txtMESSAGE").focus();
-						DirectChatVar = setTimeout(checkDirectChat, <?= $_SESSION["DIRECT_CHAT_TIME"] ?>);
-					}
-				});
-				*/
 				var message_input = $('#txtMESSAGE'); 
 				var name_input = localStorage.getItem('UBIODC_MYSELF'); //$('#hfMeInChat'); //user name
 				var name_to = localStorage.getItem('UBIODC_TO');
@@ -374,13 +339,13 @@
 				//prepare json data
 				var msg = {
 					message: message_input.val(),
-					name: name_input,
+					name: 'CARLOS CABRERA',
 					color : '<?php echo $colors[$color_pick]; ?>',
-					to: name_to,
+					to: 'carlcaba',
 					type: 'usr',
 					image: localStorage.getItem('UBIODC_IMAGE'),
-					from: localStorage.getItem('UBIODC_MYSELF'),
-					image_from: localStorage.getItem('UBIODC_FROM_IMAGE')
+					from: localStorage.getItem('UBIODC_MYSELF'), //user_id
+					image_from: localStorage.getItem('UBIODC_FROM_IMAGE') //image
 				};
 				//convert and send data to server
 				websocket.send(JSON.stringify(msg));	
@@ -401,119 +366,14 @@
 					return false;
 				try {
 					websocket = new WebSocket(wsUri); 
+					websocket.onopen = wsOO;
+					websocket.onmessage = wsSM;
+					websocket.onerror = wsOE;
+					websocket.onclose = wsOC;
 				}
 				catch(error) {
 					return false;
 				}
-				websocket.onopen = wsOO;
-				websocket.onmessage = wsSM;
-				websocket.onerror = wsOE;
-				websocket.onclose = wsOC;
-				/*
-				websocket.onopen = function(ev) { 
-					var msg = "<div class=\"direct-chat-msg right\">" +
-								"<div class=\"direct-chat-infos clearfix\">" +
-									"<span class=\"direct-chat-name float-right\">Direct Chat</span>" + 
-									"<span class=\"direct-chat-timestamp float-left\">" + formatDate() + "</span>" +
-								"</div>" +
-								"<img class=\"direct-chat-img\" src=\"img/logo/icons/apple-icon-120x120.png\" alt=\"Bienvenido\">" +  
-								"<div class=\"direct-chat-text\">" +
-									"Bienvenido a Direct Chat de UBIO" +
-								"</div>" +
-								"</div>";
-					msgBox.append(msg);
-					$("#hfDirectChat").val("on");
-					DirectChatVar = null;
-				}
-				websocket.onmessage = function(ev) {
-					var response 		= JSON.parse(ev.data);
-					var res_type 		= response.type;
-					var user_message 	= response.message;
-					var user_name 		= response.name;
-					var user_color 		= response.color;
-					var user_to			= response.to;
-					var user_image 		= response.image;
-					var msg = "";
-
-					switch(res_type){
-						case 'usr':
-							msg = "<div class=\"direct-chat-msg right\">" +
-										"<div class=\"direct-chat-infos clearfix\">" +
-											"<span class=\"direct-chat-name float-right\">Direct Chat</span>" + 
-											"<span class=\"direct-chat-timestamp float-left\">" + formatDate() + "</span>" +
-										"</div>" +
-										"<img class=\"direct-chat-img\" src=\"" + user_image + "\" alt=\"UBIO\">" +  
-										"<div class=\"direct-chat-text\">" + user_message +
-										"</div>" +
-										"</div>";
-							msgBox.append(msg);
-							break;
-						case 'sys':
-							msg = "<div class=\"direct-chat-msg right\">" +
-										"<div class=\"direct-chat-infos clearfix\">" +
-											"<span class=\"direct-chat-name float-right\">Direct Chat</span>" + 
-											"<span class=\"direct-chat-timestamp float-left\">" + formatDate() + "</span>" +
-										"</div>" +
-										"<img class=\"direct-chat-img\" src=\"img/logo/icons/apple-icon-120x120.png\" alt=\"UBIO\">" +  
-										"<div class=\"direct-chat-text\">" + user_message +
-										"</div>" +
-										"</div>";
-							msgBox.append(msg);
-							break;
-					}
-					msgBox[0].scrollTop = msgBox[0].scrollHeight; //scroll message 
-
-				};
-				
-				websocket.onerror	= function(ev) { 
-					var msg = "<div class=\"direct-chat-msg right\">" +
-								"<div class=\"direct-chat-infos clearfix\">" +
-									"<span class=\"direct-chat-name float-right\">Direct Chat</span>" + 
-									"<span class=\"direct-chat-timestamp float-left\">" + formatDate() + "</span>" +
-								"</div>" +
-								"<img class=\"direct-chat-img\" src=\"img/logo/icons/apple-icon-120x120.png\" alt=\"UBIO\">" +  
-								"<div class=\"direct-chat-text\">Ha ocurrido un error: " + ev.data +
-								"</div>" +
-								"</div>";
-					msgBox.append(msg);
-					$("#hfDirectChat").val("off");
-					DirectChatVar = setTimeout(checkDirectChat, <?= $_SESSION["DIRECT_CHAT_TIME"] ?>);					
-				}; 
-				websocket.onclose 	= function(ev) {
-					var msg = "<div class=\"direct-chat-msg right\">" +
-								"<div class=\"direct-chat-infos clearfix\">" +
-									"<span class=\"direct-chat-name float-right\">Direct Chat</span>" + 
-									"<span class=\"direct-chat-timestamp float-left\">" + formatDate() + "</span>" +
-								"</div>" +
-								"<img class=\"direct-chat-img\" src=\"img/logo/icons/apple-icon-120x120.png\" alt=\"UBIO\">" +  
-								"<div class=\"direct-chat-text\">La conexión al chat se ha cerrado" + 
-								"</div>" +
-								"</div>";
-					msgBox.append(msg);
-					$("#hfDirectChat").val("off");
-					DirectChatVar = setTimeout(checkDirectChat, <?= $_SESSION["DIRECT_CHAT_TIME"] ?>);					
-				}; 
-				*/
-				
-				/*
-				$.ajax({
-					url: "core/actions/_load/__checkDirectChat.php",
-					dataType: "json",
-					success: function(data){
-						if(data.success) {
-							if(data.count > 0) {
-								$("#directChatCount").html("<span class=\"badge badge-danger navbar-badge\">" + data.count + "</span>");
-								$("#topAreaDirectChat").html(data.messages);
-								if($("#directChatMessages")) {
-									$("#directChatMessages").html(data.directchats);
-									$("#directChatMessages").scrollTop();
-								}
-							}
-						}
-						DirectChatVar = setTimeout(checkDirectChat, <?= $_SESSION["DIRECT_CHAT_TIME"] ?>);
-					}
-				});
-				*/				
 			}
 	
 <?

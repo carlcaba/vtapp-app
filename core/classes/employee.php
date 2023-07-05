@@ -26,7 +26,7 @@ class employee extends table {
 	//Constructor anterior
 	function employee ($employee  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_EMPLOYEE");
+		parent::table("TBL_EMPLOYEE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

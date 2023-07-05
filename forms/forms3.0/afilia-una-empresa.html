@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="apple-touch-icon" sizes="57x57" href="images/icons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/icons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/icons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/icons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/icons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/icons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/icons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/icons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/icons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/icons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+	<meta name="msapplication-TileImage" content="images/icons/ms-icon-144x144.png">
+	
+	<title>UBIO - Afilia tu empresa</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="js/bootstrap/css/bootstrap.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="js/fontawesome.6/css/all.min.css">
+	<link rel="stylesheet" href="js/fontawesome.6/css/v4-shims.min.css">
+	<!-- Toastr -->
+    <link rel="stylesheet" href="js/toastr/toastr.css"/>
+	<!-- Main Style Css -->
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+
+<body class="form-v7">
+	<div class="page-content">
+		<div class="form-v7-content">
+	        <div class="form-left">
+				<img src="images/form_afilia-empresa.png" alt="form" />
+		        <p class="text-1">Mejora la logística con tu propio operador</p>
+		        <p class="text-2">A partir de 200 notificaciones al mes</p>
+		    </div>
+			<form class="form-detail msform" id="frmAfiliaEmpresa" method="post" name="frmAfiliaEmpresa">
+                <ul id="progressbar">
+                    <li class="active" id="account"><strong>Tus datos de contacto</strong></li>
+                    <li id="personal"><strong>Tu aliado de mensajería</strong></li>
+                    <li id="confirm"><strong>Finalizar</strong></li>
+                </ul>
+                <fieldset id="step1">
+                    <div class="form-card">
+                        <h2 class="fs-title">Tus datos de contacto</h2>
+                        <input type="text" name="txtCompany" id="txtCompany" class="change2Upper" placeholder="Razón social *" required/>
+                        <input type="text" name="txtBrand" id="txtBrand" class="change2Upper" placeholder="Nombre comercial (marca)"/>
+                        <input type="Idnt" name="txtId" id="txtId" placeholder="Número de identificación *" required/>
+                        <input type="text" name="txtName" id="txtName" class="change2Upper" placeholder="Nombre y Apellido *" required/>
+                        <input type="email" name="txtEmail" id="txtEmail" class="change2Lower" placeholder="Dirección de tu correo electrónico *" required />
+                        <input type="text" name="txtPhone" id="txtPhone" placeholder="Número de teléfono (celular) *" required />
+                    </div>
+                    <input type="button" name="btnNext" id="btnNext" class="next action-button" value="Siguiente paso" />
+                </fieldset>
+                <fieldset id="step2">
+                    <div class="form-card">
+                        <h2 class="fs-title">Datos de la empresa aliada</h2>
+                        <input type="text" name="txtPartner" id="txtPartner" class="change2Upper" placeholder="Razón social de tu aliado *" required />
+                        <input type="text" name="txtBrandPartner" id="txtBrandPartner" class="change2Upper" placeholder="Nombre comercial de tu aliado" />
+                        <input type="text" name="txtNamePartner" id="txtNamePartner" class="change2Upper" placeholder="Nombre y Apellido del contacto *" required />
+                        <input type="email" name="txtEmailPartner" id="txtEmailPartner" class="change2Lower" placeholder="Dirección de correo electrónico *" required />
+                        <input type="text" name="txtPhonePartner" id="txtPhonePartner" placeholder="Número de teléfono del contacto *" required />
+                        <h5> Al continuar, aceptas que has leído los <a href="#">términos, condiciones y políticas de privacidad</a> de UBIO</h5>
+                    </div>
+                    <input type="button" name="btnPrev" id="btnPrev" class="previous action-button-previous" value="Anterior paso"/>
+                    <input type="button" name="btnNext" id="btnNext" class="next action-button" value="Confirmar"/>
+                </fieldset>
+                <fieldset id="step3">
+                    <div class="form-card">
+                        <h2 class="fs-title text-center" id="h2Title">Un momento por favor.<br />Estamos procesando tu solicitud</h2>
+                        <br><br>
+                        <div class="row justify-content-center invisible" id="divEnd">
+                            <div class="col-3" align="center">
+                                <img src="images/ok-image.png" width="100" height="100" align="" />
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" id="divProgress">
+                            <div class="col-3" align="center">
+                                <i class="fa-solid fa-spinner fa-2xl" id="iconProgress"></i>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row justify-content-center">
+                            <div class="col-7 text-justify">
+                                <h5 id="h5End" class="invisible">Nos pondremos en contacto con tu empresa de mensajería para generar el registro y continuar con tu afiliación. <br />En las próximas horas puedes revisar tu correo para más información sobre los paquetes de mensajería a través de tu propio aliado.</h5>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <input type="hidden" id="hfType" name="hfType" value="afilia-una-empresa" />
+			</form>
+		</div>
+	</div>
+	<script type='text/javascript' src="js/jquery/jquery.min.js"></script>
+    <script type='text/javascript' src='js/bootstrap/js/bootstrap.bundle.min.js'></script>
+    <script type='text/javascript' src='js/toastr/toastr.min.js'></script>
+    <script type='text/javascript' src='js/script.js'></script>
+    <script type='text/javascript' src='js/afilia-una-empresa.js'></script>
+</body>
+</html>

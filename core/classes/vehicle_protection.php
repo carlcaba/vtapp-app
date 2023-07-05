@@ -17,7 +17,7 @@ class vehicle_protection extends table {
 	//Constructor anterior
 	function vehicle_protection($vehicle_protection = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_VEHICLE_PROTECTION");
+		parent::table("TBL_SYSTEM_VEHICLE_PROTECTION");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

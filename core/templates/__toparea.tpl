@@ -12,7 +12,7 @@
 	$badgeChat = ($totalChat == 0) ? "" : "<span class=\"badge badge-danger navbar-badge\" id=\"spanMessages\">$totalChat</span>\n";
 ?>
 		<div class="preloader flex-column justify-content-center align-items-center">
-			<img class="animation__shake" src="img/logo/logo_app.png" alt="VtappLogo" height="143" width="136">
+			<img class="animation__shake" src="img/logo/logo_loading.png" alt="UbioLogo" height="143" width="136">
 		</div>
 		<!-- Navbar -->
 		<nav class="main-header navbar navbar-expand <?= $skin[0] ?> border-bottom">
@@ -30,9 +30,9 @@
 				<div class="input-group input-group-sm">
 					<input class="form-control form-control-navbar" type="search" placeholder="<?= $_SESSION["SEARCH"] ?>" aria-label="<?= $_SESSION["SEARCH"] ?>">
 					<div class="input-group-append">
-						<button class="btn btn-navbar" type="submit">
+						<a class="btn btn-navbar" href="#" role="button">
 							<i class="fa fa-search"></i>
-						</button>
+						</a>
 					</div>
 				</div>
 			</form>

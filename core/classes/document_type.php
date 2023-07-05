@@ -17,7 +17,7 @@ class document_type extends table {
 	//Constructor anterior
 	function document_type($document_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_DOCUMENT_TYPE");
+		parent::table("TBL_SYSTEM_DOCUMENT_TYPE");
 		//Inicializa los atributos
 		$this->RESOURCE_NAME = $document_type;
 		$this->REGISTERED_ON = "NOW()";

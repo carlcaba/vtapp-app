@@ -13,7 +13,7 @@ class disponibilidad extends tabla {
 	//Constructor
 	function disponibilidad() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_DISPONIBILIDAD");
+		parent::table("TBL_DISPONIBILIDAD");
 		//Inicializa los atributos
 		$this->FECHA_REGISTRO = "NOW()";
 		$this->USUARIO_REGISTRO = $_SESSION['metrofutbol_userid'];

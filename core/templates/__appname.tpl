@@ -1,7 +1,7 @@
 <?
 	$image = "img/logo/only_logo.png";
 	$title = $_SESSION["vtappcorp_appname"];
-	$appname = APP_NAME;
+	$appname = strtolower(APP_NAME);
 	if(substr($_SESSION['vtappcorp_useraccess'],0,2) == "AL") {
 		require_once("core/classes/partner.php");
 		$partner = new partner();
@@ -31,7 +31,7 @@
 	else {
 		$title = substr($title,0,5);
 	}
-	$appname .= "\n<small class=\"small-brand-text\">$title</small>\n";
+	$appname .= "\n</span><span class=\"brand-text font-weight-light\"><small class=\"brand-text small-brand-text\"> &nbsp;$title</small></span>\n";
 	$skn = explode(" ",$skin[0]);
 	if(count($skn) == 3)
 		$skn[1] = $skn[2];
@@ -39,7 +39,7 @@
 			<!-- Brand Logo -->
 			<a href="dashboard.php" class="brand-link <?= $skn[1] ?>">
 				<img src="<?= $image ?>" alt="<?= APP_NAME ?>" class="brand-image elevation-3" style="opacity: .8" />
-				<span class="brand-text font-weight-light">
+				<span class="ubio-brand">
 					<?= $appname ?>
 				</span>
 			</a>

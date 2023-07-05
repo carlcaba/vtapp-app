@@ -17,7 +17,7 @@ class directaccess extends table {
 	//Constructor anterior
 	function directaccess() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_DIRECT_ACCESS");
+		parent::table("TBL_SYSTEM_DIRECT_ACCESS");
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos

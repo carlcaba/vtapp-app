@@ -24,7 +24,7 @@ class user_address extends table {
 	//Constructor anterior
 	function user_address() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_USER_ADDRESSES");
+		parent::table("TBL_USER_ADDRESSES");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

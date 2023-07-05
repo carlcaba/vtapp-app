@@ -18,7 +18,7 @@ class order_state extends table {
 	//Constructor anterior
 	function order_state($orderstate = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_ORDER_STATE");
+		parent::table("TBL_ORDER_STATE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

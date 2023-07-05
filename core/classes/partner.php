@@ -20,7 +20,7 @@ class partner extends table {
 	//Constructor anterior
 	function partner ($partner  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PARTNER");
+		parent::table("TBL_PARTNER");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
@@ -94,16 +94,15 @@ class partner extends table {
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
+
+		//Arma la sentencia SQL
+		$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY, ADDRESS FROM $this->view WHERE IS_BLOCKED = FALSE ORDER BY 2"; 
 		//Verifica el acceso del usuario
-		if($_SESSION["vtappcorp_useraccessid"] == 100) {
-			//Arma la sentencia SQL
-			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY, ADDRESS FROM $this->view WHERE IS_BLOCKED = FALSE ORDER BY 2"; 
-		}
-		else if(substr($_SESSION['vtappcorp_useraccess'],0,2) == "CL") {
+		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
 			//Arma la sentencia SQL
 			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, CITY, ADDRESS FROM VIE_PARTNER_CLIENT_SUMMARY WHERE IS_BLOCKED = FALSE AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "' ORDER BY 2"; 
 		}
-		else if(substr($_SESSION['vtappcorp_useraccess'],0,2) == "AL") {
+		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
 			//Arma la sentencia SQL
 			$this->sql = "SELECT PARTNER_ID, PARTNER_NAME, COUNTRY, ADDRESS FROM $this->view WHERE IS_BLOCKED = FALSE AND PARTNER_ID = " . $this->_checkDataType("ID") . " ORDER BY 2"; 
 		}

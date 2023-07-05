@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="apple-touch-icon" sizes="57x57" href="images/icons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/icons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/icons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/icons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/icons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/icons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/icons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/icons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/icons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/icons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+	<meta name="msapplication-TileImage" content="images/icons/ms-icon-144x144.png">
+	
+	<title>UBIO - Quiero ser un aliado</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="js/bootstrap/css/bootstrap.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="js/fontawesome.6/css/all.min.css">
+	<link rel="stylesheet" href="js/fontawesome.6/css/v4-shims.min.css">
+	<!-- Toastr -->
+    <link rel="stylesheet" href="js/toastr/toastr.css"/>
+	<!-- Main Style Css -->
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+
+<body class="form-v7">
+	<div class="page-content">
+        <div class="form-v7-content">
+            <div class="form-left">
+                <img src="images/form_ser-aliado.png" alt="form" />
+                <p class="text-1">Conviértete en un aliado</p>
+                <p class="text-2">Y ofrece un servicio digital y eficiente a tus propios clientes</p>
+            </div>
+            <form class="form-detail msform" id="frmAfiliaEmpresa" method="post" name="frmAfiliaEmpresa">
+                <ul id="progressbar">
+                    <li class="active" id="account"><strong>Tus datos</strong></li>
+                    <li id="personal"><strong>Tu empresa</strong></li>
+                    <li id="confirm"><strong>Finalizar</strong></li>
+                </ul>
+                <fieldset id="step1">
+                    <div class="form-card">
+                        <h2 class="fs-title">Datos de contacto</h2>
+                        <input type="text" name="txtCompany" id="txtCompany" class="change2Upper" placeholder="Razón social *" required/>
+                        <input type="text" name="txtBrand" id="txtBrand" class="change2Upper" placeholder="Nombre comercial (marca)"/>
+                        <input type="text" name="txtName" id="txtName" class="change2Upper" placeholder="Nombre y Apellido *" required/>
+                        <input type="Idnt" name="txtId" id="txtId" placeholder="Número de identificación *" required/>
+                        <input type="email" name="txtEmail" id="txtEmail" class="change2Lower" placeholder="Dirección de tu correo electrónico *" required />
+                        <input type="email" name="txtConfirmEmail" id="txtConfirmEmail" class="change2Lower" placeholder="Confirma tu correo electrónico *" required />
+                        <input type="text" name="txtPhone" id="txtPhone" placeholder="Número de teléfono (celular) *" required />
+                    </div>
+                    <input type="button" name="next" class="next action-button" value="Siguiente paso"/>
+                </fieldset>
+                <fieldset id="step2">
+                    <div class="form-card">
+                        <h2 class="fs-title">Sobre tu empresa</h2>
+                        <p align="left" class="page-content">¿En cuáles ciudades tienes operación?</p> 
+                        <ul class="ul-checkbox">
+                            <li>
+                                <label class="container">Bogotá
+                                    <input type="checkbox" id="chkCity1" name="chkCity" value="BOG">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </li>
+                            <li>
+                                <label class="container">Medellín
+                                    <input type="checkbox" id="chkCity2" name="chkCity" value="MED">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </li>
+                            <li>
+                                <label class="container">Cali
+                                    <input type="checkbox" id="chkCity3" name="chkCity" value="CAL">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </li>
+                            <li>
+                                <label class="container">Barranquilla
+                                    <input type="checkbox" id="chkCity4" name="chkCity" value="BQL">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </li>
+                        </ul>                        
+                        <select class="list-dt" id="cbMainCity" name="cbMainCity">
+                            <option selected disabled value="">Ciudad de operación principal</option>
+                            <option value="BTA">Bogotá</option>
+                            <option value="MED">Medellín</option>
+                            <option value="CAL">Cali</option>
+                            <option value="BQL">Barranquilla</option>
+                            <option value="OTH">Otra</option>
+                        </select>
+                        <select class="list-dt" id="cbEmployee" name="cbEmployee">
+                            <option selected disabled value="">¿Cuántos mensajeros quieres vincular?</option>
+                            <option value="10">1 a 10</option>
+                            <option value="30">11 a 30</option>
+                            <option value="50">31 a 50</option>
+                            <option value="51">51 o más</option>
+                        </select>
+                        <select class="list-dt" id="cbContract" name="cbContract">
+                            <option selected disabled value="">¿Cómo contratas a tus mensajeros?</option>
+                            <option value="TF">Término fijo</option>
+                            <option value="TI">Término indefinido</option>
+                            <option value="DT">Destajo</option>
+                        </select>
+                        <select class="list-dt" id="cbClients" name="cbClients">
+                            <option selected disabled value="">¿Deseas vincular clientes propios en UBIO?</option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                        <h5>Al confirmar, aceptas que has leído los <a href="#">términos, condiciones y políticas de privacidad</a> de UBIO</h5>
+                    </div>
+                    <input type="button" name="previous" class="previous action-button-previous" value="Anterior paso"/>
+                    <input type="button" name="next" class="next action-button" value="Confirmar"/>
+                </fieldset>
+                <fieldset id="step3">
+                    <div class="form-card">
+                        <h2 class="fs-title text-center" id="h2Title">Un momento por favor.<br />Estamos procesando tu solicitud</h2>
+                        <br><br>
+                        <div class="row justify-content-center invisible" id="divEnd">
+                            <div class="col-3" align="center">
+                                <img src="images/ok-image.png" width="100" height="100" align="" />
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" id="divProgress">
+                            <div class="col-3" align="center">
+                                <i class="fa-solid fa-spinner fa-2xl" id="iconProgress"></i>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row justify-content-center">
+                            <div class="col-7 text-justify">
+                                <h5 id="h5End" class="invisible">En las próximas horas te enviaremos un correo con los datos de acceso para confirmar tu registro.</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hfType" name="hfType" value="quiero-ser-aliado" />
+                </fieldset>
+			</form>
+		</div>
+	</div>
+	<script type='text/javascript' src="js/jquery/jquery.min.js"></script>
+    <script type='text/javascript' src='js/bootstrap/js/bootstrap.bundle.min.js'></script>
+    <script type='text/javascript' src='js/toastr/toastr.min.js'></script>
+    <script type='text/javascript' src='js/script.js'></script>
+    <script type='text/javascript' src='js/quiero-ser-aliado.js'></script>
+</body>
+</html>

@@ -52,11 +52,12 @@
 		}
 
 		//Verifica el tiempo de la sesion
-		$conf = new configuration("SESSION_EXPIRATION");
+		$conf = new configuration("SESSION_EXPIRATION_MESSENGER");
 		$max_time = $conf->verifyValue();
 		
 		//Toma el dateStamp del servidor
-		$now = date("Y-n-j H:i:s");
+		$ahorita = date_create("now",timezone_open(date_default_timezone_get()));
+		$now = date("Y-n-j H:i:s", $ahorita->getTimestamp());
 		//Verifica la fecha de login
 		$logtime = $external->MODIFIED_ON == null ? $external->REGISTERED_ON : $external->MODIFIED_ON;
 

@@ -17,14 +17,14 @@ class assign_service extends table {
 	var $vehicle;
 	
 	//Constructor de la clase
-	function __constructor() {
-		$this->assign_service();
+	function __constructor($service = "") {
+		$this->assign_service($service);
 	}
 	
 	//Constructor anterior
-	function assign_service ($user  = '') {
+	function assign_service ($service  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_ASSIGN_SERVICE");
+		parent::table("TBL_ASSIGN_SERVICE");
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos
@@ -204,6 +204,14 @@ class assign_service extends table {
             $this->nerror = 0;
             $this->error = "";
         }
+	}
+	
+	//Funcion para deshabilitar las asignaciones
+	function disableAssignments() {
+		//Arma la sentencia sql
+		$this->sql = "UPDATE " . $this->table . " SET IS_BLOCKED = TRUE WHERE SERVICE_ID = " . $this->_checkDataType("SERVICE_ID") . " AND IS_BLOCKED = FALSE";
+		//Ejecuta la sentencia
+		$this->executeQuery();
 	}
 
 }

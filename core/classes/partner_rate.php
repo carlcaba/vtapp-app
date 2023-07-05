@@ -20,7 +20,7 @@ class partner_rate extends table {
 	//Constructor anterior
 	function partner_rate() {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PARTNER_RATE");
+		parent::table("TBL_PARTNER_RATE");
 		//Valores por defecto
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
@@ -96,40 +96,45 @@ class partner_rate extends table {
     }	
 
 	//Funcion para seleccionar operador
-	function selectPartner($distance, $round, $filter = "", $quota = "", $balance = 0, $notification = false, $id = "") {
+	function selectPartner($distance, $round, $filter = "", $quota = "", $balance = 0, $notification = false, $ptid = 0) {
 		//Arma la sentencia SQL
-		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME, PRICE_NOTIFICATION " .
+		$this->sql = "SELECT PARTNER_RATE_ID, PARTNER_NAME, SKIN, DISTANCE_MIN, DISTANCE_MAX, PRICE, PARTNER_ID, ICON, ROUND_TRIP, TIME_MIN, TIME_MAX, " .
+					"VEHICLE_TYPE_ID, VEHICLE_TYPE_NAME, PRICE_NOTIFICATION, CONTRACT, PAYMENT_NOTIFICATION	" .
 					"FROM $this->view " .
-					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX ";
+					"WHERE IS_BLOCKED = FALSE AND $distance BETWEEN DISTANCE_MIN AND DISTANCE_MAX AND PAYMENT_TYPE_ID = $ptid ";
 		//Si hay un filtro			
 		if($filter != "") 
 			$this->sql .= "AND PARTNER_ID IN ($filter) ";
 		//Termina la sentencia SQL
-		$this->sql .= "ORDER BY PRICE";
+		$this->sql .= "ORDER BY PRICE, PARTNER_NAME";
 		$count = 0;
 		$max = 0;
 		$id = "";
 		$min = 900000000;
 		//Valor a retornar
 		$return = "";
+		$rate = 1.25;
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
 			$skins = ["","","",""];
+			$mask = "$ ";
 			if($row[2] != "") {
 				$skins = explode(",",$row[2]);
 			}
+			if($row[15] == 1) {
+				$price = !$round ? $row[13] : $row[13] * 2;
+				$rate = 1;
+				$mask = "";
+			}
+			else
+				$price = !$round ? $row[5] : $row[8];			
 			if($quota == "") {
-				$price = !$round ? $row[5] : $row[8];
 				if($price < $min)
 					$min = $price;
 				if($price > $max)
 					$max = $price;
 			}
 			else {
-				if(!$notification)
-					$price = !$round ? $row[13] : $row[13] * 2;
-				else
-					$price = !$round ? $row[5] : $row[8];
 				if($price < $min)
 					$min = $price;
 				if($price > $max)
@@ -147,10 +152,10 @@ class partner_rate extends table {
 			$return .=  "<span class=\"info-box-text\">" . $timeText . "</span>\n";
 			$return .=  "</div>\n";
 			//Verifica si es cupo o precio
-			if($quota == "") {
+			if($row[15] == "0") {
 				$return .=  "<div class=\"col-md-3\">\n";
 				$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
-				$return .=  "<span class=\"info-box-text\">$ " . number_format($price*1.25,2,".",",") . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$mask" . number_format($price*$rate,2,".",",") . "</span>\n";
 				$return .=  "</div>\n";
 				$return .=  "<div class=\"col-md-3\">\n";
 				$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
@@ -158,10 +163,10 @@ class partner_rate extends table {
 				$return .=  "</div>\n";
 				$return .=  "<div class=\"col-md-3\">\n";
 				$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
-				$return .=  "<span class=\"info-box-text\">$ " . number_format($price,2,".",",") . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$mask" . number_format($price,2,".",",") . "</span>\n";
 				$return .=  "</div>\n";
 			}
-			else {
+			else if($quota != "") {
 				$return .=  "<div class=\"col-md-9\">\n";
 				$return .=  "<span class=\"info-box-number\">" . $_SESSION["NOTIFICATION_TITLE"] . "</span>\n";
 				if(!$notification)
@@ -170,10 +175,25 @@ class partner_rate extends table {
 					$return .=  "<span class=\"info-box-text\"> " . sprintf($_SESSION["NOTIFICATION_TEXT_2"],number_format($price,2,".",","),number_format($balance,2,".",",")) . "</span>\n";					
 				$return .=  "</div>\n";
 			}
+			else if($row[15] != "0" && $quota == "") {
+				$price = !$round ? $row[5] : $row[8];
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["PUBLIC_PRICE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$mask" . number_format($price*$rate,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["INSURANCE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$ " . number_format(800,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+				$return .=  "<div class=\"col-md-3\">\n";
+				$return .=  "<span class=\"info-box-number\">" . $_SESSION["VTAPP_PRICE"] . "</span>\n";
+				$return .=  "<span class=\"info-box-text\">$mask" . number_format($price,2,".",",") . "</span>\n";
+				$return .=  "</div>\n";
+			}
 			$return .=  "</div>\n";
 			$return .=  "</div>\n";
 			$return .=  "<span class=\"info-box-icon\"><i class=\"" . $row[7] . "\" title=\"$row[12]\"></i></span>\n";
-			$return .=  "<span class=\"info-box-icon text-warning\" id=\"spanSelected_$row[0]\" style=\"display: none;\"><i class=\"fa fa-check\" title=\"" . $_SESSION["YOUR_SELECTION"] . "\"></i></span>\n";
+			$return .=  "<span class=\"info-box-icon text-black\" id=\"spanSelected_$row[0]\" style=\"display: none;\"><i class=\"fa fa-check\" title=\"" . $_SESSION["YOUR_SELECTION"] . "\"></i></span>\n";
 			$return .=  "</div>\n";
 			$return .=  "</label>\n";
 			$id = $row[0];
@@ -184,12 +204,14 @@ class partner_rate extends table {
 						"max" => $max,
 						"min" => $min,
 						"sql" => $this->sql,
-						"filter" => ($filter != "" && $count == 1) ? $id : "");
+						"filter" => ($filter != "" && $count == 1) ? $id : "",
+						"notification" => $rate == 1);
 						
 		return $result;
 	}
 
 	function dataForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();

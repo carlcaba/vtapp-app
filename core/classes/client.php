@@ -5,6 +5,7 @@
 //Incluye las clases dependientes
 require_once("table.php");
 require_once("resources.php");
+require_once("configuration.php");
 require_once("city.php");
 require_once("client_payment_type.php");
 require_once("client_payment.php");
@@ -12,6 +13,7 @@ require_once("client_payment.php");
 class client extends table {
 	var $resources;
 	var $view;
+	var $card;
 	var $city;
 	var $client_type;
 	var $client_payment;
@@ -24,7 +26,7 @@ class client extends table {
 	//Constructor anterior
 	function client ($client  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_CLIENT");
+		parent::table("TBL_CLIENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
@@ -37,6 +39,7 @@ class client extends table {
 		$this->client_type = new client_payment_type();
 		$this->client_payment = new client_payment();
 		$this->view = "VIE_CLIENT_SUMMARY";		
+		$this->card = "VIE_CLIENT_CARD_SUMMARY";
 	}
 
     //Funcion para Set la ciudad
@@ -200,17 +203,21 @@ class client extends table {
 
 	//Funcion que despliega los valores en una categoria
 	function showOptionList($tabs = 8,$selected = "", $payment = false) {
+		$stabs = "";
 		//Arma la cadena con los tabs requeridos
 		for($i=0;$i<$tabs;$i++)
 			$stabs .= "\t";
 		//Arma la sentencia SQL
-		$this->sql = "SELECT DISTINCT CLIENT_ID, CLIENT_NAME, COUNTRY, CLIENT_PAYMENT_TYPE_ID, CLIENT_PAYMENT_TYPE FROM $this->view WHERE IS_BLOCKED = FALSE";
+		$this->sql = "SELECT DISTINCT C.CLIENT_ID, C.CLIENT_NAME, C.COUNTRY, C.CLIENT_PAYMENT_TYPE_ID, C.CLIENT_PAYMENT_TYPE, C.PAYMENT_TYPE_ID, C.PAYMENT_TYPE_NAME, C.CLIENT_TYPE_ID, " .
+					"C.CLIENT_TYPE_NAME, C.PARTNER_ID, NOT R.CLIENT_CARD_ID IS NULL CARD, C.CONTRACT " .
+					"FROM $this->view C LEFT JOIN $this->card R ON (C.CLIENT_ID = R.CLIENT_ID AND R.EXPIRES_ON > DATE(NOW()) AND R.IS_BLOCKED = FALSE) " .
+					"WHERE C.IS_BLOCKED = FALSE";
 		//Verifica el acceso del usuario
 		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
-			$this->sql .= " AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			$this->sql .= " AND C.CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
 		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
-			$this->sql .= " AND PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			$this->sql .= " AND C.PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
 		//Completa la sentencia SQL
 		$this->sql .= " ORDER BY 2"; 
@@ -220,18 +227,25 @@ class client extends table {
 		foreach($this->__getAllData() as $row) {
             if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS
-                $row[1] = utf8_encode($row[1]);
+                $row[1] = mb_convert_encoding($row[1],"UTF-8");
             }
-			$pay = $row[3] < 3 ? "off" : "on";
-			$opt = $payment ? $row[4] : $row[2];
+			$pay = intval($row[3]) == 1 ? "off" : (intval($row[7]) == 2 ? "on" : "off");
+			$opt = $payment ? $row[6] : $row[2];
+			$pid = $row[9];
+			$bid = intval($row[3]) == 2 ? "true" : (($pid == null || $pid == "") ? "true" : "false");
+			$ccard = $payment ? ($row[10] == 1 ? "true" : "false") : "true";
+			$requirecard = $payment ? ($row[7] == 4 ? "true" : "false") : "true";
+			$contract = ($row[11] == 1 ? "true" : "false");
+			$datas = "data-optionpy='" . $pay . "' data-bid='" . $bid . "' data-partner='" . $pid . "' data-cc='" . $ccard . "' data-crequired='" . $requirecard . "' data-ctrct='$contract' data-pymttype='$row[5]'";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' selected data-optionpy='" . $pay . "'>" . $row[1] . " ($opt)</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' selected $datas>" . $row[1] . " ($opt)</option>\n";
 			else
 				//Ajusta al diseño segun GUI
-				$return .= "$stabs<option value='" . $row[0] . "' data-optionpy='" . $pay . "'>" . $row[1] . " ($opt)</option>\n";
+				$return .= "$stabs<option value='" . $row[0] . "' $datas>" . $row[1] . " ($opt)</option>\n";
 		}
+		_error_log("Client ShowOptionList",$this->sql);
 		//Retorna
 		return $return;
 	}
@@ -292,6 +306,47 @@ class client extends table {
 		}
 		//Retorna 
 		return true;
+	}
+	
+	function sendRegistration($usua,$pass) {
+		$lang = $_SESSION["LANGUAGE"];
+		$this->conf = new configuration();
+		$resources = new resources();
+		try {
+			//Obtiene informacion de la configuracion
+			$mBody = sprintf($resources->getResourceByName("CLIENT_WELCOME_FORMS",$lang),			
+								$this->client_type->getResource(),
+								$this->conf->verifyValue("APP_NAME"),
+								$this->EMAIL,
+								$this->CLIENT_NAME,
+								$usua->ID,
+								$pass,
+								$this->conf->verifyValue("COMPANY_NAME"),
+								$this->conf->verifyValue("COMPANY_NAME"));
+			$to = $this->EMAIL;
+			//Envia el correo
+			$usua->sendMail($mBody, $to);
+			
+			//Envia correo con informacion
+			//Obtiene informacion de la configuracion
+			$mBody = sprintf($resources->getResourceByName("CLIENT_WELCOME_FORMS",$lang),			
+								$this->client_type->getResource(),
+								$this->conf->verifyValue("APP_NAME"),
+								$this->EMAIL,
+								$this->CLIENT_NAME,
+								$usua->ID,
+								$pass,
+								$this->conf->verifyValue("COMPANY_NAME"),
+								$this->conf->verifyValue("COMPANY_NAME"));
+			$to = $this->conf->verifyValue("MAIN_MAIL");
+			//Envia el correo
+			$usua->sendMail($mBody, $to);
+			
+		}
+		catch(Exception $ex) {
+			$this->nerror = 18;
+			$this->error = $ex->getMessage();
+		}
 	}
 
 	function dataForm($action, $tabs = 5) {
@@ -405,6 +460,7 @@ class client extends table {
 	
 	//Funcion que muestra la forma
 	function showForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();

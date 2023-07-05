@@ -17,8 +17,10 @@
 
 	//Carga los valores de la configuraci�n
 	$site_root = $conf->verifyValue();
-
+	
+	_error_log("load-resources start on " . date('d/m/Y h:i:s a', time()));
     include("__load-resources.php");
+	_error_log("load-resources finishes on " . date('d/m/Y h:i:s a', time()));
 	
 	//Variable del codigo
 	$link = "";
@@ -100,8 +102,6 @@
 	//Valida la contrase�a
 	$usua->check();
 	
-	_error_log("Validate user ok " . $usua->conf->sql);
-	
 	//Si hay error
 	if($usua->nerror > 0) {
 		//Confirma mensaje al usuario
@@ -131,12 +131,8 @@
 	$_SESSION["LANGUAGE"] = 2;
 	$link = ($link != "") ? $link : $usua->access->LINK_TO;
 
-	_error_log("Trying to validate last access " . basename(__FILE__));
-
 	//Actualiza la hora de acceso
 	$inter->updateLastAccess();
-	
-	_error_log("Last access validated ok " . basename(__FILE__));	
 	
 	//Verifica el acceso del usuario
 	if ($usua->REFERENCE != "") {
@@ -168,6 +164,7 @@
 
 	//Crea el nuevo LOG
 	$log = new logs("LOGIN");
+	$log->USER_ID = $user;
 	//Adiciona la transaccion
 	$log->Login($datas);
 	//Si hubo error
@@ -195,8 +192,6 @@
 		//Si hay algun link	
 		$result['link'] = $site_root . $link;
 	}
-
-	_error_log("Session name " . session_id());
 
 	//Termina
 	exit(json_encode($result));

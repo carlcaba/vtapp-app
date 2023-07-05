@@ -25,7 +25,7 @@ class payment extends table {
 	//Constructor anterior
 	function payment ($payment  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PAYMENT");
+		parent::table("TBL_PAYMENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->IP_CLIENT = $_SERVER["SERVER_ADDR"];

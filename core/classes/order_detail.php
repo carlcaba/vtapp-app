@@ -23,7 +23,7 @@ class order_detail extends table {
 	//Constructor anterior
 	function order_detail ($order_detail  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_DETAIL_ORDER");
+		parent::table("TBL_DETAIL_ORDER");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

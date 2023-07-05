@@ -18,7 +18,7 @@ class delivery_type extends table {
 	//Constructor anterior
 	function delivery_type($delivery_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_DELIVERY_TYPE");
+		parent::table("TBL_DELIVERY_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

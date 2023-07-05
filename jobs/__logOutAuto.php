@@ -14,6 +14,8 @@
 	
     //Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
+	
+	$uid = uniqid();
 
     //Variable del codigo
     $result = array('success' => false,
@@ -24,11 +26,11 @@
 	require_once("../core/classes/logs.php");
 	require_once("../core/classes/external_session.php");
 
-	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
 	$usua = new users();
 
-	_error_log("Getting connected users " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting connected users " . date("Ymd H:i:s"));
 
 	//Obtiene la informacion de los usuarios conectados
 	$usuarios = $usua->getConnectedUsers();
@@ -38,14 +40,14 @@
 		$log = new logs("No users for logout");
 		$log->USER_ID = "admin";
 		$log->_add();
-		_error_log($log->TEXT_TRANSACTION, $serv->sql);
+		_error_log("$uid - " . $log->TEXT_TRANSACTION, $usua->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
 	
 	$count = 0;
 	$err = 0;	
-	_error_log("Processing records " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Processing records " . date("Ymd H:i:s"));
 	
 	foreach($usuarios as $usr) {
 		if($usr["action"] == "LOGOUT_EXTERNAL_SESSION") {
@@ -58,7 +60,7 @@
 				$log = new logs("User " . $usr["uid"] . " not found external session -> " . $exte->error);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION, $exte->sql);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION, $exte->sql);
 				$err++;
 				//continua
 				continue;
@@ -70,7 +72,7 @@
 				$log = new logs("User " . $usr["uid"] . " external session couldn't be updated -> " . $exte->error);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION, $exte->sql);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION, $exte->sql);
 				$err++;
 				//continua
 				continue;
@@ -85,7 +87,7 @@
 			$usr["action"] = "LOGOUT";
 		}
 		//Si debe realizar el logout
-		if($usr["action"] == "LOGOUT") {
+		else if($usr["action"] == "LOGOUT") {
 			$count++;
 			//Verifica el usuario
 			$usua->ID = $usr["uid"];
@@ -95,7 +97,7 @@
 				$log = new logs("User " . $usr["uid"] . " not found -> " . $usua->error);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION, $usua->sql);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION, $usua->sql);
 				$err++;
 				//continua
 				continue;
@@ -105,7 +107,7 @@
 				$log = new logs("User " . $usr["uid"] . " not online -> " . $usua->ONLINE);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION);
 				$err++;
 				//continua
 				continue;
@@ -116,7 +118,7 @@
 				$log = new logs("User " . $usr["uid"] . " couldn't be updated -> " . $usua->error . ":" . $usua->sql);
 				$log->USER_ID = "admin";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION, $usua->sql);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION, $usua->sql);
 				$err++;
 				//continua
 				continue;

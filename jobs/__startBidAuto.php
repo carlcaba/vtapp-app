@@ -15,6 +15,8 @@
     //Inicializa la cabecera
     header('Content-Type: text/plain; charset=utf-8');
 
+	$uid = uniqid();
+
     //Variable del codigo
     $result = array('success' => false,
         'message' => "");
@@ -24,7 +26,7 @@
 	require_once("../core/classes/logs.php");
 	require_once("../core/classes/configuration.php");
 
-	_error_log("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 	
 	$log = new logs("Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 	$log->USER_ID = "jbStartAutoBid";
@@ -34,7 +36,7 @@
 	$active = $conf->verifyValue();
 	
 	if(!filter_var($active, FILTER_VALIDATE_BOOLEAN)) {
-		_error_log("AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
+		_error_log("$uid - " . "AUTOBID_ACTIVATED disabled $active " . date("Ymd H:i:s"));
 		$result["message"] = "AUTOBID_ACTIVATED disabled $active";
 		exit(json_encode($result));
 	}
@@ -42,7 +44,7 @@
 	$usua = new users();
 	$serv = new user_notification();
 
-	_error_log("Getting services " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting services " . date("Ymd H:i:s"));
 	
 	$log = new logs("Getting services " . date("Ymd H:i:s"));
 	$log->USER_ID = "jbStartAutoBid";
@@ -56,12 +58,12 @@
 		$log = new logs("No services for auto-notify");
 		$log->USER_ID = "jbStartAutoBid";
 		$log->_add();
-		_error_log($log->TEXT_TRANSACTION, $serv->sql);
+		_error_log("$uid - " . $log->TEXT_TRANSACTION, $serv->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
 	
-	_error_log("Getting online users " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Getting online users " . date("Ymd H:i:s"));
 
 	$log = new logs("Getting online users " . date("Ymd H:i:s"));
 	$log->USER_ID = "jbStartAutoBid";
@@ -75,7 +77,7 @@
 		$log = new logs("No uses online for auto-notify");
 		$log->USER_ID = "jbStartAutoBid";
 		$log->_add();
-		_error_log($log->TEXT_TRANSACTION, $usua->sql);
+		_error_log("$uid - " . $log->TEXT_TRANSACTION, $usua->sql);
 		$result["message"] = $log->TEXT_TRANSACTION;
 		exit(json_encode($result));
 	}
@@ -86,7 +88,7 @@
 	$reso = new resources();
 	$reso->RESOURCE_NAME = "NEW_NOTIFICATION";
 	
-	_error_log("Processing records " . date("Ymd H:i:s"));
+	_error_log("$uid - " . "Processing records " . date("Ymd H:i:s"));
 
 	$log = new logs(json_encode($usersTotal));
 	$log->USER_ID = "jbStartAutoBid";
@@ -109,7 +111,7 @@
 				$log = new logs("Service " . $srv["id"] . " not found -> " . $service->error);
 				$log->USER_ID = "jbStartAutoBid";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION, $service->sql);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION, $service->sql);
 				$err++;
 				//continua
 				continue;
@@ -119,7 +121,7 @@
 				$log = new logs("Service " . $srv["id"] . " wrong state -> " . $service->STATE_ID . " <> " . $state);
 				$log->USER_ID = "jbStartAutoBid";
 				$log->_add();
-				_error_log($log->TEXT_TRANSACTION);
+				_error_log("$uid - " . $log->TEXT_TRANSACTION);
 				$err++;
 				//continua
 				continue;
@@ -135,7 +137,7 @@
 					$log = new logs("No uses online for auto-notify PARTNER: " . $srv["partner_name"]);
 					$log->USER_ID = "jbStartAutoBid";
 					$log->_add();
-					_error_log($log->TEXT_TRANSACTION, $usua->sql);
+					_error_log("$uid - " . $log->TEXT_TRANSACTION, $usua->sql);
 					$err++;
 					//continua
 					continue;
@@ -150,7 +152,7 @@
 					$log = new logs("Service " . $srv["id"] . " User " . $usr["uid"] . " Notifications active: " . $usr["active_notifications"] . " / " . $usr["max"]);
 					$log->USER_ID = "jbStartAutoBid";
 					$log->_add();
-					_error_log($log->TEXT_TRANSACTION);
+					_error_log("$uid - " . $log->TEXT_TRANSACTION);
 					continue;
 				}
 				$usrcount++;
@@ -178,7 +180,7 @@
 					$log = new logs("Service " . $srv["id"] . " Notification error: " . $usnot->user->error);
 					$log->USER_ID = "jbStartAutoBid";
 					$log->_add();
-					_error_log($log->TEXT_TRANSACTION);
+					_error_log("$uid - " . $log->TEXT_TRANSACTION);
 					$err++;
 					continue;
 				}
@@ -188,7 +190,7 @@
 						$log = new logs("Service " . $srv["id"] . " Error add notification: " . $usnot->error . " -> SQL: " . $usnot->sql);
 						$log->USER_ID = "jbStartAutoBid";
 						$log->_add();
-						_error_log($log->TEXT_TRANSACTION);
+						_error_log("$uid - " . $log->TEXT_TRANSACTION);
 						$err++;
 						continue;
 					}

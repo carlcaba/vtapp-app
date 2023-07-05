@@ -1,6 +1,6 @@
 <?
 	//Inicio de sesion
-	session_name('asimetric_session');
+	session_name('vtappcorp_session');
 	session_start();
 	
 	//Inicializa la cabecera

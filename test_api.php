@@ -108,10 +108,19 @@ print_r($responseData);
 	catch (Exception $ex) {
 		$this->nerror = 110;
 		$this->error = $ex->getMessage();
-		error_log("Error getting coordinates: " . $ex->getMessage() . "\n" . $url . "\n" . $result);
+		_error_log("Error getting coordinates: " . $ex->getMessage() . "\n" . $url . "\n" . $result);
 		$data = null;
 	}
 	return $data;
 */	
+
+	echo "<br />";
+	echo date("y-m-d h:i:sa");
+	echo "<br />";
+	date_default_timezone_set('America/Bogota');
+	echo date("y-m-d h:i:sa");
+	echo "<br />";
+	
+	
 	
 ?>

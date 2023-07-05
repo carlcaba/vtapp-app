@@ -18,7 +18,7 @@ class quota_type extends table {
 	//Constructor anterior
 	function quota_type($quota_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_QUOTA_TYPE");
+		parent::table("TBL_QUOTA_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

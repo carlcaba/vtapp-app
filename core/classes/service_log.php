@@ -27,7 +27,7 @@ class service_log extends table {
 	//Constructor anterior
 	function service_log ($service_log  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SERVICE_LOG");
+		parent::table("TBL_SERVICE_LOG");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
@@ -341,7 +341,7 @@ class service_log extends table {
 
 	
 	//Funcion para listar los servicios de acuerdo al estado
-	function listServices($state, $id, $usr = "", $history = false, $limit = 0, $debug = false) {
+	function listServices($state, $id, $usr = "", $history = false, $limit = 0, $debug = false, $details = false) {
 		//Define las columnas
 		$columns = ["SERVICE_ID", "CLIENT_ID", "CLIENT_NAME", "CLIENT_IDENTIFICATION", "CLIENT_ADDRESS", "CLIENT_PHONE", "CLIENT_CELLPHONE", 
 					"REQUESTED_BY", "REQUESTED_EMAIL", "REQUESTED_ADDRESS", "REQUESTED_PHONE", "REQUESTED_CELLPHONE", "REQUEST_CITY_ID", "REQUEST_CITY_NAME", "REQUEST_COUNTRY", 
@@ -354,14 +354,16 @@ class service_log extends table {
 		if($history) {
 			$columns = ["SERVICE_ID", "REGISTERED_ON", "PRICE", "REQUESTED_ADDRESS", "DELIVER_ADDRESS", "REQUESTED_COORDINATES", "DELIVER_COORDINATES"];
 		}
+		if($details)
+			$columns = ["SERVICE_ID","CLIENT_ID","CLIENT_NAME","CLIENT_IDENTIFICATION","CLIENT_ADDRESS","CLIENT_PHONE","CLIENT_CELLPHONE","REQUESTED_BY","REQUESTED_EMAIL","REQUESTED_ADDRESS","REQUESTED_PHONE","REQUESTED_CELLPHONE","DELIVER_DESCRIPTION","OBSERVATION","DELIVER_TO","DELIVER_EMAIL","DELIVER_ADDRESS","DELIVER_PHONE","DELIVER_CELLPHONE","ZONE_NAME_REQUEST","ZONE_NAME_DELIVERY","CLIENT_USER_NAME","CLIENT_USER_IMAGE","CLIENT_USER_ONLINE","PARTNER_FINAL_ID","PARTNER_FINAL_NAME","PARTNER_USER_NAME","PARTNER_USER_IMAGE","PARTNER_USER_ONLINE"];
 		//Arma la sentencia SQL
 		$this->sql = "SELECT DISTINCT " . implode(",", $columns) .
-					" FROM $this->view WHERE ID_STATE BETWEEN 7 AND 10 AND "; 	// = '$state' AND ";
+					" FROM $this->view ";
 					
 		if($history)			
-			$this->sql .= " EMPLOYEE_FINAL_ID = '$id' ";
+			$this->sql .= "WHERE ID_STATE BETWEEN 11 AND 15 AND EMPLOYEE_FINAL_ID = '$id' ";
 		else 
-			$this->sql .= " NOTIFIED_EMPLOYEE = '$id' ";
+			$this->sql .= " WHERE ID_STATE BETWEEN 7 AND 10 AND NOTIFIED_EMPLOYEE = '$id' ";
 		
 		if($usr != "")
 			$this->sql .= "AND USER_NOTIFICATION = '$usr' AND NOTIFICATION_BLOCKED = FALSE ";
@@ -380,12 +382,35 @@ class service_log extends table {
 		foreach($this->__getAllData() as $row) {
 			$data = array();
 			for($i = 0; $i < count($row); $i++) {
-				$data[$columns[$i]] = $row[$i];
+				if(strpos($columns[$i],"_ONLINE") !== false)
+					$data[$columns[$i]] = intval($row[$i]) == 1;
+				else
+					$data[$columns[$i]] = $row[$i];
 			}
 			if($history) {
 				$reqcor = explode(",", $row[5]);
 				$delcor = explode(",", $row[6]);
 				$data["DISTANCE"] = number_format(($this->haversineGreatCircleDistance(floatval($reqcor[0]), floatval($reqcor[1]), floatval($delcor[0]), floatval($delcor[1])) / 1000), 2) . " Kms";
+			}
+			if($details) {
+				if($data["CLIENT_USER_NAME"] != "") {
+					//Imagen del usuario
+					$avatar = "img/users/" . $data["CLIENT_USER_NAME"] . ".jpg";
+					if(!file_exists($avatar)) {
+						//verifica el tipo de usuario
+						$avatar = "img/users/user.jpg";
+					}
+					$data["CLIENT_USER_IMAGE"] = $avatar;
+				}
+				if($data["PARTNER_USER_NAME"] != "") {
+					//Imagen del usuario
+					$avatar = "img/users/" . $data["PARTNER_USER_NAME"] . ".jpg";
+					if(!file_exists($avatar)) {
+						//verifica el tipo de usuario
+						$avatar = "img/users/user.jpg";
+					}
+					$data["PARTNER_USER_NAME"] = $avatar;
+				}
 			}
 			array_push($return,$data);
 			$isThereData = true;
@@ -394,16 +419,13 @@ class service_log extends table {
 			$return["success"] = false;
 			$return["message"] = $_SESSION["NO_DATA"];
 		}
-		/*
 		else {
-			$return["ACCUMULATED_money-bill-1"] = rand(1000,1000000);
-			$return["ACCUMULATED_POINTS"] = rand(1,1000); 
-			$return["REDEEMED_money-bill-1"] = rand(1000,1000000);
-			$return["REDEEMED_POINTS"] = rand(1,1000); 
+			if(!$details)
+				$return["money"] = array("ACCUMULATED_MONEY" => rand(1000,1000000),
+								"ACCUMULATED_POINTS" => rand(1,1000),
+								"REDEEMED_MONEY" => rand(1000,1000000),
+								"REDEEMED_POINTS" => rand(1,1000));
 		}
-		*/
-		if($debug)
-			$return["sql"] = $this->sql;
 		return $return;
 	}
 	

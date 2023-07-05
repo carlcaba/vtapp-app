@@ -18,7 +18,7 @@ class conversion extends table {
 	//Constructor anterior
 	function conversion($conversion = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_CONVERSION");
+		parent::table("TBL_CONVERSION");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

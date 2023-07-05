@@ -12,20 +12,18 @@
 	
 	$lock = false;
 	$link = "";
-	$username = "";
+	$username = $_SESSION['vtappcorp_userid'];
 	
 	//Captura las variables
 	if(!isset($_POST['lockscreen'])) {
 		if(isset($_GET['lockscreen'])) {
 			$lock = $_GET['lockscreen'];
 			$link = $_GET['ref'];
-			$username = $_SESSION['vtappcorp_userid'];
 		}
 	}
 	else {
 		$lock = $_POST['lockscreen'];
 		$link = $_POST['ref'];
-		$username = $_SESSION['vtappcorp_userid'];
 	}
 	
 	//Inicializa la clase
@@ -65,23 +63,26 @@
 
 	$url = $site_root;
 
+	//Confirma al usuario
+	$vtappcorp_user_message = $lock ? $_SESSION["SESSION_ENDED_LOCK"] : $_SESSION["SESSION_ENDED"];	
+
 	//Elimina las variables cargadas al iniciar
 	$conf->unloadValues();
 
 	//Destruye la sesion e inicia una nueva
 	session_destroy();
 	session_unset();
-	//Regenera el numero
-	session_regenerate_id();	
 	//Inicia la sesion
 	session_name("vtappcorp_session");
 	session_start();
+	//Regenera el numero
+	session_regenerate_id();	
 	
 	//Recarga los recursos
 	$resources->loadResources();
 
 	//Confirma al usuario
-	$_SESSION["vtappcorp_user_message"] = $lock ? $_SESSION["SESSION_ENDED_LOCK"] : $_SESSION["SESSION_ENDED"];	
+	$_SESSION["vtappcorp_user_message"] = $vtappcorp_user_message;	
 
 	//Verifica si hubo algun error
 	if($log->nerror > 0)

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="apple-touch-icon" sizes="57x57" href="images/icons/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="images/icons/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/icons/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="images/icons/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/icons/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="images/icons/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="images/icons/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="images/icons/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="images/icons/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="images/icons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+	<meta name="msapplication-TileImage" content="images/icons/ms-icon-144x144.png">
+	
+	<title>Envía con UBIO</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="js/bootstrap/css/bootstrap.css">
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="js/fontawesome.6/css/all.min.css">
+	<link rel="stylesheet" href="js/fontawesome.6/css/v4-shims.min.css">
+	<!-- Toastr -->
+    <link rel="stylesheet" href="js/toastr/toastr.css"/>
+	<!-- Main Style Css -->
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+
+<body class="form-v7">
+	<div class="page-content">
+	    <div class="form-v7-content">
+	        <div class="form-left">
+				<img src="images/form_demanda-usuarios.png" alt="form" />
+                <p class="text-1">Envía cuando lo necesites</p>
+                <p class="text-2">Escoge entre diferentes aliados con un precio ideal</p>
+            </div>
+			<form class="form-detail msform" id="frmAfiliaEmpresa" method="post" name="frmAfiliaEmpresa">
+                <ul id="progressbar">
+                    <li class="active" id="account"><strong>Tus datos</strong></li>
+                    <li id="personal"><strong>Sobre ti</strong></li>
+                    <li id="confirm"><strong>Finalizar</strong></li>
+                </ul>
+                <fieldset id="step1">
+                    <div class="form-card">
+                        <h2 class="fs-title">Datos de contacto</h2>
+                        <input type="text" name="txtName" id="txtName" class="change2Upper" placeholder="Nombre y Apellido *" required/>
+                        <input type="email" name="txtEmail" id="txtEmail" class="change2Lower" placeholder="Dirección de tu correo electrónico *" required />
+                        <input type="email" name="txtConfirmEmail" id="txtConfirmEmail" class="change2Lower" placeholder="Confirma tu correo electrónico *" required />
+                        <input type="text" name="txtPhone" id="txtPhone" placeholder="Número de teléfono (celular) *" required />
+                        <input type="Idnt" name="txtId" id="txtId" placeholder="Número de identificación *" required/>
+                    </div>
+                    <input type="button" name="btnNext" id="btnNext" class="next action-button" value="Siguiente paso" />
+                </fieldset>
+                <fieldset id="step2">
+                    <div class="form-card">
+                        <h2 class="fs-title">Permítenos conocerte</h2>
+                        <input type="text" name="txtBrand" id="txtBrand" class="change2Upper" placeholder="Si tienes una marca o empresa"/>
+                        <select class="list-dt" id="cbPackage" name="cbPackage">
+                            <option selected disabled value="0">¿Cuántos envíos realizas al mes?</option>
+                            <option value="40">20 a 40 envíos al mes</option>
+                            <option value="80">41 a 80 envíos al mes</option>
+                            <option value="120">81 a 120 envíos al mes</option>
+                            <option value="121">121 o más envíos al mes</option>
+                        </select>
+                        <select class="list-dt" id="cbType" name="cbType">
+                            <option selected disabled value="">Escoge tu tipo de servicios</option>
+                            <option value="ENV">Sobres</option>
+                            <option value="PAK">Paquetes</option>
+                            <option value="ENP">Varios</option>
+                        </select>
+                        <h5> Al continuar, aceptas que has leído los <a href="#">términos, condiciones y políticas de privacidad</a> de UBIO</h5>
+                    </div>
+                    <input type="button" name="btnPrev" id="btnPrev" class="previous action-button-previous" value="Anterior paso"/>
+                    <input type="button" name="btnNext" id="btnNext" class="next action-button" value="Confirmar"/>
+                </fieldset>
+                <fieldset id="step3">
+                    <div class="form-card">
+                        <h2 class="fs-title text-center" id="h2Title">Un momento por favor.<br />Estamos procesando tu solicitud</h2>
+                        <br><br>
+                        <div class="row justify-content-center invisible" id="divEnd">
+                            <div class="col-3" align="center">
+                                <img src="images/ok-image.png" width="100" height="100" align="" />
+                            </div>
+                        </div>
+                        <div class="row justify-content-center" id="divProgress">
+                            <div class="col-3" align="center">
+                                <i class="fa-solid fa-spinner fa-2xl" id="iconProgress"></i>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="row justify-content-center">
+                            <div class="col-7 text-justify">
+                                <h5 id="h5End" class="invisible">En las próximas horas te enviaremos un correo con los datos de acceso para confirmar tu registro.</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="hfType" name="hfType" value="envios-por-demanda-usuario" />
+                </fieldset>
+			</form>
+		</div>
+	</div>
+	<script type='text/javascript' src="js/jquery/jquery.min.js"></script>
+    <script type='text/javascript' src='js/bootstrap/js/bootstrap.bundle.min.js'></script>
+    <script type='text/javascript' src='js/toastr/toastr.min.js'></script>
+    <script type='text/javascript' src='js/script.js'></script>
+    <script type='text/javascript' src='js/envios-por-demanda-usuario.js'></script>
+</body>
+</html>

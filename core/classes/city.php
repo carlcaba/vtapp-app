@@ -19,7 +19,7 @@ class city extends table {
 	//Constructor anterior
 	function city($ciudad = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_CITY");
+		parent::table("TBL_SYSTEM_CITY");
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION["vtappcorp_userid"];
 		//Especifica los valores unicos
@@ -326,6 +326,33 @@ class city extends table {
 		$return .= "$stabs</form>\n";
 		//Retorna
 		return $return;
+	}
+	
+	function locateByName($name) {
+		//Convierte a mayusculas
+		$name = strtoupper($name);
+		//Arma la sentencia SQL
+		$this->sql = "SELECT ID FROM $this->table WHERE CITY_NAME LIKE '$name'";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "0";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = "Ciudad $name " . $_SESSION["NOT_REGISTERED"];
+        }
+        else {
+            //Asigna el ID
+            $this->ID = $row[0];
+            //Llama el metodo
+            $this->__getInformation();
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+		return $this->ID;
 	}
 	
 }	

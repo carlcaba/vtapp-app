@@ -18,7 +18,7 @@ class journey extends table {
 	//Constructor anterior
 	function journey($journey = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_JOURNEY");
+		parent::table("TBL_JOURNEY");
 		//Inicializa los atributos
 		$this->ID = 0;
 		$this->REGISTERED_ON = "NOW()";

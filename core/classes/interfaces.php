@@ -26,7 +26,7 @@ class interfaces extends table {
 	//Constructor anterior
 	function interfaces($menu = "") {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_MENU");
+		parent::table("TBL_SYSTEM_MENU");
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		//Asigna los valores propios
@@ -118,7 +118,7 @@ class interfaces extends table {
 		$this->sql = "SELECT M.ID, R.RESOURCE_TEXT, M.LINK, M.ICON, M.ACCESS_ID, M.PARENT_ID, M.ORDER_ID, M.IS_BLOCKED " .
 			"FROM $this->table M INNER JOIN " . $this->resources->table . " R ON (R.RESOURCE_NAME = M.RESOURCE_NAME) " .
 			"WHERE R.LANGUAGE_ID = " . $_SESSION["LANGUAGE"] . " AND M.PARENT_ID = $parent AND M.IS_BLOCKED = FALSE AND " .
-			"M.ACCESS_ID <= $access ORDER BY M.ORDER_ID";
+			"M.ACCESS_ID = $access ORDER BY M.ORDER_ID";
 		//Muestra las opciones
 		foreach($this->__getAllData() as $row) {
 			if($return == null) {
@@ -338,13 +338,11 @@ class interfaces extends table {
 		}
 		$hs = headers_sent();
 		$vvar = explode("//",$location);
-		_error_log($location);
 		if(count($vvar) > 1){
 			$location = $vvar[0] . "//";
 			$oarr = array_shift($vvar);
 			$location .= implode("/",$vvar);
 		}
-		_error_log($location);
 		if(!$hs) {
 			header("Location: $location");
 			//header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');

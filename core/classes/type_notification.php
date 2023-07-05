@@ -17,7 +17,7 @@ class type_notification extends table {
 	//Constructor anterior
 	function type_notification($type_notification = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_TYPE_NOTIFICATION");
+		parent::table("TBL_SYSTEM_TYPE_NOTIFICATION");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

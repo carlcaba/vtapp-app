@@ -8,8 +8,8 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d  
 RewriteRule .* 404.php [L] 
 
-#ErrorDocument 404 /404.php
+#ErrorDocument 404 /_404.php
 #Not Found
 
-#ErrorDocument 500 /500.php
+#ErrorDocument 500 /_500.php
 #Internal Server Error

@@ -20,7 +20,7 @@ class service_state extends table {
 	//Constructor anterior
 	function service_state($service_state = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SERVICE_STATE");
+		parent::table("TBL_SERVICE_STATE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

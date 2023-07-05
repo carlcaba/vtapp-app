@@ -17,7 +17,7 @@ class movement_type extends table {
 	//Constructor anterior
 	function movement_type($movement_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_MOVEMENT_TYPE");
+		parent::table("TBL_MOVEMENT_TYPE");
 		//Inicializa los atributos
 		$this->ID = 0;
 		$this->REGISTERED_ON = "NOW()";

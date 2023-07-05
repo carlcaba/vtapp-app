@@ -204,6 +204,15 @@
 			<section class="content">
 				<div class="row">
 					<div class="col-12">
+						<div class="btn-group float-right">
+<?
+	include("core/templates/__buttons.tpl");
+?>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
 						<div class="card">
 							<div class="card-header">
 								<div class="stepwizard">
@@ -488,13 +497,16 @@
 										<input type="hidden" name="hfPartnerId" id="hfPartnerId" value="<?= $assi->PARTNER_ID ?>" />
 										<input type="hidden" name="hfAssignedPartner" id="hfAssignedPartner" value="" />
 										<input type="hidden" name="hfAssignedEmployee" id="hfAssignedEmployee" value="" />
-										<input type="hidden" name="hfGateWay" id="hfGateWay" value="<?= $gate ?>" />
+										<input type="hidden" name="hfGateWayName" id="hfGateWayName" value="<?= $gate ?>" />
 										<input type="hidden" name="hfContinueStep" id="hfContinueStep" value="false" />
 										<input type="hidden" name="hfPayOnDeliver" id="hfPayOnDeliver" value="false" />
 										<input type="hidden" name="hfIsRepeated" id="hfIsRepeated" value="false" />
 										<input type="hidden" name="hfPeriod" id="hfPeriod" value="" />
 										<input type="hidden" name="hfLastDate" id="hfLastDate" value="" />
 										<input type="hidden" name="hfIsQuota" id="hfIsQuota" value="false" />
+										<input type="hidden" name="hfBid" id="hfBid" value="true" />
+										<input type="hidden" name="hfGateWay" id="hfGateWay" value="true" />
+										<input type="hidden" name="hfCheck" id="hfCheck" value="false" />
 									</div>
 								</div>
 							</form>
@@ -548,14 +560,13 @@
 		alt_address = "txtDELIVER_ADDRESS",
 		latitude = "hfLATITUDE_REQUESTED_ADDRESS",
 		longitude = "hfLONGITUDE_REQUESTED_ADDRESS";
-	var chkRt = null;
 	var zones = null;
+	var noty = null;
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
 		$('[data-compare="true"]').change(function() {
 			var ctrl = $(this).data("compareto");
 			var value = "true";
-			console.log($("#hfAction").val());
 			if($("#hfAction").val() != "view") {
 				if ($(this).val() != $("#" + ctrl).val()) {
 					notify("", 'danger', "", "<?= $_SESSION["PHONE_NO_MATCH"] ?>", "");
@@ -645,10 +656,14 @@
 				dataType: "json",
 				beforeSend: function (xhrObj) {
 					var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-					noty = notify("", "dark", "", message, "", false);												
+					if(noty == null)
+						noty = notify("", "dark", "", message, "", false);												
 				},
 				success:function(data){
-					noty.close();
+					if(noty != null) {
+						noty.close();
+						noty = null;
+					}
 					if (data.success) {
 						if($.fn.DataTable.isDataTable('#tableAddresses')) {
 							$('#tableAddresses').DataTable().clear().draw();
@@ -674,140 +689,12 @@
 			$('#hfTimeEnd').val(end);
 		});
 		$('#cbClient').change(function() {
-			var opt = $(this).find("option:selected").data("optionpy");
-			var val = $(this).find("option:selected").val();
-			$('#btnPayment').attr("disabled", opt == "off" && $("#panelBodyPartners").data("state") == "0");
-			$('#btnSave').attr("disabled", opt != "off");
-			$("#hfIsMarco").val(opt);
-			if(opt == "off") {
-				$.ajax({
-					url: "core/actions/_load/__loadClientQuota.php",
-					data: { 
-						client: $("#cbClient").val(),
-						user: $("#hfUSERID").val()
-					},
-					dataType: "json",
-					beforeSend: function (xhrObj) {
-						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-						noty = notify("", "dark", "", message, "", false);												
-					},
-					success:function(data){
-						noty.close();
-						if (data.success) {
-							$("#hfQUOTAID").val(data.quota_id);
-							$("#hfPeriod").val(data.period);							
-							$("#hfIsRepeated").val(data.repeated);
-							$("#hfLastDate").val(data.lastDate);
-							$("#hfIsQuota").val(data.is_quota);
-						}
-						else {
-							$("#hfQUOTAID").val("");
-							$("#hfPeriod").val("");							
-							$("#hfIsRepeated").val(false);
-							$("#hfLastDate").val("");
-							$("#hfIsQuota").val(false);
-						}
-					}
-				});
-			}
+			validation();
 		});
 		$("#cbDeliverType").on("change", function(e) {
-			if(chkRt != null)
-				return;
-			chkRt = true;
-			var selected = $("option:selected", this);
-			var distance = setDistance();
-			var noty;
-			var dats = selected.data();
-			$("#txtTOTAL_WIDTH").attr("disabled", dats.block);
-			$("#txtTOTAL_HEIGHT").attr("disabled", dats.block);
-			$("#txtTOTAL_WEIGHT").attr("disabled", dats.block);
-			$("#txtTOTAL_LENGTH").attr("disabled", dats.block);
-			$("#txtTOTAL_WIDTH").val(dats.block ? dats.width : "");
-			$("#txtTOTAL_HEIGHT").val(dats.block ? dats.height : "");
-			$("#txtTOTAL_WEIGHT").val(dats.block ? dats.weight : "");
-			$("#txtTOTAL_LENGTH").val(dats.block ? dats.length : "");
-			distance = parseFloat($("#hfDISTANCE").val());
-			if(distance > 0) {
-				$.ajax({
-					url: "core/actions/_load/__checkRate.php",
-					data: { 
-						distance: distance,
-						client: $("#cbClient").val(),
-						round: $("#cbRoundTrip").is(':checked'),
-						action: $("#hfAction").val(),
-						pid: $("#hfPartnerId").val()
-					},
-					dataType: "json",
-					beforeSend: function (xhrObj) {
-						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["CALCULATING"] ?>";
-						noty = notify("", "dark", "", message, "", false);												
-					},
-					success:function(data){
-						noty.close();
-						if($("#hfAction").val() != "view") {
-							$("#hfPRICE").val("");
-							$("#txtPRICE").val("");
-							$("#hfRateId").val("");
-							$("#hfPartnerName").val("");
-							$("#hfPartnerId").val("");
-							$("#btnPayment").attr("disabled",true);
-							$("#btnSave").attr("disabled",true);
-							$("#panelBodyPartners").data("state", 0);
-							$("[id^='spanSelected_']" ).hide();
-						}
-						if(data.success) {
-							$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
-							$("#panelBodyPartners").html(data.message);
-							$("#panelBodyPartners").data("state", 1);
-							$("#grpButtons").html(data.buttons);
-							if(data.change)
-								$("#hfQUOTAID").val = "";
-							if(data.filtered && data.filter != "") {
-								$("#spanSelected_" + data.filter).show();
-								$("#hfAssignedPartner").val(data.filter);
-							}
-							$(".optPartner").on("click", function() {
-								var datas = $(this).data();
-								$("#hfRateId").val($(this).val());
-								$("#hfPRICE").val(datas.rate);
-								$("#txtPRICE").val(FormatNumber(datas.rate,2));
-								$("#hfPartnerName").val(datas.partner);
-								$("#cbVehicleType").val(datas.vehicle);
-								$("#hfPartnerId").val(datas.partnerid);
-								$("[id^='spanSelected_']" ).hide();
-								$("#spanSelected_" + $(this).val()).show();
-								$("#btnPayment").attr("disabled",false);
-								$("#btnSave").attr("disabled",false);
-							});
-							if($("#hfAction").val() == "view") {
-								var datas = $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").data();
-								console.log(datas);
-								$("#hfRateId").val($(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val());
-								$("#hfPRICE").val(datas.rate);
-								$("#txtPRICE").val(FormatNumber(datas.rate,2));
-								$("#hfPartnerName").val(datas.partner);
-								$("#cbVehicleType").val(datas.vehicle);
-								$("#hfPartnerId").val(datas.partnerid);
-								$("[id^='spanSelected_']" ).hide();
-								$("#spanSelected_" + $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val()).show();
-							}
-						}
-						else 
-							notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-						chkRt = null;
-					}
-				});
-			}
-			else {
-				if($("#cbDeliverType").is(":visible"))
-					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
-				else if(parseInt($('.nextBtn').closest(".setup-content").attr("id").substr(5,1)) >= 2)
-					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
-				chkRt = null;
-			}
+			validation();
 		});
-		var checkAddressChange = function(obj) {
+		const checkAddressChange = function(obj) {
 			var val = removeAccents($(obj).val().toUpperCase());
 			var id = $(obj).attr('id');
 			var ref = id.split("_")[0];
@@ -816,13 +703,10 @@
 				$("#" + ref.replace("txt","Zone")).fadeIn();
 			else 
 				$("#" + ref.replace("txt","Zone")).fadeOut();
-			$('#cbDeliverType').trigger("change");
 		};
 		$("[id$=_ADDRESS]").on('input', function () { checkAddressChange(this) });
 		$("[id$=_ADDRESS]").on('change', function () { checkAddressChange(this) });
-		$("[id$=_ADDRESS]").focusout(function () { checkAddressChange(this) });
-		$('#cbDeliverType').trigger("change");
-		$("#cbClient").trigger("change");
+		$("[id$=_ADDRESS]").focusout(function () { validation(); });
 		if($("#hfLATITUDE_REQUESTED_ADDRESS").val() != "" && $("#hfLONGITUDE_REQUESTED_ADDRESS").val() != "")
 			$("#ZoneREQUESTED").fadeOut();
 
@@ -834,23 +718,16 @@
 			$("#cbZoneDeliver").trigger("change");
 			$("#cbZoneDeliverSub option[value=" + $("#hfSubZoneDelSel").val() + "]").attr('selected','selected').change();
 		}
-		if($("#hfAction").val() == "view") {
-			$("#cbDeliverType").trigger("change");
-		}
 	});
 	function onDeliver() {
 		$("#hfPayOnDeliver").val("true");
 		Save();
 	}
 	function Save() {
-		if($("#txtPRICE").val() == "0") {
-			$('#cbDeliverType').trigger("change");
-		}
-		if($("#hfQUOTAID").val() == "") {
-			$('#cbClient').trigger("change");
+		if($("#txtPRICE").val() == "0" || $("#hfQUOTAID").val() == "") {
+			validation();
 		}
 		var form = document.getElementById('frmService');
-		var noty;
 		if (form.checkValidity() === false) {
 			window.event.preventDefault();
 			window.event.stopPropagation();
@@ -868,7 +745,6 @@
 		$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
 		$("#btnActivate").unbind("click");
 		$("#btnActivate").bind("click", function() {
-			var noty;
 			$.ajax({
 				url: url,
 				data: { strModel: datas },
@@ -876,14 +752,18 @@
 				method: "POST",
 				beforeSend: function (xhrObj) {
 					var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-					noty = notify("", "dark", "", message, "", false);												
+					if(noty == null)
+						noty = notify("", "dark", "", message, "", false);												
 				},
 				error: function( jqxhr, textStatus, error ) {
 					var err = textStatus + ", " + error;
 					notify("", 'danger', "", "Request Failed: " + err , "");
 				},
 				success:function(data){
-					noty.close();
+					if(noty != null) {
+						noty.close();
+						noty = null;
+					}
 					notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 					if(data.success)
 						location.href = data.link;
@@ -893,7 +773,7 @@
 		$("#divActivateModal").modal("toggle");			
 	}
 	function setDistance() {
-		var distance;
+		var distance = 0;
 		var orig = {
 			lat: parseFloat($("#hfLATITUDE_REQUESTED_ADDRESS").val()),
 			lng: parseFloat($("#hfLONGITUDE_REQUESTED_ADDRESS").val())
@@ -902,7 +782,7 @@
 			lat: parseFloat($("#hfLATITUDE_DELIVER_ADDRESS").val()),
 			lng: parseFloat($("#hfLONGITUDE_DELIVER_ADDRESS").val())
 		};
-		if(isNaN(orig.lat) || isNaN(orig.lng) || isNaN(dest.lat) || isNaN(dest.lng)) 
+		if(isNaN(orig.lat) || isNaN(orig.lng) || isNaN(dest.lat) || isNaN(dest.lng))
 			distance = 0;
 		else 
 			distance = getDistance(orig, dest);
@@ -925,10 +805,14 @@
 			dataType: "json",
 			beforeSend: function (xhrObj) {
 				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-				noty = notify("", "dark", "", message, "", false);												
+				if(noty == null)
+					noty = notify("", "dark", "", message, "", false);												
 			},
 			success:function(data){
-				noty.close();
+				if(noty != null) {
+					noty.close();
+					noty = null;
+				}
 				return data.success;
 			}
 		});
@@ -938,7 +822,6 @@
 			$('#cbDeliverType').trigger("change");
 		}
 		var form = document.getElementById('frmService');
-		var noty;
 		for (var i = 0; i < form.elements.length; i++) {
 			var e = form.elements[i];
 			try {
@@ -969,10 +852,14 @@
 			dataType: "json",
 			beforeSend: function (xhrObj) {
 				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-				noty = notify("", "dark", "", message, "", false);												
+				if(noty == null)
+					noty = notify("", "dark", "", message, "", false);												
 			},
 			success: function(data) {
-				noty.close();
+				if(noty != null) {
+					noty.close();
+					noty = null;
+				}
 				$("#hfPayed").val(data.success);
 				if(data.success) {
 					$("#hfQUOTAID").val(data.id);
@@ -986,7 +873,6 @@
 					$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM_AND_DISCOUNT"] ?>");
 					$("#btnActivate").unbind("click");
 					$("#btnActivate").bind("click", function() {
-						var noty;
 						$.ajax({
 							url: "core/actions/_save/__newService.php",
 							data: { 
@@ -996,10 +882,14 @@
 							dataType: "json",
 							beforeSend: function (xhrObj) {
 								var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-								noty = notify("", "dark", "", message, "", false);												
+								if(noty == null)
+									noty = notify("", "dark", "", message, "", false);												
 							},
 							success:function(data){
-								noty.close();
+								if(noty != null) {
+									noty.close();
+									noty = null;
+								}
 								notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 								if(data.success)
 									location.href = data.link;
@@ -1021,10 +911,15 @@
 							dataType: "json",
 							beforeSend: function (xhrObj) {
 								var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-								noty = notify("", "dark", "", message, "", false);												
+								if(noty == null)
+									noty = notify("", "dark", "", message, "", false);												
 							},
 							success: function(data) {
 								if(data.success) {
+									if(noty != null) {
+										noty.close();
+										noty = null;
+									}
 									notify("", 'success', "", "<?= $_SESSION["PAYMENT_REGISTERED"] ?>", "");
 									var url = "core/actions/_save/__newService.php";
 									$("#hfPayed").val("true");
@@ -1045,16 +940,24 @@
 										method: "POST",
 										beforeSend: function (xhrObj) {
 											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-											noty = notify("", "dark", "", message, "", false);												
+											if(noty == null)
+												noty = notify("", "dark", "", message, "", false);												
 										},
 										success:function(data) {
-											noty.close();
+											if(noty != null) {
+												noty.close();
+											}
 											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 											if(data.success) {
-												noty.close();
+												if(noty != null) {
+													noty.close();
+												}
 												location.href = data.link
 											}
-											noty.close();
+											if(noty != null) {
+												noty.close();
+												noty = null;
+											}
 										}
 									});
 								}
@@ -1085,7 +988,6 @@
 									var datasObj = $frm.serializeObject();
 									datasObj = checkSerializedObject(datasObj);
 									var datas = JSON.stringify(datasObj);
-									var noty;
 									$.ajax({
 										url: url,
 										data: { strModel: datas },
@@ -1093,10 +995,14 @@
 										method: "POST",
 										beforeSend: function (xhrObj) {
 											var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-											noty = notify("", "dark", "", message, "", false);												
+											if(noty == null)
+												noty = notify("", "dark", "", message, "", false);												
 										},
 										success:function(data) {
-											noty.close();
+											if(noty != null) {
+												noty.close();
+												noty = null;
+											}
 											notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 											if(data.success) {
 												$.ajax({
@@ -1104,16 +1010,20 @@
 													data: { 
 														id: data.srvid,
 														strdata: $("#hfOBJPAY").val(),
-														gate: $("#hfGateWay").val(),
+														gate: $("#hfGateWayName").val(),
 														ref: reference
 													},
 													dataType: "json",
 													beforeSend: function (xhrObj) {
 														var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-														noty = notify("", "dark", "", message, "", false);												
+														if(noty == null)
+															noty = notify("", "dark", "", message, "", false);												
 													},
 													success:function(data) {
-														noty.close();
+														if(noty != null) {
+															noty.close();
+															noty = null;
+														}
 														notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
 														if(data.success) {
 															location.href = data.link
@@ -1238,6 +1148,178 @@
 		}		
 		return datasObj;	
 	}
+	const checkRate = function(dist, cli, prt, gwt, bdi) {
+		var notcr;
+		if(dist == 0) {
+			dist = setDistance();
+		}
+		if($("#hfAction").val() != "view") {
+			$("#hfPRICE").val("");
+			$("#txtPRICE").val("");
+			$("#hfRateId").val("");
+			$("#hfPartnerName").val("");
+			$("#hfPartnerId").val("");
+			$("#btnPayment").attr("disabled",true);
+			$("#btnSave").attr("disabled",true);
+			$("#panelBodyPartners").data("state", 0);
+			$("[id^='spanSelected_']" ).hide();
+		}
+		if(dist == 0)
+			return false;
+		return $.ajax({
+			url: "core/actions/_load/__checkRate.php",
+			data: { 
+				distance: dist,
+				client: cli,
+				round: $("#cbRoundTrip").is(':checked'),
+				action: $("#hfAction").val(),
+				pid: prt,
+				gtw: gwt,
+				bid: bdi
+			},
+			dataType: "json",
+			beforeSend: function (xhrObj) {
+				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["CHECKING_RATE"] ?>";
+				notcr = notify("", "dark", "", message, "", false);												
+				$('<div class="modal-backdrop fade show"></div>').appendTo(document.body);
+			},
+			success:function(data){
+				notcr.close();
+				if(data.success) {
+					if(!data.notification) {
+						$("#txtPRICE").val(FormatNumber(data.min,2) + " - " + FormatNumber(data.max,2));
+						$(".fa-bell").removeClass("fa-bell").addClass("fa-usd");
+					}
+					else {
+						$("#txtPRICE").val(FormatNumber(data.max,0));
+						$(".fa-usd").removeClass("fa-usd").addClass("fa-bell");
+					}
+					$("#panelBodyPartners").html(data.message);
+					$("#panelBodyPartners").data("state", 1);
+					$("#grpButtons").html(data.buttons);
+					if(data.change)
+						$("#hfQUOTAID").val("");
+					if(data.filtered && data.filter != "") {
+						$("#spanSelected_" + data.filter).show();
+						$("#hfAssignedPartner").val(data.filter);
+					}
+					$(".optPartner").on("click", function() {
+						var datas = $(this).data();
+						$("#hfRateId").val($(this).val());
+						$("#hfPRICE").val(datas.rate);
+						$("#txtPRICE").val(FormatNumber(datas.rate,2));
+						$("#hfPartnerName").val(datas.partner);
+						$("#cbVehicleType").val(datas.vehicle);
+						$("#hfPartnerId").val(datas.partnerid);
+						$("[id^='spanSelected_']" ).hide();
+						$("#spanSelected_" + $(this).val()).show();
+						$("#btnPayment").attr("disabled",false);
+						$("#btnSave").attr("disabled",false);
+					});
+					if($("#hfAction").val() == "view") {
+						var datas = $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").data();
+						$("#hfRateId").val($(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val());
+						$("#hfPRICE").val(datas.rate);
+						$("#txtPRICE").val(FormatNumber(datas.rate,2));
+						$("#hfPartnerName").val(datas.partner);
+						$("#cbVehicleType").val(datas.vehicle);
+						$("#hfPartnerId").val(datas.partnerid);
+						$("[id^='spanSelected_']" ).hide();
+						$("#spanSelected_" + $(".optPartner[data-partnerid=" + $("#hfPartnerId").val() + "]").val()).show();
+					}
+				}
+				$(".modal-backdrop").remove();				
+			}
+		});
+	};
+	const loadQuota = function(cli,usr) {
+		let notlq;
+		return $.ajax({
+			url: "core/actions/_load/__loadClientQuota.php",
+			data: { 
+				client: cli,
+				user: usr
+			},
+			dataType: "json",
+			beforeSend: function (xhrObj) {
+				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["CHECKING_QUOTA"] ?>";
+				notlq = notify("", "dark", "", message, "", false);												
+			},
+			success:function(data){
+				notlq.close();
+				if (data.success) {
+					$("#hfQUOTAID").val(data.quota_id);
+					$("#hfPeriod").val(data.period);							
+					$("#hfIsRepeated").val(data.repeated);
+					$("#hfLastDate").val(data.lastDate);
+					$("#hfIsQuota").val(data.is_quota);
+				}
+				else {
+					$("#hfQUOTAID").val("");
+					$("#hfPeriod").val("");							
+					$("#hfIsRepeated").val(false);
+					$("#hfLastDate").val("");
+					$("#hfIsQuota").val(false);
+					$("#hfGateWay").val(true);
+				}
+			}
+		});
+	};
+	const validation = function() {
+		if(!Boolean($("#hfCheck").val()))
+			return false;
+		let pymt, bid, price, ccar, creq, part, clval, gtw, ctrct;
+		let cli = $("#cbClient").find("option:selected");
+		let pck = $("#cbDeliverType").find("option:selected");
+		let dist = parseFloat($("#hfDISTANCE").val()) <= 0 ? setDistance() : parseFloat($("#hfDISTANCE").val());
+		let usr = $("#hfUSERID").val();
+		//Verifica si hay seleccionado un tipo de paquete
+		if(pck.length > 0) {
+			let dats = pck.data();
+			$("#txtTOTAL_WIDTH").attr("disabled", dats.block);
+			$("#txtTOTAL_HEIGHT").attr("disabled", dats.block);
+			$("#txtTOTAL_WEIGHT").attr("disabled", dats.block);
+			$("#txtTOTAL_LENGTH").attr("disabled", dats.block);
+			$("#txtTOTAL_WIDTH").val(dats.block ? dats.width : "");
+			$("#txtTOTAL_HEIGHT").val(dats.block ? dats.height : "");
+			$("#txtTOTAL_WEIGHT").val(dats.block ? dats.weight : "");
+			$("#txtTOTAL_LENGTH").val(dats.block ? dats.length : "");
+			if(dist == 0) {
+				if($("#cbDeliverType").is(":visible"))
+					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
+				else if(parseInt($('.nextBtn').closest(".setup-content").attr("id").substr(5,1)) >= 2)
+					notify("", 'danger', "", "<?= $_SESSION["CANT_CALCULATE_DISTANCE"] ?>", "");
+			}
+		}
+		//Verifica si hay seleccionado tipo de cliente
+		if(cli.length > 0) {
+			clval = cli.val();
+			pymt = cli.data("optionpy") == "on";
+			bid = Boolean(cli.data("bid"));
+			part = cli.data("partner");
+			ccar = Boolean(cli.data("cc"));
+			creq = Boolean(cli.data("crequired"));
+			gtw = cli.data("optionpy") == "on";
+			ctrct = Boolean(cli.data("ctrct"));
+			pymttype = parseInt(cli.data("pymttype"));
+			let result = checkRate(dist,clval,part,gtw,bid);
+			if(result !== false) {
+				result.done(function(data) {
+					if(data.success) {
+						if(pymttype == 2 || ctrct) {
+							loadQuota(clval,usr).done(function(tst) {
+								if(!tst.success)
+									notify("", 'danger', "", tst.message, "");
+							});
+						}
+					}
+					else
+						notify("", 'danger', "", data.message, "");
+				});
+			}
+		}
+
+	};
 	</script>
 <?
 	include("core/templates/__modalAddress.tpl");

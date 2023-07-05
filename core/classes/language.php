@@ -15,7 +15,7 @@ class language extends table {
 	//Constructor anterior
 	function language($language = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_LANGUAGE");
+		parent::table("TBL_SYSTEM_LANGUAGE");
 		//Inicializa los atributos
 		$this->LANGUAGE_NAME = $language;
 		//Especifica los valores unicos

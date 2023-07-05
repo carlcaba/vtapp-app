@@ -47,7 +47,7 @@
 		$service->REQUESTED_CELLPHONE = $datas->txtREQUESTED_CELLPHONE;
 		$service->REQUESTED_IP = $_SERVER["REMOTE_ADDR"];
 		$service->REQUESTED_ADDRESS = $datas->txtREQUESTED_ADDRESS;
-		$service->setRequestZone($datas->cbZoneRequestSub);
+		$service->setRequestZone($datas->cbZoneRequestedSub);
 		$service->DELIVER_DESCRIPTION = $datas->txtDELIVER_DESCRIPTION;
 		$service->OBSERVATION = $datas->txtOBSERVATION;
 		$service->DELIVER_TO = $datas->txtDELIVER_TO;
@@ -169,7 +169,7 @@
 		}
 
 		//Verifica si hubo pago
-		if(boolval($datas->hfPayed)) {
+		if(filter_var($datas->hfPayed, FILTER_VALIDATE_BOOLEAN)) {
 			//Cambia el estado
 			$service->updateState($service->state->getNextState());
 			//Si se genera error

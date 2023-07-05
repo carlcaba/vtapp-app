@@ -354,10 +354,13 @@
 					$("#cbQuotaType").append("<option value='" + value.id + "' data-amount=\"" + value.amount + "\" data-ismarco=\"" + value.ismarco + "\">" + value.text + "</option>");
 				});
 				$("#cbClient").on("change", function(e) {
-					var selected = $("option:selected", this);
-					var ismarco = selected.data("optionpy") == "off" ? "1" : "0";
+					let selected = $("option:selected", this);
+					let ismarco = selected.data("optionpy") == "off" ? "1" : "0";
+					let compare = parseInt(selected.data("pymttype")) == 2 ? "2" : ismarco;
+					console.log(compare);
 					$("#cbQuotaType > option").each(function() {
-						if($(this).data("ismarco") == ismarco)
+						console.log($(this).data("ismarco"));
+						if($(this).data("ismarco") == compare)
 							$(this).show();
 						else 
 							$(this).hide();

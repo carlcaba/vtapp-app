@@ -18,7 +18,7 @@ class client_payment extends table {
 	//Constructor anterior
 	function client_payment($client_payment = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_CLIENT_PAYMENT_TYPE");
+		parent::table("TBL_SYSTEM_CLIENT_PAYMENT_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
@@ -111,7 +111,7 @@ class client_payment extends table {
 		foreach($this->__getAllData() as $row) {
             if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS
-                $row[1] = utf8_encode($row[1]);
+                $row[1] = mb_convert_encoding($row[1],"UTF-8");
             }
 			$data = "data-clienttypeid=\"$row[2]\"";
 			//Si la opcion se encuentra seleccionada

@@ -18,7 +18,7 @@ class payment_state extends table {
 	//Constructor anterior
 	function payment_state($payment_state = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_PAYMENT_STATE");
+		parent::table("TBL_PAYMENT_STATE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];

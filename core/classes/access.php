@@ -17,7 +17,7 @@ class access extends table {
 	//Constructor anterior
 	function access($access = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_ACCESS");
+		parent::table("TBL_SYSTEM_ACCESS");
 		//Inicializa los atributos
 		$this->RESOURCE_NAME = $access;
 		//Especifica los valores unicos

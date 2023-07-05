@@ -9,6 +9,7 @@ require_once("client.php");
 require_once("zone.php");
 require_once("service_state.php");
 require_once("delivery_type.php");
+require_once("delivery_type.php");
 require_once("vehicle_type.php");
 
 class service extends table {
@@ -32,7 +33,7 @@ class service extends table {
 	//Constructor anterior
 	function service ($service  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SERVICE");
+		parent::table("TBL_SERVICE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
@@ -286,7 +287,11 @@ class service extends table {
 
 	//Funcion para mostrar las horas disponibles
 	function showTimeOptionList() {
-		$hour = intval(date("H")) + 1;
+		$minute = intval(date("i"));
+		$sum = 1;
+		if($minute > 30)
+			$sum++;
+		$hour = intval(date("H")) + $sum;
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
@@ -683,15 +688,16 @@ class service extends table {
 			$result .= "<a class=\"btn btn-default bg-light\" href=\"javascript:void(0)\" title=\"" . $_SESSION["STATUS"] . " " . $row[0] . "\" data-filter=\"$row[1]\"> <i class=\"$row[2]\"></i>&nbsp; " . $_SESSION["STATUS"] . " $row[0] ($row[3])</a>\n";
 		}
 		$result .= "</div>\n";
-		$this->sql = "SELECT DISTINCT SERVICE_ID, USER_ID, CLIENT_NAME, DELIVER_TO, DELIVER_ADDRESS, REQUESTED_BY, SERVICE_STATE_NAME, ID_STATE, ICON, ICON_STATE " .
+		$this->sql = "SELECT DISTINCT SERVICE_ID, USER_ID, CLIENT_NAME, DELIVER_TO, DELIVER_ADDRESS, REQUESTED_BY, SERVICE_STATE_NAME, ID_STATE, ICON, ICON_STATE, DATE_FORMAT(REGISTERED_ON,'%Y%m%d') " .
 			"FROM $this->view $sWhere";
 		_error_log($this->sql);
 		$result .= "<div class=\"mb-2\">\n" .
 			"<a class=\"btn btn-secondary\" href=\"javascript:void(0)\" data-shuffle> Reordenar </a>\n" .
 			"<div class=\"float-right\">\n" .
 			"<select class=\"custom-select\" style=\"width: auto;\" data-sortOrder>\n" .
-			"<option value=\"index\"> Ordenar por estado </option>\n" .
-			"<option value=\"sortData\"> Ordenar por destinatario </option>\n" .
+			"<option value=\"state\"> Ordenar por estado </option>\n" .
+			"<option value=\"destiny\"> Ordenar por destinatario </option>\n" .
+			"<option value=\"date\"> Ordenar por fecha </option>\n" .
 			"</select>\n" .
 			"<div class=\"btn-group\">\n" .
 			"<a class=\"btn btn-default\" href=\"javascript:void(0)\" data-sortAsc> Ascendente </a>\n" .
@@ -703,10 +709,10 @@ class service extends table {
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
 			$state = str_replace(" ","-",$row[6]);
-			$result .= "<div class=\"filtr-item col-sm-3\" data-category=\"$row[7]\" data-sort=\"$state sample\">\n";
+			$result .= "<div class=\"filtr-item col-sm-3\" data-category=\"$row[7]\" data-sort=\"$state sample\" data-state=\"$row[7]\" data-destiny=\"$row[3]\" data-date=\"$row[10]\">\n";
 				$result .= "<div class=\"card card-primary card-outline direct-chat direct-chat-primary\">\n";
 					$result .= "<div class=\"card-header\">\n";
-						$result .= "<h3 class=\"card-title\"><i class=\"$row[9]\" title=\"$row[6]\"></i>&nbsp;$row[3]</h3>\n";
+						$result .= "<h3 class=\"card-title text-truncate\" style=\"max-width: 280px\" title=\"$row[3]\"><i class=\"$row[9]\" title=\"$row[6]\"></i>&nbsp;$row[3]</h3>\n";
 						$result .= "<div class=\"card-tools\">\n";
 							$result .= "<button type=\"button\" title=\"" . $_SESSION["MINIMIZE"] . "\" class=\"btn btn-tool\" data-card-widget=\"collapse\">\n";
 								$result .= "<i class=\"fa fa-minus\"></i>\n";
@@ -880,7 +886,8 @@ class service extends table {
 	}
 	
 	//Funcion para mostrar el proceso de asignar servicio
-	function processAssign($step = 1) {
+	// SAA = Service Already Assigned
+	function processAssign($step = 1, $SAA = 7) {
 		$datZone = $this->request_zone->getRandomZone();
 		$parZone = $this->request_zone->getParentZone();
 		array_push($datZone, array("id" => $this->request_zone->ID,
@@ -908,7 +915,7 @@ class service extends table {
 		foreach($this->__getAllData() as $row) {
 			$validate = array();
 			//Si el servicio ya fue asignado
-			if($row[17] == 3) {
+			if($row[17] == $SAA) {
 				$data = array("id" => $row[42],
 								"status" => $_SESSION["SERVICE_ALREADY_ASSIGNED"]);
 				array_push($return,$data);
@@ -963,17 +970,24 @@ class service extends table {
 				}
 				case 2: {
 					$times = array();
+					$now = time();
+					for($int = 15;$int < 50;$int+=10)
+						array_push($times,date("h:i A", $now + ($int * 60)));
+					$sel = $times[0];
+					/*
 					$timePick = strtotime(date("Y-m-d") . " " . $row[60]);
 					$timeRequest = strtotime(date("Y-m-d") . " " . $row[61]);
 					for($i=0;$i<5;$i++) {
 						$tm = mt_rand($timePick,$timeRequest);
 						array_push($times,date("h:i A",$tm));
 					}
-					$times[mt_rand(0,4)] =  date("h:i A",$timePick);
+					$times[mt_rand(0,4)] = date("h:i A",$timePick);
+					*/
+					shuffle($times);
 					foreach($times as $key => $value) {
 						array_push($validate, array("id" => ($key + 1) ,
 													"text" => $value,
-													"valid" => $value == date("h:i A",$timePick)));
+													"valid" => $value == $sel));
 						/*
 						if($key+1 < count($times)) {
 							array_push($validate, array("id" => ($key + 1) ,
@@ -1012,17 +1026,24 @@ class service extends table {
 					$istrue = false;
 					*/
 					$times = array();
-					$timePick = strtotime(date("Y-m-d") . " " . $row[61]);
 					$timeRequest = strtotime(date("Y-m-d") . " " . $row[62]);
+					for($int = 15;$int < 50;$int+=10)
+						array_push($times,date("h:i A", $timeRequest + ($int * 60)));					
+					$sel = $times[3];
+					/*
+					$timePick = strtotime(date("Y-m-d") . " " . $row[61]);
+					$timeRequest = strtotime(date("Y-m-d") . " " . $row[62]);					
 					for($i=0;$i<3;$i++) {
 						$tm = mt_rand($timePick,$timeRequest);
 						array_push($times,date("h:i A",$tm));
 					}
 					$times[mt_rand(0,2)] = date("h:i A",$timeRequest);
+					*/
+					shuffle($times);
 					foreach($times as $key => $value) {
 						array_push($validate, array("id" => ($key + 1) ,
 													"text" => $value,
-													"valid" => $value == date("h:i A",$timeRequest)));
+													"valid" => $value == $sel));
 						/*
 						if($key == 0) {
 							array_push($validate, array("id" => ($key + 1),				
@@ -1231,7 +1252,7 @@ class service extends table {
     //Funcion que verifica servicios que no estan en subasta
     function getNotBidded() {
         //Arma la sentencia SQL
-        $this->sql = "SELECT * FROM " . $this->vie2;
+        $this->sql = "SELECT * FROM " . $this->vie2 . " WHERE EMPLOYEE_ID = '' AND STEP_ID <= 7";
 		//Variable a devolver
 		$return = array();
 		//Recorre los valores
@@ -1250,6 +1271,31 @@ class service extends table {
 		}
 		return $return;
     }
+
+    //Funcion que verifica servicios que no fueron atendidos
+    function getNotAttended() {
+        //Arma la sentencia SQL
+        $this->sql = "SELECT * FROM " . $this->vie2 . " WHERE STEP_ID BETWEEN 7 AND 10 AND SERVICE_DUE = TRUE";
+		//Variable a devolver
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+			//Arma la respuesta
+			$data = array("sid" => $row[0],
+							"stateid" => $row[1],
+							"service_state" => $row[2],
+							"registered_on" => $row[3],
+							"notified_on" => $row[4],
+							"minutes" => intval($row[5]),
+							"new_stateid" => $row[7],
+							"notification_id" => $row[8],
+							"service_due" => intval($row[9]) == 1,
+							"employee_id" => $row[11]);
+			array_push($return,$data);
+		}
+		return $return;
+    }
+
 
 }
 

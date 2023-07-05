@@ -35,7 +35,7 @@
 	}
 	else {
 		if(empty($_SESSION["LANGUAGE"])) {
-			$_SESSION["LANGUAGE"] = LANGUAGE;
+			$_SESSION["LANGUAGE"] = LANGUAGE;<
 		}
 	}
 	

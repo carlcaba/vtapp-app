@@ -12,13 +12,13 @@ class client_type extends table {
 	
 	//Constructor
 	function __constructor($client_type = "") {
-		$this->category($client_type);
+		$this->client_type($client_type);
 	}
 	
 	//Constructor anterior
 	function client_type($client_type = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_SYSTEM_CLIENT_TYPE");
+		parent::table("TBL_SYSTEM_CLIENT_TYPE");
 		//Inicializa los atributos
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
@@ -138,7 +138,7 @@ class client_type extends table {
 		foreach($this->__getAllData() as $row) {
             if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS
-                $row[1] = utf8_encode($row[1]);
+                $row[1] = mb_convert_encoding($row[1],"UTF-8");
             }
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
@@ -218,6 +218,7 @@ class client_type extends table {
 	
 	//Funcion que muestra la forma
 	function showForm($action, $tabs = 5) {
+		$stabs = "";
 		$resources = new resources();
 		//Verifica los recursos
 		$this->completeResources();
@@ -259,7 +260,7 @@ class client_type extends table {
 			$cont++;
 		}
 
-		$return .= $this->showField("RESOURCE_NAME", "$stabs\t", "", "", $showvalue, $this->getResource(), false, "9,9,12", $readonly[$cont++], $reso);
+		$return .= $this->showField("RESOURCE_NAME", "$stabs\t", "", "", $showvalue, $this->getResource(), false, "9,9,12", $readonly[$cont++]);
 		
 		if($viewData) {
 			$return .= $this->showField("REGISTERED_ON", "$stabs\t", "", "", $showvalue, "", false, "9,9,12", $readonly[$cont++]);

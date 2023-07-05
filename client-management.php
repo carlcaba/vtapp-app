@@ -31,7 +31,7 @@
 	$action = "";
 	$id = "";
 	$aliado = "";
-	$link = "clients.php?src=" . $source;
+	$linkBack = "clients.php";
 	if(!empty($_GET['id'])) {
 		$id = $_GET['id'];
 	}
@@ -48,7 +48,7 @@
 		if(substr($uscli->access->PREFIX,0,2) == "CL") {
 			$id = $uscli->REFERENCE;
 			$action = "edit";
-			$link = "clients-management.php";
+			$linkBack = "client-management.php";
 		}
 		//Si sigue siendo vacio
 		if($id == "")
@@ -105,6 +105,8 @@
 	require_once("core/classes/document_type.php");
 	$doc_type = new document_type();
 	
+	if($aliado == "''")
+		$aliado = "";
 ?>
 <!DOCTYPE html>
 <html>
@@ -181,7 +183,7 @@
 											<div class="form-group">
 												<label><?= $client->arrColComments["PAYMENT_TYPE_ID"] ?> *</label>
 												<select class="form-control" id="cbClientType" name="cbClientType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $client->client_type->client_type->showOptionList(9,$client->client_type->client_type->ID) ?>
+													<?= $client->client_type->showOptionList(9,$client->client_type->ID) ?>
 												</select>
 											</div>
 										</div>
@@ -189,7 +191,7 @@
 											<div class="form-group">
 												<label><?= $client->arrColComments["CLIENT_PAYMENT_TYPE_ID"] ?> *</label>
 												<select class="form-control" id="cbPaymentType" name="cbPaymentType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $client->client_type->showOptionList(9,$client->client_type->ID) ?>
+													<?= $client->client_type->client_type->showOptionList(9,$client->client_type->client_type->ID) ?>
 												</select>
 											</div>
 										</div>
@@ -230,7 +232,8 @@
 											<div class="form-group">
 												<label><?= $_SESSION["CONTRACT"] ?> *</label>
 												<select class="form-control" id="cbClientPaymentType" name="cbClientPaymentType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $client->client_payment->showOptionList(9,$client->client_payment->ID) ?>
+													<option value="0" data-clienttypeid="12" data-show="false">Sin contrato</option>
+													<option value="1" data-clienttypeid="3" data-show="true">Con contrato</option>
 												</select>
 											</div>
 										</div>
@@ -283,18 +286,19 @@
 	if($action != "view") {
 ?>
 									<button type="button" class="btn btn-success" id="btnSave" name="btnSave" title="<?= $_SESSION["SAVE_CHANGES"] ?>"><i class="fa fa-floppy-o"></i> <?= $_SESSION["SAVE_CHANGES"] ?></button>
-									<button type="button" class="btn btn-danger" id="btnCancel" name="btnCancel" title="<?= $_SESSION["MENU_CANCEL"] ?>" onclick="location.href='<?= $link ?>';"><i class="fa fa-times-circle"></i> <?= $_SESSION["MENU_CANCEL"] ?></button>
+									<button type="button" class="btn btn-danger" id="btnCancel" name="btnCancel" title="<?= $_SESSION["MENU_CANCEL"] ?>" onclick="location.href='<?= $linkBack ?>';"><i class="fa fa-times-circle"></i> <?= $_SESSION["MENU_CANCEL"] ?></button>
 <?
 	}
 	else {
 ?>
-									<button type="button" class="btn btn-primary" id="btnReturn" name="btnReturn" title="<?= $_SESSION["MENU_CANCEL"] ?>" onclick="location.href='<?= $link ?>';"><i class="fa fa-arrow-left"></i> <?= $_SESSION["MENU_CANCEL"] ?></button>
+									<button type="button" class="btn btn-primary" id="btnReturn" name="btnReturn" title="<?= $_SESSION["MENU_CANCEL"] ?>" onclick="location.href='<?= $linkBack ?>';"><i class="fa fa-arrow-left"></i> <?= $_SESSION["MENU_CANCEL"] ?></button>
 <?
 	}
 ?>
 									<input type="hidden" name="hfAction" id="hfAction" value="<?= $dataForm["actiontext"] ?>" /> 
 									<input type="hidden" name="hfLinkAction" id="hfLinkAction" value="<?= $dataForm["link"] ?>" /> 
 									<input type="hidden" name="hfIdAliado" id="hfIdAliado" value="<?= $aliado ?>" /> 
+									<input type="hidden" name="hfPartner" id="hfPartner" value="false" />
 								</div>							
 							</div>
 						</div>
@@ -330,17 +334,57 @@
 	$(document).ready(function() {
 		$('[data-toggle="tooltip"]').tooltip();
 		$("#cbClientType").on("change", function () {
-			var value = $(this).val();
+			var value = $("#cbClientType option:selected").data("clientType");
+			var contract = $("#cbClientType option:selected").data("contract");
 			$("#cbPaymentType").removeAttr("disabled");
-			$("#cbPaymentType").find("option[data-client-type='" + value + "']").removeAttr("disabled");
-			$("#cbPaymentType").find("option[data-client-type!='" + value + "']").attr("disabled","disabled");
-			$('#cbPaymentType option:not([disabled]):first').attr('selected', 'selected');
+			$("#cbPaymentType").find("option[value='" + value + "']").removeAttr("disabled");
+			$("#cbPaymentType").find("option[value!='" + value + "']").attr("disabled","disabled");
+			$('#cbPaymentType option:not([disabled]):first').prop('selected', true);
 
-			$("#cbClientPaymentType").find("option[data-clienttypeid='" + value + "']").removeAttr("disabled");
-			$("#cbClientPaymentType").find("option[data-clienttypeid!='" + value + "']").attr("disabled","disabled");
-			$('#cbClientPaymentType option:not([disabled]):first').attr('selected', 'selected');
+			$("#cbClientPaymentType").find("option[value='" + contract + "']").removeAttr("disabled");
+			$("#cbClientPaymentType").find("option[value!='" + contract + "']").attr("disabled","disabled");
+			$('#cbClientPaymentType option[value="' + contract + '"').prop('selected', true);
 		});
 		$("#btnSave").on("click", function(e) {
+			console.log("Saving");
+			if($("#cbClientPaymentType option:selected").data("show")) {
+				console.log("Enter cbClientPaymentType");
+				if($("#hfIdAliado").val() == "") {
+					console.log("Enter IdAliado");
+					var noty;
+					$.ajax({
+						url: "core/actions/_load/__loadPartner.php",
+						dataType: "json",
+						method: "POST",
+						beforeSend: function (xhrObj) {
+							var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+							noty = notify("", "dark", "", message, "", false);												
+						},
+						success:function(data){
+							console.log(data);
+							noty.close();
+							var cmbx = '<div class="form-group">\n<label><?= $_SESSION["PARTNER"] ?> *</label>\n<select class="form-control" id="cbPartner" name="cbPartner">\n';
+							$("#spanTitle").html("<?= $_SESSION["SELECT_PARTNER"] ?>");
+							$("#spanTitleName").html("");
+							$.each(data.data, function(key,value) {
+								cmbx += "<option value='" + value.value + "' " + (value.selected ? "selected" : "") + ">" + value.text + "</option>";
+							});
+							cmbx += "/select>\n</div>\n";
+							$("#modalBody").html(cmbx);
+							$("#btnActivate").unbind("click");
+							$("#btnActivate").bind("click", function() {
+								if($("#cbPartner option:selected").val() != "") {
+									$("#hfIdAliado").val($("#cbPartner option:selected").val());
+									$("#hfPartner").val(true);
+									$("#divActivateModal").modal("toggle");								
+								}
+							});
+							$("#divActivateModal").modal("toggle");
+						}
+					});
+					return false;
+				}
+			}
 			var form = document.getElementById('frmClient');
 			var noty;
 			if (form.checkValidity() === false) {
@@ -358,6 +402,18 @@
 			}
 			if(!datasObj.hasOwnProperty("cbBlocked")) {
 				datasObj["cbBlocked"] = $("#cbBlocked").is(':checked');
+			}
+			if(!datasObj.hasOwnProperty("hfIdAliado")) {
+				datasObj["hfIdAliado"] = $("#hfIdAliado").val();
+			}
+			if(!datasObj.hasOwnProperty("hfPartner")) {
+				datasObj["hfPartner"] = $("#hfPartner").val();
+			}
+			if(!datasObj.hasOwnProperty("cbClientPaymentType")) {
+				datasObj["cbClientPaymentType"] = $("#cbClientPaymentType option:selected").val()
+			}
+			if(datasObj["cbClientPaymentType"] == "0") {
+				datasObj["cbClientPaymentType"] = "2";				
 			}
 			datasObj["cbTBL_CLIENT_IDENTIFICATION"] = $("#hfDocType_" + $("#cbTBL_CLIENT_IDENTIFICATION").val()).val();
 			var datas = JSON.stringify(datasObj);

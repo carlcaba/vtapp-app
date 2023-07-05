@@ -368,3 +368,25 @@ label .glyphicon {
 #directChatBody {
 	overflow: hidden !important;
 }
+
+@font-face {
+	font-family: Ubio;
+	src: url("fonts/UbioRegular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: UbioBold;
+    font-weight: bold;
+    src: url("fonts/UbioBold.otf") format("opentype");
+}
+
+.ubio-brand {
+	font-family: UbioBold;
+	color: white;
+    font-size: 2.3em;	
+}
+
+.ubio-brand:after {
+	content:"\00ae";
+	font-size: small;	
+}

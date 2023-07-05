@@ -24,7 +24,7 @@ class vehicle extends table {
 	//Constructor anterior
 	function vehicle ($vehicle  = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_VEHICLE");
+		parent::table("TBL_VEHICLE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

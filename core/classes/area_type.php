@@ -18,7 +18,7 @@ class area_type extends table {
 	//Constructor anterior
 	function area_type($area = '') {
 		//Llamado al constructor padre
-		parent::tabla("TBL_AREA_TYPE");
+		parent::table("TBL_AREA_TYPE");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";

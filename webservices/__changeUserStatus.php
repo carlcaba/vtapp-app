@@ -10,6 +10,8 @@
 	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
 	header('Access-Control-Allow-Methods: GET, POST, PUT');	
 	header('Content-Type: application/json');	
+
+	$uid = uniqid();
 	
 	//Incluye las clases necesarias
 	require_once("../core/classes/resources.php");
@@ -39,7 +41,7 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
-	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), " ", json_encode($result));
+	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
@@ -54,7 +56,6 @@
 				$token = $_GET['token'];
 				$pos = $_GET['pos'];
 				$id = $_GET['id'];
-				_error_log(print_r($_GET,true));
 			}
 		}
 		else {
@@ -63,7 +64,6 @@
 			$token = $_POST['token'];
 			$pos = $_POST['pos'];
 			$id = $_POST['id'];				
-			_error_log(print_r($_POST,true));
 		}
 	} 
 	else {
@@ -74,7 +74,6 @@
 		$estado = $vars['state'];
 		$pos = $vars['pos'];
 		$id = $vars['id'];
-		_error_log(print_r($vars,true));
 	}
 	
 	//Verifica la informacion
