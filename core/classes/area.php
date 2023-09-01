@@ -215,6 +215,14 @@ class area extends table {
 				$sWhere .= " AND PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 			}
 		}
+		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "DO") {
+			if($sWhere == "") {
+				$sWhere = " WHERE CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			}
+			else {
+				$sWhere .= " AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			}
+		}
 		//Cuenta el total de filas
 		$this->sql = "SELECT COUNT(DISTINCT AREA_ID) FROM $this->view $sWhere";
         //Obtiene los resultados
@@ -228,7 +236,8 @@ class area extends table {
 		$output = array(
 			"recordsTotal" => $iTotal,
 			"recordsFiltered" => $iTotal,
-			"data" => array());
+			"data" => array(),
+			"sql" => "");
 		
 		//Arma la sentencia SQL
 		$this->sql = "SELECT DISTINCT " . str_replace(" , "," ",implode(", ",$aColumnsBD)) . " FROM $this->view $sWhere $sOrder $sLimit";
@@ -268,7 +277,7 @@ class area extends table {
 			}
 			array_push($output['data'],$row);
 		}
-		array_push($output['sql'],$this->sql);
+		$output['sql'] = $this->sql;
 		return $output;
 	}
 	

@@ -1,4 +1,5 @@
 <?
+
 	//Web service que genera el login del usuario
 	//LOGICA ESTUDIO 2019
 	
@@ -39,18 +40,16 @@
 	$config = new configuration("DEBUGGING");
 	$debug = $config->verifyValue();
 	
+	$httpcode = NULL;
+	
 	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
-				header("HTTP/1.1 400 Bad Request " . $result["message"]);
-				exit;		
-				/*
-				//Termina
-				exit(json_encode($result));
-				*/
+				$httpcode = 400;
+				goto _Exit;
 			}
 			else {
 				$usuario = $_GET['user'];
@@ -72,12 +71,12 @@
 	//Verifica la informacion
 	if(empty($usuario)) {
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
+		$httpcode = 400;
 		goto _Exit;		
 	}
 	if(empty($pass)) {
 		$result['message'] = $_SESSION["PASSWORD_EMPTY"];
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["PASSWORD_EMPTY"]);
+		$httpcode = 400;
 		goto _Exit;		
 	}
 
@@ -90,24 +89,19 @@
 	//Asigna los valores
 	$usua->THE_PASSWORD = $pass;
 
-	_error_log(print_r($usua->arrColDatas,true));
-
-		
 	//Valida la contrase�a
 	$usua->check(true);
 	
 	//Si hay error
 	if($usua->nerror > 0) {
 		$result['message'] = $usua->error;
+		$httpcode = 400;
 		goto _Exit;		
 	}
 	
-	_error_log("Verificar estado del usuario: " . print_r($usua->arrColDatas,true),$usua->sql);
-	
-	_error_log(filter_var($usua->ON_LINE, FILTER_VALIDATE_BOOLEAN));
-	
 	if(filter_var($usua->ON_LINE, FILTER_VALIDATE_BOOLEAN) || intval($usua->ON_LINE) == 1) {
 		$result['message'] = $_SESSION["MESSENGER_LOGGED_ON"];
+		$httpcode = 419;
 		goto _Exit;		
 	}
 	
@@ -115,6 +109,7 @@
 
 	if(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN) || intval($usua->LOGGED) == 1) {
 		$result['message'] = $_SESSION["MESSENGER_ALREADY_LOGGED"];
+		$httpcode = 419;
 		goto _Exit;		
 	}
 	
@@ -174,6 +169,10 @@
 	
 	_Exit:
 	$idws = updateTraceWS($idws, json_encode($result));	
+	
+	if($httpcode !== NULL) {
+		_http_response_code($result["message"],$httpcode);
+	}
 	//Termina
 	exit(json_encode($result));
 ?>

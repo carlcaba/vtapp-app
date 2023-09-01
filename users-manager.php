@@ -27,15 +27,14 @@
 		$inter->redirect($result["link"]);
 	
 	$user = new users($_SESSION["vtappcorp_userid"]);
+	$titleUsr = $source == "" ? $_SESSION["MENU_7"] : $_SESSION["USER_" . strtoupper($source)];
 	
 	if($user->REFERENCE != "") {
 		$source .= ";" . $user->REFERENCE;
 	}
-	
+
 	require_once("core/classes/configuration.php");
 	$conf = new configuration("INIT_PASSWORD");
-
-	$titleUsr = $source == "" ? $_SESSION["MENU_7"] : $_SESSION["USER_" . strtoupper($source)];
 
 ?>
 <!DOCTYPE html>

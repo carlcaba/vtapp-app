@@ -30,11 +30,11 @@
 		$ref = "";
 	
 	if($value != 0) {
-		if ($value >= 20 && $value < 50) {
+		if ($value >= 20 && $value < 60) {
 			require_once("../../classes/client.php");
-			$class = new client();
+			$class = new client($value);
 		}
-		elseif ($value >= 50 && $value < 90) {
+		elseif ($value >= 60 && $value < 90) {
 			require_once("../../classes/partner.php");
 			$class = new partner();
 		}

@@ -39,12 +39,14 @@
 	
 	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
+	$httpcode = NULL;
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
-				header("HTTP/1.1 400 Bad Request " . $result["message"]);
-				goto _Exit;		
+				$httpcode = 400;
+				goto _Exit;
 			}
 			else {
 				$usuario = $_GET['user'];
@@ -66,12 +68,12 @@
 	//Verifica la informacion
 	if(empty($usuario)) {
 		$result["message"] = $_SESSION["USERNAME_EMPTY"];
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["USERNAME_EMPTY"]);
+		$httpcode = 400;
 		goto _Exit;		
 	}
 	if(empty($token)) {
 		$result["message"] = $_SESSION["TOKEN_EMPTY"];
-		header("HTTP/1.1 400 Bad Request " . $_SESSION["TOKEN_EMPTY"]);
+		$httpcode = 400;
 		goto _Exit;		
 	}
 
@@ -84,7 +86,7 @@
 	//Si hay error
 	if($usua->nerror > 0) {
 		$result["message"] = $usua->error;
-		header("HTTP/1.1 403 Forbidden " . $usua->error);
+		$httpcode = 403;
 		//Termina
 		goto _Exit;
 	}
@@ -96,7 +98,7 @@
 	//Si hay error
 	if($exts->nerror > 0) {
 		$result["message"] = $exts->error;
-		header("HTTP/1.1 400 Bad Request " . $exts->error);
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -126,6 +128,11 @@
 	$usua->setOnline(false);
 
 	$idws = updateTraceWS($idws, json_encode($result));
+
+	if($httpcode !== NULL) {
+		_http_response_code($result["message"],$httpcode);
+	}
+	
 	//Termina
 	exit(json_encode($result));
 ?>

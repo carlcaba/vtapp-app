@@ -43,10 +43,13 @@
 	
 	$idws = addTraceWS(explode(".",basename(__FILE__))[0], json_encode($_REQUEST), $uid, json_encode($result));
 	
+	$httpcode = NULL;
+	
 	//Captura las variables
 	if($_SERVER['REQUEST_METHOD'] != 'PUT') {
 		if(!isset($_POST['user'])) {
 			if(!isset($_GET['user'])) {
+				$httpcode = 400;
 				//Termina
 				goto _Exit;
 			}
@@ -86,6 +89,7 @@
 	if(empty($user)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["USERNAME_EMPTY"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -93,12 +97,14 @@
 	if(empty($token)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["TOKEN_EMPTY"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
 	if(empty($id)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ID_SERVICE_EMPTY"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -106,6 +112,7 @@
 	if(empty($tipo)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_TYPE_EMPTY"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -114,6 +121,7 @@
 	if(!(intval($tipo) > 0 && intval($tipo) < 11)) {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["ACTION_NOT_DEFINED"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -123,6 +131,7 @@
 	if(intval($tipo) == 1 && $pos == "") {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["POSITION_REQUIRED"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -132,6 +141,7 @@
 	if(intval($tipo) == 8 && $det == "") {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["NO_DETAILS_FOR_CANCEL"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -141,25 +151,17 @@
 	if(intval($tipo) == 4 && $pos == "") {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["POSITION_REQUIRED"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
-
-	/*
-	//Actualizar posicion
-	if(intval($tipo) == 10 && $pos == "") {
-		//Confirma mensaje al usuario
-		$result['message'] = $_SESSION["POSITION_REQUIRED"];
-		//Termina
-		goto _Exit;
-	}
-	*/
 	
 	//Si no tiene los parametros para la accion
 	//Cancelar
 	if(intval($tipo) == 10 && $det == "") {
 		//Confirma mensaje al usuario
 		$result['message'] = $_SESSION["NO_DETAILS_FOR_DELAY"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -171,8 +173,9 @@
 
 	//Verifica si hay error
 	if(!$check["success"]) {
-		header("HTTP/1.1 401 Unauthorized " . $_SESSION["SESSION_ENDED"]);
-		exit;		
+		$result["message"] = $_SESSION["SESSION_ENDED"];
+		$httpcode = 400;
+		goto _Exit;		
 	}
 
 	//Verifica el ID de servicio
@@ -184,6 +187,7 @@
 	if($service->nerror > 0) {
 		//Asigna el mensaje
 		$result["message"] = $service->error;
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -203,6 +207,7 @@
 	if($className == "") {
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["NO_VALID_ACTION_TYPE"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -211,6 +216,7 @@
 	if($method == "") {
 		//Asigna el mensaje
 		$result["message"] = $_SESSION["NO_VALID_METHOD_TYPE"];
+		$httpcode = 400;
 		//Termina
 		goto _Exit;
 	}
@@ -219,6 +225,7 @@
 		if(empty($pos)) {
 			//Asigna el mensaje
 			$result["message"] = $_SESSION["POSITION_REQUIRED"];
+			$httpcode = 400;
 			//Termina
 			goto _Exit;
 		}
@@ -300,6 +307,11 @@
 
 	_Exit:
 	$idws = updateTraceWS($idws, json_encode($result));	
+	
+	if($httpcode !== NULL) {
+		_http_response_code($result["message"],$httpcode);
+	}
+	
 	//Termina
 	exit(json_encode($result));
 ?>

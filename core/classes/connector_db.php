@@ -81,7 +81,7 @@ class connector_db {
 	var $conex_id = 0;
 	var $query_id = 0;
 	
-	var $env = "prod";
+	var $env = "deve";
 	var $maxAlt = 0;
 	/* numero de error y texto error */
 	var $Errno = 0;
@@ -108,7 +108,7 @@ class connector_db {
 	
 	//Constructor anterior
     function connector_db() {
-		$this->env = "prod";
+		$this->env = "deve";
 		$this->conex_id = 0;
 		$this->maxAlt = $this->getMaxAlternateConnections();
 		foreach($this->datas as $key => $value) {

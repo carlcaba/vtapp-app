@@ -48,7 +48,7 @@
 		if(substr($uscli->access->PREFIX,0,2) == "CL") {
 			$id = $uscli->REFERENCE;
 			$action = "edit";
-			$linkBack = "client-management.php";
+			$linkBack = "client-management-dom.php";
 		}
 		//Si sigue siendo vacio
 		if($id == "")
@@ -183,7 +183,10 @@
 											<div class="form-group">
 												<label><?= $client->arrColComments["PAYMENT_TYPE_ID"] ?> *</label>
 												<select class="form-control" id="cbClientType" name="cbClientType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $client->client_type->showOptionList(9,$client->client_type->ID) ?>
+													<option value="ECL">Empresa cliente</option>
+													<option value="EPR">Empresa proveedor</option>
+													<option value="ECT">Empresa contratista</option>
+													
 												</select>
 											</div>
 										</div>
@@ -191,7 +194,10 @@
 											<div class="form-group">
 												<label><?= $client->arrColComments["CLIENT_PAYMENT_TYPE_ID"] ?> *</label>
 												<select class="form-control" id="cbPaymentType" name="cbPaymentType" <?= $dataForm["readonly"][$cont++] ?>>
-													<?= $client->client_type->client_type->showOptionList(9,$client->client_type->client_type->ID) ?>
+													<option value="DCTO">Descuento cupo en UBIO</option>
+													<option value="PCEO">Pago contra entrega ORIGEN</option>
+													<option value="PCED">Pago contra entrega DESTINO</option>
+													
 												</select>
 											</div>
 										</div>
@@ -299,7 +305,7 @@
 									<input type="hidden" name="hfLinkAction" id="hfLinkAction" value="<?= $dataForm["link"] ?>" /> 
 									<input type="hidden" name="hfIdAliado" id="hfIdAliado" value="<?= $aliado ?>" /> 
 									<input type="hidden" name="hfPartner" id="hfPartner" value="false" />
-									<input type="hidden" name="hfDOM" id="hfDOM" value="false" />
+									<input type="hidden" name="hfDOM" id="hfDOM" value="true" />
 								</div>							
 							</div>
 						</div>
@@ -359,6 +365,7 @@
 							noty = notify("", "dark", "", message, "", false);												
 						},
 						success:function(data){
+							console.log(data);
 							noty.close();
 							var cmbx = '<div class="form-group">\n<label><?= $_SESSION["PARTNER"] ?> *</label>\n<select class="form-control" id="cbPartner" name="cbPartner">\n';
 							$("#spanTitle").html("<?= $_SESSION["SELECT_PARTNER"] ?>");

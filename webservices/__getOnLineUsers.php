@@ -39,8 +39,6 @@
 
 	$usua = new users();
 
-	_error_log("$uid - " . "Getting connected users " . date("Ymd H:i:s"));
-
 	$pid = "";
 	//Captura las variables
 	if(empty($_POST['pid']))
@@ -65,7 +63,6 @@
 	}
 	
 	$count = 0;
-	_error_log("$uid - " . "Returning " . count($usuarios) . " records " . date("Ymd H:i:s"));
 	
 	//Cambia el resultado
 	$result['success'] = true;

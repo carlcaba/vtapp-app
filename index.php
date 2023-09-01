@@ -116,9 +116,11 @@
 				<p class="mb-1">
 					<a href="forgot-password.php"><?= $_SESSION["FORGOT_PASSWORD"] ?></a>
 				</p>
+				<!--
 				<p class="mb-0">
 					<a href="register.php" class="text-center"><?= $_SESSION["REGISTER_MEMBERSHIP"] ?></a>
 				</p>
+				-->
 			</div>
 			<!-- /.login-card-body -->
 		</div>

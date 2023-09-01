@@ -17,6 +17,7 @@ class client extends table {
 	var $city;
 	var $client_type;
 	var $client_payment;
+	var $access;
 	
 	//Constructor
 	function __constructor($client = "") {
@@ -24,14 +25,19 @@ class client extends table {
 	}
 	
 	//Constructor anterior
-	function client ($client  = '') {
+	function client ($client = '') {
 		//Llamado al constructor padre
 		parent::table("TBL_CLIENT");
 		//Inicializa los atributos
 		$this->ID = "UUID()";
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
-		$this->CLIENT_NAME = $client;
+		if(!is_numeric($client)) {
+			$this->CLIENT_NAME = $client;
+		}
+		else {
+			$this->access = $client;
+		}
 		//Especifica los valores unicos
 		$this->_addUniqueColumn("ID");
 		//Relaciones con otras clases
