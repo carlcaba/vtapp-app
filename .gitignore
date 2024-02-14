@@ -2735,3 +2735,4 @@ my-errors.log
 test_api.php
 webservices/error_log
 webservices/my-errors.log
+test_conection.php

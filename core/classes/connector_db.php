@@ -20,11 +20,11 @@ class connector_db {
 										"port" => 3306,
 										"user" => "logicaad_vtapp_u",
 										"pass" => "Vt4ppC0rp0r1t3$"),
-						"deve" => array("db" => "vtappcorp",
-										"host" => "localhost",
+						"deve" => array("db" => "test_vtapp",
+										"host" => "mysql",
 										"port" => 3306,
-										"user" => "vtappcorp_u",
-										"pass" => "Vt4ppC0rp0r1t3$")
+										"user" => "root",
+										"pass" => "root")
 						);
 	var $dataAlt = array(
 		//LOCAL ALTERNATE CONNECTIONS
