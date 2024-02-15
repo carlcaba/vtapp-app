@@ -367,24 +367,25 @@
 			$("#spanTitleName").html("");
 			$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
 			$("#btnActivate").unbind("click");
+			console.log(datas, url);
 			$("#btnActivate").bind("click", function() {
 				var noty;
-				$.ajax({
-					url: url,
-					method: "POST",
-					data: { strModel: datas },
-					dataType: "json",
-					beforeSend: function (xhrObj) {
-						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-						noty = notify("", "dark", "", message, "", false);												
-					},
-					success:function(data){
-						noty.close();
-						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-						if(data.success)
-							location.href = data.link;
-					}
-				});
+				// $.ajax({
+				// 	url: url,
+				// 	method: "POST",
+				// 	data: { strModel: datas },
+				// 	dataType: "json",
+				// 	beforeSend: function (xhrObj) {
+				// 		var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+				// 		noty = notify("", "dark", "", message, "", false);												
+				// 	},
+				// 	success:function(data){
+				// 		noty.close();
+				// 		notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+				// 		if(data.success)
+				// 			location.href = data.link;
+				// 	}
+				// });
 			});
 			$("#divActivateModal").modal("toggle");			
 		});
