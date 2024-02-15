@@ -369,6 +369,7 @@
 			$("#btnActivate").unbind("click");
 			console.log(datas, url);
 			$("#btnActivate").bind("click", function() {
+				//TODO: Aca se va a realizar la logica para afilia tu empresa
 				var noty;
 				// $.ajax({
 				// 	url: url,
