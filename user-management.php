@@ -306,7 +306,45 @@
 	
     <script>
 	$(document).ready(function() {
+		// Nuevo desarrollo Nativapps
 		var action = "<?= $action ?>";
+		$("#cbAccess").trigger("change");
+
+		// Inicializar el stepper
+		var stepper = new Stepper($('#stepper1')[0]);
+		var nextBtn = $('#nextBtn');
+		var previousBtn = $('#previousBtn');
+		var btnCancelActivate = $('#btnCancelActivate');
+		var lastStep = 2;
+		previousBtn.hide();
+		nextBtn.html('Comienza aquí');
+		previousBtn.html('Anterior');
+
+		$("#stepper1")[0].addEventListener('show.bs-stepper', function (event) {
+			console.log('Moved to step ' + event.detail.indexStep)
+			var indexStep = event.detail.indexStep;
+			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('Comienza aquí')};
+			if (indexStep === 1) {previousBtn.show(); nextBtn.html('Siguiente')}
+			if (indexStep === lastStep)  {nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+			
+		})
+
+		$("#stepper1")[0].addEventListener('shown.bs-stepper', function(event){
+			console.log('Paso completado:', event.target);
+		});
+
+		nextBtn.click(function(event) {
+			stepper.next();
+		});
+
+		previousBtn.click(function() {
+			stepper.previous();
+		});
+
+		$('#divActivateModalAffiliateUsers').on('hidden.bs.modal', function (event) {
+			stepper.reset();
+		})
+		//////////////////////////////////////////////////////////////////////////////
 
 		$('[data-toggle="tooltip"]').tooltip();
 		$('#txtEMAIL').on('input',function(e){
@@ -343,6 +381,7 @@
 			}
 		});		
 		$("#btnSave").on("click", function(e) {
+			$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO: Borrar
 			var form = document.getElementById('frmUser');
 			var noty;
 			if (form.checkValidity() === false) {
@@ -410,8 +449,6 @@
 			}
 		});
 
-		$("#cbAccess").trigger("change");
-
 		function checkClientIsAffiliationType(data) {
 			return new Promise(function(resolve, reject) {
 				var noty;
@@ -440,15 +477,15 @@
     </script>
 	<script>
 		
-	var stepper1Node = document.querySelector('#stepper1')
-	var stepper1 = new Stepper(document.querySelector('#stepper1'))
+	// var stepper1Node = document.querySelector('#stepper1')
+	// var stepper1 = new Stepper(document.querySelector('#stepper1'))
 
-	stepper1Node.addEventListener('show.bs-stepper', function (event) {
-		console.log('show.bs-stepper', event)
-	})
-	stepper1Node.addEventListener('shown.bs-stepper', function (event) {
-		console.log('shown.bs-stepper', event)
-	})
+	// stepper1Node.addEventListener('show.bs-stepper', function (event) {
+	// 	console.log('show.bs-stepper', event)
+	// })
+	// stepper1Node.addEventListener('shown.bs-stepper', function (event) {
+	// 	console.log('shown.bs-stepper', event)
+	// })
 
 	// var stepper2 = new Stepper(document.querySelector('#stepper2'), {
 	// linear: false,
