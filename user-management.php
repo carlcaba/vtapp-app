@@ -88,6 +88,7 @@
 ?>
 	<!-- bootstrap toogle -->
 	<link rel="stylesheet" href="plugins/bootstrap-toggle/css/bootstrap-toggle.min.css"></link>	
+	<link rel="stylesheet" href="plugins/bs-stepper/css/bs-stepper.min.css"></link>	
 </head>
 <body class="hold-transition sidebar-mini <?= $skin[2] ?>">
 	<div class="wrapper">
@@ -289,6 +290,7 @@
 	$userModal = true;
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
+	include("core/templates/__modalAffiliate.php");
 ?>
 
 	<!-- SlimScroll -->
@@ -299,9 +301,13 @@
 	<script src="plugins/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>	
 	<!-- Resources -->
 	<script src="js/resources.js"></script>	
+	<!-- bs-stepper -->
+	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	
 	
     <script>
 	$(document).ready(function() {
+		var action = "<?= $action ?>";
+
 		$('[data-toggle="tooltip"]').tooltip();
 		$('#txtEMAIL').on('input',function(e){
 			var nameParts = $(this).val().split("@");
@@ -367,32 +373,92 @@
 			$("#spanTitleName").html("");
 			$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
 			$("#btnActivate").unbind("click");
-			console.log(datas, url);
+
 			$("#btnActivate").bind("click", function() {
-				//TODO: Aca se va a realizar la logica para afilia tu empresa
 				var noty;
-				// $.ajax({
-				// 	url: url,
-				// 	method: "POST",
-				// 	data: { strModel: datas },
-				// 	dataType: "json",
-				// 	beforeSend: function (xhrObj) {
-				// 		var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
-				// 		noty = notify("", "dark", "", message, "", false);												
-				// 	},
-				// 	success:function(data){
-				// 		noty.close();
-				// 		notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
-				// 		if(data.success)
-				// 			location.href = data.link;
-				// 	}
-				// });
+				$.ajax({
+					url: url,
+					method: "POST",
+					data: { strModel: datas },
+					dataType: "json",
+					beforeSend: function (xhrObj) {
+						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+						noty = notify("", "dark", "", message, "", false);												
+					},
+					success:function(data){
+						noty.close();
+						notify("", (data.success ? 'info' : 'danger'), "", data.message, "");
+						if(data.success)
+							location.href = data.link;
+					}
+				});
 			});
-			$("#divActivateModal").modal("toggle");			
+			//TODO: Aca se va a realizar la logica para afilia tu empresa
+			if (action === "new") {
+				console.log(datas, url, action);
+				checkClientIsAffiliationType(datas).then(function(resp) {
+					if (resp.is_affiliated_client) {
+						$("#divActivateModalAffiliateUsers").modal("toggle");
+					} else {
+						$("#divActivateModal").modal("toggle");
+					}
+				}).catch(function(error) {
+
+				});
+			} else {
+				$("#divActivateModal").modal("toggle");
+			}
 		});
+
 		$("#cbAccess").trigger("change");
+
+		function checkClientIsAffiliationType(data) {
+			return new Promise(function(resolve, reject) {
+				var noty;
+				$.ajax({
+					url: 'core/actions/_load/__checkClientIsAffiliationType.php',
+					method: "POST",
+					data: data,
+					contentType: 'application/json',
+					beforeSend: function (xhrObj) {
+						console.log(xhrObj)
+						// var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+						// noty = notify("", "dark", "", message, "", false);												
+					},
+					success:function(response){
+						console.log(response)
+						resolve(response)
+					},error: function(xhr, status, error) {
+						reject(error)
+					}
+				});
+			})
+		}
 	});
+
 	
+    </script>
+	<script>
+		
+	var stepper1Node = document.querySelector('#stepper1')
+	var stepper1 = new Stepper(document.querySelector('#stepper1'))
+
+	stepper1Node.addEventListener('show.bs-stepper', function (event) {
+		console.log('show.bs-stepper', event)
+	})
+	stepper1Node.addEventListener('shown.bs-stepper', function (event) {
+		console.log('shown.bs-stepper', event)
+	})
+
+	// var stepper2 = new Stepper(document.querySelector('#stepper2'), {
+	// linear: false,
+	// animation: true
+	// })
+	// var stepper3 = new Stepper(document.querySelector('#stepper3'), {
+	// animation: true
+	// })
+	// var stepper4 = new Stepper(document.querySelector('#stepper4'))
+		
     </script>
 <?
 	include("core/templates/__mapModal.tpl");
