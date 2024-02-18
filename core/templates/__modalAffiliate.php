@@ -1,9 +1,9 @@
 <!-- Modal Reset Password / Activate user -->
-<div class="modal fade bd-example-modal-lg" id="divActivateModalAffiliateUsers" tabindex="-1" role="dialog" aria-labelledby="h5Modal2Label" aria-hidden="true" style="z-index: 99998 !important;">
+<div class="modal fade bd-example-modal-lg" id="divActivateModalAffiliateUsers" tabindex="-1" role="dialog" aria-labelledby="h5Modal2Label" aria-hidden="true" data-backdrop="static" style="z-index: 99998 !important;">
 	<div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="h5Modal2Label"><i class="fa fa-exclamation-triangle"></i> <span id="spanTitle"></span> <span id="spanTitleName"></span>Pasos para la afiliación</h5>
+				<h5 class="modal-title" id="h5Modal2Label"><i class="fa fa-exclamation-triangle"></i> <span id="spanTitle"></span> <span id="spanTitleName"></span><?= $_SESSION["AFFILIATION_RATE_TITLE_MODAL"] ?></h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -14,33 +14,33 @@
 						<div class="step" data-target="#test-l-1">
 							<button type="button" class="step-trigger">
 								<span class="bs-stepper-circle">1</span>
-								<span class="bs-stepper-label">Bienvenido</span>
+								<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_1"] ?></span>
 							</button>
 						</div>
 						<div class="line"></div>
 						<div class="step" data-target="#test-l-2">
 							<button type="button" class="step-trigger">
 								<span class="bs-stepper-circle">2</span>
-								<span class="bs-stepper-label">Rellena tu plan</span>
+								<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_2"] ?></span>
 							</button>
 						</div>
 						<div class="line"></div>
 						<div class="step" data-target="#test-l-3">
 							<button type="button" class="step-trigger">
 								<span class="bs-stepper-circle">3</span>
-								<span class="bs-stepper-label">Confirmar compra</span>
+								<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_3"] ?></span>
 							</button>
 						</div>
 					</div>
 					<div class="bs-stepper-content">
 						<div id="test-l-1" class="content">
-							<h2>Desde aquí podrás gestionar tu afiliación</h2>
-							<p>Recuerda que deberás adquirir un servicio de afiliación para tu empresa, cada una de las empresas aliadas que trabajen contigo y adquirir membresías para usuarios con una base mensual.</p>
+							<h2><?= $_SESSION["AFFILIATION_RATE_STEP1_H2"] ?></h2>
+							<p><?= $_SESSION["AFFILIATION_RATE_STEP1_P"] ?></p>
 
 							<div class="form-check">
-								<input class="form-check-input" id="exampleRadios1" name="exampleRadios1" type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="success">
-								<label class="form-check-label" for="exampleRadios1">
-									* Acepta los términos y condiciones de tu plan Vincula tu Aliado
+								<input class="form-check-input form-control" id="acceptTermsConditionsId" name="acceptTermsConditions" type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="success">
+								<label class="form-check-label" for="acceptTermsConditions">
+									<?= $_SESSION["AFFILIATION_RATE_ACCEPT_TERMS_CONDITIONS"] ?>
 								</label>
 							</div>
 
@@ -55,10 +55,10 @@
 						</div>
 						<div class="row justify-content-between mt-3">
 							<div class="col-auto">
-								<button class="btn btn-secondary" id="previousBtn">previous</button>
+								<button class="btn btn-secondary" id="previousBtn"><?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?></button>
 							</div>
 							<div class="col-auto">
-								<button class="btn btn-primary" id="nextBtn">Next</button>
+								<button class="btn btn-primary" id="nextBtn"><?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?></button>
 							</div>
 						</div>
 					</div>

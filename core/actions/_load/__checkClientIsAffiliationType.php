@@ -20,7 +20,6 @@ try {
 		$is_affiliated_client = true;
 	}
 
-	error_log(date('d.m.Y h:i:s') . " - " . json_encode([$cbReference, $payment_type_id]) . PHP_EOL, 3, 'my-errors.log');
 	$resp = array(
 		'code' => '202',
 		'status' => 'success',

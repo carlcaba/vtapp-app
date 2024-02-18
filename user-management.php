@@ -290,7 +290,7 @@
 	$userModal = true;
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
-	include("core/templates/__modalAffiliate.php");
+	include("core/templates/__modalAffiliate.php"); //TODO Nativapps
 ?>
 
 	<!-- SlimScroll -->
@@ -302,29 +302,28 @@
 	<!-- Resources -->
 	<script src="js/resources.js"></script>	
 	<!-- bs-stepper -->
-	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	
+	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	<!--TODO Nativapps -->
 	
     <script>
 	$(document).ready(function() {
-		// Nuevo desarrollo Nativapps
+		//TODO Nuevo desarrollo Nativapps
 		var action = "<?= $action ?>";
-		$("#cbAccess").trigger("change");
-
 		// Inicializar el stepper
 		var stepper = new Stepper($('#stepper1')[0]);
 		var nextBtn = $('#nextBtn');
 		var previousBtn = $('#previousBtn');
 		var btnCancelActivate = $('#btnCancelActivate');
+		var acceptTermsConditionsId = $('#acceptTermsConditionsId');
 		var lastStep = 2;
 		previousBtn.hide();
-		nextBtn.html('Comienza aquí');
-		previousBtn.html('Anterior');
+		nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
+		previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
 
 		$("#stepper1")[0].addEventListener('show.bs-stepper', function (event) {
 			console.log('Moved to step ' + event.detail.indexStep)
 			var indexStep = event.detail.indexStep;
-			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('Comienza aquí')};
-			if (indexStep === 1) {previousBtn.show(); nextBtn.html('Siguiente')}
+			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
+			if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
 			if (indexStep === lastStep)  {nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
 			
 		})
@@ -380,8 +379,12 @@
 				});
 			}
 		});		
-		$("#btnSave").on("click", function(e) {
-			$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO: Borrar
+		$("#btnSave").on("click", function(e) {			
+			//TODO Nativapps
+			acceptTermsConditionsId.bootstrapToggle('off');
+			nextBtn.prop("disabled", true);
+			/////////////////////
+
 			var form = document.getElementById('frmUser');
 			var noty;
 			if (form.checkValidity() === false) {
@@ -432,11 +435,11 @@
 					}
 				});
 			});
-			//TODO: Aca se va a realizar la logica para afilia tu empresa
+			//TODO Aca se va a realizar la logica para afilia tu empresa
 			if (action === "new") {
-				console.log(datas, url, action);
 				checkClientIsAffiliationType(datas).then(function(resp) {
 					if (resp.is_affiliated_client) {
+						$('#acceptTermsConditions').prop('checked', false);
 						$("#divActivateModalAffiliateUsers").modal("toggle");
 					} else {
 						$("#divActivateModal").modal("toggle");
@@ -447,8 +450,22 @@
 			} else {
 				$("#divActivateModal").modal("toggle");
 			}
+			////////////////////
 		});
 
+		//TODO Nativapps
+		acceptTermsConditionsId.change(function(){
+            if ($(this).is(':checked')) {
+                nextBtn.prop('disabled', false);
+            } else {
+                nextBtn.prop('disabled', true);
+            }
+        });
+		///////////////////
+
+		$("#cbAccess").trigger("change");
+
+		//TODO Nativapps
 		function checkClientIsAffiliationType(data) {
 			return new Promise(function(resolve, reject) {
 				var noty;
@@ -471,31 +488,10 @@
 				});
 			})
 		}
+		///////////////
 	});
 
 	
-    </script>
-	<script>
-		
-	// var stepper1Node = document.querySelector('#stepper1')
-	// var stepper1 = new Stepper(document.querySelector('#stepper1'))
-
-	// stepper1Node.addEventListener('show.bs-stepper', function (event) {
-	// 	console.log('show.bs-stepper', event)
-	// })
-	// stepper1Node.addEventListener('shown.bs-stepper', function (event) {
-	// 	console.log('shown.bs-stepper', event)
-	// })
-
-	// var stepper2 = new Stepper(document.querySelector('#stepper2'), {
-	// linear: false,
-	// animation: true
-	// })
-	// var stepper3 = new Stepper(document.querySelector('#stepper3'), {
-	// animation: true
-	// })
-	// var stepper4 = new Stepper(document.querySelector('#stepper4'))
-		
     </script>
 <?
 	include("core/templates/__mapModal.tpl");
