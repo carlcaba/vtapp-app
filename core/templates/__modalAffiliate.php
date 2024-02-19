@@ -46,8 +46,96 @@
 
 						</div>
 						<div id="test-l-2" class="content">
-							<h2>Step 2 Content</h2>
-							<!-- Aquí va el contenido del paso 2 -->
+							<h2>conocer el valor y elegir la cantidad de aliados y usuarios </h2>
+							<div class="container px-3 my-5 clearfix">
+								<!-- Shopping cart table -->
+								<div class="card">
+									<div class="card-header">
+										<h4>Adiciona empresas aliadas, mensajeros y usuarios de tu plataforma aquí</h4>
+									</div>
+									<div class="card-body">
+										<div class="table-responsive">
+											<table class="table table-bordered m-0">
+												<thead>
+													<tr>
+														<!-- Set columns width -->
+														<th class="text-center py-3 px-4" style="min-width: 300px;">Productos</th>
+														<th class="text-right py-3 px-4" style="width: 100px;">Precio</th>
+														<th class="text-center py-3 px-4" style="width: 120px;">Cantidad</th>
+														<th class="text-right py-3 px-4" style="width: 100px;">Total</th>
+
+													</tr>
+												</thead>
+												<tbody>
+
+													<tr>
+														<td class="p-3">
+															<div class="media align-items-center">
+
+																<div class="media-body">
+																	<p class="d-block text-dark">Agrega una empresa aliada de mensajería adicional:</p>
+																</div>
+															</div>
+														</td>
+														<td class="text-right font-weight-semibold align-middle p-4">$57.55</td>
+														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="2"></td>
+														<td class="text-right font-weight-semibold align-middle p-4">$115.1</td>
+
+													</tr>
+
+													<tr>
+														<td class="p-3">
+															<div class="media align-items-center">
+
+																<div class="media-body">
+																	<p class="d-block text-dark">Agrega usuarios para tu compañía*:</p>
+																</div>
+															</div>
+														</td>
+														<td class="text-right font-weight-semibold align-middle p-4">$1049.00</td>
+														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="1"></td>
+														<td class="text-right font-weight-semibold align-middle p-4">$1049.00</td>
+
+													</tr>
+
+													<tr>
+														<td class="p-3">
+															<div class="media align-items-center">
+
+																<div class="media-body">
+																	<p class="d-block text-dark">Agrega mensajeros a tu empresa mensajería Aliada:</p>
+																</div>
+															</div>
+														</td>
+														<td class="text-right font-weight-semibold align-middle p-4">$20.55</td>
+														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="1"></td>
+														<td class="text-right font-weight-semibold align-middle p-4">$20.55</td>
+
+													</tr>
+
+												</tbody>
+											</table>
+										</div>
+										<!-- / Shopping cart table -->
+
+										<div class="d-flex flex-wrap justify-content-between align-items-center pb-4">
+											<div class="mt-4">
+												
+											</div>
+											<div class="d-flex">
+												<div class="text-right mt-4 mr-5">
+													
+												</div>
+												<div class="text-right mt-4">
+													<label class="text-muted font-weight-normal m-0">Precio Total</label>
+													<div class="text-large"><strong>$1164.65</strong></div>
+												</div>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
 						</div>
 						<div id="test-l-3" class="content">
 							<h2>Step 3 Content</h2>

@@ -379,7 +379,8 @@
 				});
 			}
 		});		
-		$("#btnSave").on("click", function(e) {			
+		$("#btnSave").on("click", function(e) {		
+			$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO Quitar al pasar a produccion	
 			//TODO Nativapps
 			acceptTermsConditionsId.bootstrapToggle('off');
 			nextBtn.prop("disabled", true);
