@@ -46,12 +46,12 @@
 
 						</div>
 						<div id="test-l-2" class="content">
-							<h2>conocer el valor y elegir la cantidad de aliados y usuarios </h2>
+							<h2><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h2>
 							<div class="container px-3 my-5 clearfix">
 								<!-- Shopping cart table -->
 								<div class="card">
 									<div class="card-header">
-										<h4>Adiciona empresas aliadas, mensajeros y usuarios de tu plataforma aquí</h4>
+										<h4><?= $_SESSION["AFFILIATION_RATE_STEP2_H4"] ?></h4>
 									</div>
 									<div class="card-body">
 										<div class="table-responsive">
@@ -59,10 +59,10 @@
 												<thead>
 													<tr>
 														<!-- Set columns width -->
-														<th class="text-center py-3 px-4" style="min-width: 300px;">Productos</th>
-														<th class="text-right py-3 px-4" style="width: 100px;">Precio</th>
-														<th class="text-center py-3 px-4" style="width: 120px;">Cantidad</th>
-														<th class="text-right py-3 px-4" style="width: 100px;">Total</th>
+														<th class="text-center py-3 px-4" style="min-width: 300px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
+														<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL2"] ?></th>
+														<th class="text-center py-3 px-4" style="width: 120px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL3"] ?></th>
+														<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL4"] ?></th>
 
 													</tr>
 												</thead>
@@ -73,7 +73,7 @@
 															<div class="media align-items-center">
 
 																<div class="media-body">
-																	<p class="d-block text-dark">Agrega una empresa aliada de mensajería adicional:</p>
+																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></p>
 																</div>
 															</div>
 														</td>
@@ -88,7 +88,7 @@
 															<div class="media align-items-center">
 
 																<div class="media-body">
-																	<p class="d-block text-dark">Agrega usuarios para tu compañía*:</p>
+																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></p>
 																</div>
 															</div>
 														</td>
@@ -103,7 +103,7 @@
 															<div class="media align-items-center">
 
 																<div class="media-body">
-																	<p class="d-block text-dark">Agrega mensajeros a tu empresa mensajería Aliada:</p>
+																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></p>
 																</div>
 															</div>
 														</td>
@@ -127,7 +127,7 @@
 													
 												</div>
 												<div class="text-right mt-4">
-													<label class="text-muted font-weight-normal m-0">Precio Total</label>
+													<label class="text-muted font-weight-normal m-0"><?= $_SESSION["AFFILIATION_RATE_STEP2_LB_TOTAL_VALUE"] ?></label>
 													<div class="text-large"><strong>$1164.65</strong></div>
 												</div>
 											</div>

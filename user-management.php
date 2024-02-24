@@ -497,6 +497,7 @@
 <?
 	include("core/templates/__mapModal.tpl");
 	include("core/templates/__messages.tpl");
+	error_log(date('d.m.Y h:i:s') . " - " . json_encode([$_SESSION]) . PHP_EOL, 3, 'my-errors.log');
 ?>
 </body>
 </html>
