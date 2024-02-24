@@ -9,7 +9,7 @@
 				</button>
 			</div>
 			<div class="modal-body" id="modalBody">
-				<div id="stepper1" class="bs-stepper">
+				<div id="stepperCompanyUserAffiliation" class="bs-stepper">
 					<div class="bs-stepper-header">
 						<div class="step" data-target="#test-l-1">
 							<button type="button" class="step-trigger">
@@ -46,7 +46,7 @@
 
 						</div>
 						<div id="test-l-2" class="content">
-							<h2><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h2>
+							<h3><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h3>
 							<div class="container px-3 my-5 clearfix">
 								<!-- Shopping cart table -->
 								<div class="card">
@@ -55,80 +55,90 @@
 									</div>
 									<div class="card-body">
 										<div class="table-responsive">
-											<table class="table table-bordered m-0">
-												<thead>
-													<tr>
-														<!-- Set columns width -->
-														<th class="text-center py-3 px-4" style="min-width: 300px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
-														<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL2"] ?></th>
-														<th class="text-center py-3 px-4" style="width: 120px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL3"] ?></th>
-														<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL4"] ?></th>
+											<form id="frmAffiliateRates">
+												<table class="table table-bordered m-0">
+													<thead>
+														<tr>
+															<!-- Set columns width -->
+															<th class="text-center py-3 px-4" style="min-width: 300px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
+															<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL2"] ?></th>
+															<th class="text-center py-3 px-4" style="width: 120px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL3"] ?></th>
+															<th class="text-right py-3 px-4" style="width: 150px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL4"] ?></th>
 
-													</tr>
-												</thead>
-												<tbody>
+														</tr>
+													</thead>
+													<tbody>
 
-													<tr>
-														<td class="p-3">
-															<div class="media align-items-center">
+														<tr>
+															<td class="p-2">
+																<div class="media align-items-center">
 
-																<div class="media-body">
-																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></p>
+																	<div class="media-body">
+																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></p>
+																	</div>
 																</div>
-															</div>
-														</td>
-														<td class="text-right font-weight-semibold align-middle p-4">$57.55</td>
-														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="2"></td>
-														<td class="text-right font-weight-semibold align-middle p-4">$115.1</td>
+															</td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
+															<td class="align-middle p-4">
 
-													</tr>
+																<input type="number" name="number_users_rate_1" class="form-control text-center number-users-affiliation " min="0" value="0" max="<?= $max_users_affiliation_rate_1 ?>">
 
-													<tr>
-														<td class="p-3">
-															<div class="media align-items-center">
+															</td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-1">0</span></td>
 
-																<div class="media-body">
-																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></p>
+														</tr>
+
+														<tr>
+															<td class="p-2">
+																<div class="media align-items-center">
+
+																	<div class="media-body">
+																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></p>
+																	</div>
 																</div>
-															</div>
-														</td>
-														<td class="text-right font-weight-semibold align-middle p-4">$1049.00</td>
-														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="1"></td>
-														<td class="text-right font-weight-semibold align-middle p-4">$1049.00</td>
+															</td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
+															<td class="align-middle p-4"><input type="number" name="number_users_rate_2" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_rate_2 ?>"></td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-2">0</span< /td>
 
-													</tr>
+														</tr>
 
-													<tr>
-														<td class="p-3">
-															<div class="media align-items-center">
+														<tr>
+															<td class="p-2">
+																<div class="media align-items-center">
 
-																<div class="media-body">
-																	<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></p>
+																	<div class="media-body">
+																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></p>
+																	</div>
 																</div>
-															</div>
-														</td>
-														<td class="text-right font-weight-semibold align-middle p-4">$20.55</td>
-														<td class="align-middle p-4"><input type="text" class="form-control text-center" value="1"></td>
-														<td class="text-right font-weight-semibold align-middle p-4">$20.55</td>
+															</td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
+															<td class="align-middle p-4">
 
-													</tr>
+																<input type="number" name="number_users_rate_3" class="form-control text-center number-users-affiliation " min="0" value="0" max="<?= $max_users_affiliation_rate_3 ?>">
 
-												</tbody>
-											</table>
+															</td>
+															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-3">0</span< /td>
+
+														</tr>
+
+													</tbody>
+												</table>
+											</form>
 										</div>
 										<!-- / Shopping cart table -->
 
 										<div class="d-flex flex-wrap justify-content-between align-items-center pb-4">
 											<div class="mt-4">
-												
+
 											</div>
 											<div class="d-flex">
 												<div class="text-right mt-4 mr-5">
-													
+
 												</div>
 												<div class="text-right mt-4">
 													<label class="text-muted font-weight-normal m-0"><?= $_SESSION["AFFILIATION_RATE_STEP2_LB_TOTAL_VALUE"] ?></label>
-													<div class="text-large"><strong>$1164.65</strong></div>
+													<div class="text-large"><strong>$</strong><strong class="total-membership-value">0</strong></div>
 												</div>
 											</div>
 										</div>
@@ -141,22 +151,14 @@
 							<h2>Step 3 Content</h2>
 							<!-- Aquí va el contenido del paso 3 -->
 						</div>
-						<div class="row justify-content-between mt-3">
-							<div class="col-auto">
-								<button class="btn btn-secondary" id="previousBtn"><?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?></button>
-							</div>
-							<div class="col-auto">
-								<button class="btn btn-primary" id="nextBtn"><?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?></button>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer">
+			<div class="modal-footer justify-content-between">
 				<button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancelActivate" name="btnCancelActivate"><?= $_SESSION["CLOSE"] ?></button>
-				<!-- <button type="button" class="btn btn-primary" id="btnActivate" name="btnActivate" data-dismiss="modal"><?= $btnText ?></button>
-				<input type="hidden" name="hfDefaultTextButton" id="hfDefaultTextButton" value="<?= $btnText ?>" />
-				<input type="hidden" name="hfTextButton" id="hfTextButton" value="" /> -->
+				<button class="btn btn-secondary" id="previousBtn"><?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?></button>
+				<button class="btn btn-primary" id="nextBtn"><?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?></button>
+
 			</div>
 		</div>
 	</div>

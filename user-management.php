@@ -29,6 +29,20 @@
 	require_once("core/classes/configuration.php");
 	$conf = new configuration("INIT_PASSWORD");
 
+	//TODO Nativapps
+	$conf = new configuration("USER_AFFILIATE_RATE_VALUE");
+	$user_affiliate_rate_value =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_1");
+	$max_users_affiliation_rate_1 =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_2");
+	$max_users_affiliation_rate_2 =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_3");
+	$max_users_affiliation_rate_3 =  $conf->verifyValue();
+	////////////////////////////
+
 	$action = "new";
 
 	if(!empty($_GET['id'])) {
@@ -309,27 +323,40 @@
 		//TODO Nuevo desarrollo Nativapps
 		var action = "<?= $action ?>";
 		// Inicializar el stepper
-		var stepper = new Stepper($('#stepper1')[0]);
+		var stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
+		var stepper = new Stepper(stepperCompanyUserAffiliation[0]);
 		var nextBtn = $('#nextBtn');
 		var previousBtn = $('#previousBtn');
 		var btnCancelActivate = $('#btnCancelActivate');
 		var acceptTermsConditionsId = $('#acceptTermsConditionsId');
+		var numberUsersAffiliation = $( ".number-users-affiliation" );
+		var numberUsersTotalRate1 = $('.number-users-total-rate-1');
+		var numberUsersTotalRate2 = $('.number-users-total-rate-2');
+		var numberUsersTotalRate3 = $('.number-users-total-rate-3');
+		var totalMembershipValue = $('.total-membership-value');
+		var frmAffiliateRates = $("#frmAffiliateRates");
+	
 		var lastStep = 2;
 		previousBtn.hide();
 		nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
 		previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
+		var unitPrice = parseFloat("<?= $user_affiliate_rate_value ?>");
 
-		$("#stepper1")[0].addEventListener('show.bs-stepper', function (event) {
-			console.log('Moved to step ' + event.detail.indexStep)
+		stepperCompanyUserAffiliation[0].addEventListener('show.bs-stepper', function (event) {
 			var indexStep = event.detail.indexStep;
 			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
 			if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
 			if (indexStep === lastStep)  {nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+
+			//TODO prueba para obtener los datos de un formulario en jquery
+			if (indexStep === lastStep) {
+				console.log(frmAffiliateRates.serializeObject())
+			}
 			
 		})
 
-		$("#stepper1")[0].addEventListener('shown.bs-stepper', function(event){
-			console.log('Paso completado:', event.target);
+		stepperCompanyUserAffiliation[0].addEventListener('shown.bs-stepper', function(event){
+			
 		});
 
 		nextBtn.click(function(event) {
@@ -384,6 +411,11 @@
 			//TODO Nativapps
 			acceptTermsConditionsId.bootstrapToggle('off');
 			nextBtn.prop("disabled", true);
+			numberUsersAffiliation.each(function() {
+				var min = parseInt($(this).attr('min'));
+				$(this).val(min)
+				calculateUnitTotal($(this))
+			})
 			/////////////////////
 
 			var form = document.getElementById('frmUser');
@@ -436,7 +468,7 @@
 					}
 				});
 			});
-			//TODO Aca se va a realizar la logica para afilia tu empresa
+			//TODO Aca se va a realizar la lógica para afilia tu empresa
 			if (action === "new") {
 				checkClientIsAffiliationType(datas).then(function(resp) {
 					if (resp.is_affiliated_client) {
@@ -462,6 +494,59 @@
                 nextBtn.prop('disabled', true);
             }
         });
+		numberUsersAffiliation.change(function() {
+			var max = parseInt($(this).attr('max'));
+			var min = parseInt($(this).attr('min'));
+			if ($(this).val() > max)
+			{
+				$(this).val(max);
+			}
+			else if ($(this).val() < min)
+			{
+				$(this).val(min);
+			}
+			calculateUnitTotal($(this))
+		});
+		numberUsersAffiliation.on('input', function() {
+			calculateUnitTotal($(this))
+		});
+
+		function calculateUnitTotal(field) {
+			var amount = parseInt(field.val());
+			var total = amount * unitPrice;
+
+			var nameField = field.attr('name')
+
+			switch (nameField) {
+				case 'number_users_rate_1':
+					numberUsersTotalRate1.text(total);
+					break;
+				case 'number_users_rate_2':
+					numberUsersTotalRate2.text(total);
+					break;
+				case 'number_users_rate_3':
+					numberUsersTotalRate3.text(total);
+					break;
+			
+				default:
+					break;
+			}
+
+			calculateTotalPrice();
+		}
+
+		function calculateTotalPrice() {
+			var quantities = 0;
+			numberUsersAffiliation.each(function() {
+				quantities = parseInt(quantities) + parseInt($(this).val());
+			})
+
+			var totalValue = quantities * unitPrice;
+			
+			totalMembershipValue.text(totalValue)
+		}
+
+		
 		///////////////////
 
 		$("#cbAccess").trigger("change");
@@ -476,7 +561,7 @@
 					data: data,
 					contentType: 'application/json',
 					beforeSend: function (xhrObj) {
-						console.log(xhrObj)
+						
 						// var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
 						// noty = notify("", "dark", "", message, "", false);												
 					},
@@ -497,7 +582,7 @@
 <?
 	include("core/templates/__mapModal.tpl");
 	include("core/templates/__messages.tpl");
-	error_log(date('d.m.Y h:i:s') . " - " . json_encode([$_SESSION]) . PHP_EOL, 3, 'my-errors.log');
+	// error_log(date('d.m.Y h:i:s') . " - " . json_encode([$user_affiliate_rate_value]) . PHP_EOL, 3, 'my-errors.log');
 ?>
 </body>
 </html>
