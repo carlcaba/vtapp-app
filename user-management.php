@@ -367,6 +367,7 @@
 
 			//TODO prueba para obtener los datos de un formulario en jquery
 			if (indexStep === lastStep) {
+				dataPersonalizePlan = []
 				frmAffiliateRates.each(function() {
 					var name = $(this).attr('name');
 					var quantities = $(this).val();
