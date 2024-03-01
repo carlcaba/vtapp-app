@@ -46,7 +46,7 @@
 
 						</div>
 						<div id="test-l-2" class="content">
-							<h3><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h3>
+							<!-- <h3><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h3> -->
 							<div class="container px-3 my-5 clearfix">
 								<!-- Shopping cart table -->
 								<div class="card">
@@ -60,7 +60,7 @@
 													<thead>
 														<tr>
 															<!-- Set columns width -->
-															<th class="text-center py-3 px-4" style="min-width: 300px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
+															<th class="text-center py-3 px-4" style="min-width: 200px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
 															<th class="text-right py-3 px-4" style="width: 100px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL2"] ?></th>
 															<th class="text-center py-3 px-4" style="width: 120px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL3"] ?></th>
 															<th class="text-right py-3 px-4" style="width: 150px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL4"] ?></th>
@@ -70,55 +70,48 @@
 													<tbody>
 
 														<tr>
-															<td class="p-2">
-																<div class="media align-items-center">
+															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_basic_rate ?></td>
+															<td class="align-middle p-3">
 
-																	<div class="media-body">
-																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></p>
-																	</div>
-																</div>
-															</td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
-															<td class="align-middle p-4">
-
-																<input type="number" name="number_users_rate_1" class="form-control text-center number-users-affiliation " min="0" value="0" max="<?= $max_users_affiliation_rate_1 ?>">
+																<input type="number" name="number_users_rate_basic" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>" readonly>
 
 															</td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-1">0</span></td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-basic">0</span></td>
 
 														</tr>
 
 														<tr>
-															<td class="p-2">
-																<div class="media align-items-center">
+															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_allied_company ?></td>
+															<td class="align-middle p-3">
 
-																	<div class="media-body">
-																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></p>
-																	</div>
-																</div>
+																<input type="number" name="number_users_rate_1" data-rate-value="<?= $user_affiliate_allied_company ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_allied_company ?>">
+
 															</td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
-															<td class="align-middle p-4"><input type="number" name="number_users_rate_2" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_rate_2 ?>"></td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-2">0</span< /td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-1">0</span></td>
 
 														</tr>
 
 														<tr>
-															<td class="p-2">
-																<div class="media align-items-center">
-
-																	<div class="media-body">
-																		<p class="d-block text-dark"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></p>
-																	</div>
-																</div>
+															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_company_users ?></td>
+															<td class="align-middle p-3">
+																<input type="number" name="number_users_rate_2" data-rate-value="<?= $user_affiliate_company_users ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_company ?>">
 															</td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<?= $user_affiliate_rate_value ?></td>
-															<td class="align-middle p-4">
+															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-2">0</span></td>
 
-																<input type="number" name="number_users_rate_3" class="form-control text-center number-users-affiliation " min="0" value="0" max="<?= $max_users_affiliation_rate_3 ?>">
+														</tr>
+
+														<tr>
+															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_delivery_allied ?></td>
+															<td class="align-middle p-3">
+
+																<input type="number" name="number_users_rate_3" data-rate-value="<?= $user_affiliate_delivery_allied ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_delivery_allied ?>">
 
 															</td>
-															<td class="text-right font-weight-semibold align-middle p-4">$<span class="number-users-total-rate-3">0</span< /td>
+															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-3">0</span></td>
 
 														</tr>
 

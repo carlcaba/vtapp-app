@@ -30,17 +30,32 @@
 	$conf = new configuration("INIT_PASSWORD");
 
 	//TODO Nativapps
-	$conf = new configuration("USER_AFFILIATE_RATE_VALUE");
-	$user_affiliate_rate_value =  $conf->verifyValue();
 
-	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_1");
-	$max_users_affiliation_rate_1 =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_BASIC_RATE");
+	$user_affiliate_basic_rate =  $conf->verifyValue();
 
-	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_2");
-	$max_users_affiliation_rate_2 =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_ALLIED_COMPANY");
+	$user_affiliate_allied_company =  $conf->verifyValue();
 
-	$conf = new configuration("MAX_USERS_AFFILIATION_RATE_3");
-	$max_users_affiliation_rate_3 =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_COMPANY_USERS");
+	$user_affiliate_company_users =  $conf->verifyValue();
+	
+	$conf = new configuration("USER_AFFILIATE_DELIVERY_ALLIED");
+	$user_affiliate_delivery_allied =  $conf->verifyValue();
+
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_BASIC_RATE");
+	$max_users_affiliation_basic_rate =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_ALLIED_COMPANY");
+	$max_users_affiliation_allied_company =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_COMPANY");
+	$max_users_affiliation_company =  $conf->verifyValue();
+	
+	$conf = new configuration("MAX_USERS_AFFILIATION_DELIVERY_ALLIED");
+	$max_users_affiliation_delivery_allied =  $conf->verifyValue();
+
 	////////////////////////////
 
 	$action = "new";
@@ -330,17 +345,19 @@
 		var btnCancelActivate = $('#btnCancelActivate');
 		var acceptTermsConditionsId = $('#acceptTermsConditionsId');
 		var numberUsersAffiliation = $( ".number-users-affiliation" );
+		var numberUsersTotalBasic = $('.number-users-total-rate-basic');
 		var numberUsersTotalRate1 = $('.number-users-total-rate-1');
 		var numberUsersTotalRate2 = $('.number-users-total-rate-2');
 		var numberUsersTotalRate3 = $('.number-users-total-rate-3');
 		var totalMembershipValue = $('.total-membership-value');
-		var frmAffiliateRates = $("#frmAffiliateRates");
+		var frmAffiliateRates = $("#frmAffiliateRates input");
+		var dataPersonalizePlan = [];
 	
 		var lastStep = 2;
 		previousBtn.hide();
 		nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
 		previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
-		var unitPrice = parseFloat("<?= $user_affiliate_rate_value ?>");
+		var unitPrice = parseFloat("<?= $user_affiliate_basic_rate ?>");
 
 		stepperCompanyUserAffiliation[0].addEventListener('show.bs-stepper', function (event) {
 			var indexStep = event.detail.indexStep;
@@ -350,7 +367,17 @@
 
 			//TODO prueba para obtener los datos de un formulario en jquery
 			if (indexStep === lastStep) {
-				console.log(frmAffiliateRates.serializeObject())
+				frmAffiliateRates.each(function() {
+					var name = $(this).attr('name');
+					var quantities = $(this).val();
+					var unitValue = $(this).data('rateValue');
+					var data = {};
+					data['field'] = name;
+					data['quantities'] = quantities;
+					data['unit_value'] = unitValue;
+					dataPersonalizePlan.push(data)
+				})
+				console.log(dataPersonalizePlan, calculateTotalPrice())
 			}
 			
 		})
@@ -513,11 +540,15 @@
 
 		function calculateUnitTotal(field) {
 			var amount = parseInt(field.val());
-			var total = amount * unitPrice;
+			var price = parseInt(field.data('rateValue'))
+			var total = amount * price;
 
 			var nameField = field.attr('name')
 
 			switch (nameField) {
+				case 'number_users_rate_basic':
+					numberUsersTotalBasic.text(total);
+					break;
 				case 'number_users_rate_1':
 					numberUsersTotalRate1.text(total);
 					break;
@@ -537,13 +568,16 @@
 
 		function calculateTotalPrice() {
 			var quantities = 0;
+			var totalValue = 0;
 			numberUsersAffiliation.each(function() {
-				quantities = parseInt(quantities) + parseInt($(this).val());
+				var price = parseInt($(this).data('rateValue'))
+				quantities = parseInt($(this).val()) * price;
+				totalValue = totalValue + quantities;
 			})
-
-			var totalValue = quantities * unitPrice;
 			
 			totalMembershipValue.text(totalValue)
+
+			return totalValue;
 		}
 
 		
@@ -582,7 +616,6 @@
 <?
 	include("core/templates/__mapModal.tpl");
 	include("core/templates/__messages.tpl");
-	// error_log(date('d.m.Y h:i:s') . " - " . json_encode([$user_affiliate_rate_value]) . PHP_EOL, 3, 'my-errors.log');
 ?>
 </body>
 </html>
