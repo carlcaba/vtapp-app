@@ -51,6 +51,61 @@ class affiliate_subscription extends table
 		return $result;
 	}
 
+	function dataForm($action, $tabs = 5)
+	{
+		$resources = new resources();
+		$stabs = "";
+		//Verifica los recursos
+		$this->completeResources();
+		//Arma la cadena con los tabs requeridos
+		for ($i = 0; $i < $tabs; $i++)
+			$stabs .= "\t";
+		//Verifica si es nuevo registro o es edicion
+		if ($action == "new") {
+			$readonly = array(
+				"", "", "disabled",
+				"", "",
+				"", "", "", "disabled",
+				"", "", ""
+			);
+			$actiontext = $_SESSION["MENU_NEW"];
+			$link = "core/actions/_save/__newQuota.php";
+		} else if ($action == "edit") {
+			$readonly = array(
+				"readonly=\"readonly\"", "disabled", "disabled",
+				"disabled", "disabled",
+				"disabled", "disabled", "", "disabled",
+				"disabled", "disabled", "disabled", "disabled",
+				"disabled", "disabled", "disabled"
+			);
+			$actiontext = $_SESSION["EDIT"];
+			$link = "core/actions/_save/__editQuota.php";
+		} else {
+			$readonly = array(
+				"disabled", "disabled",
+				"disabled", "disabled", "disabled",
+				"disabled", "disabled", "disabled",
+				"disabled", "disabled",
+				"disabled", "disabled", "disabled",
+				"disabled", "disabled", "disabled", "disabled",
+				"disabled", "disabled", "disabled"
+			);
+			$actiontext = ($action == "view") ? $_SESSION["INFORMATION_OF"] : $_SESSION["DELETE"];
+			$link = "core/actions/_save/__deleteQuota.php";
+		}
+
+		//Variable a regresar
+		$return = array(
+			"tabs" => $stabs,
+			"readonly" => $readonly,
+			"actiontext" => $actiontext,
+			"link" => $link,
+			"showvalue" => true
+		);
+		//Retorna
+		return $return;
+	}
+
 	//Funcion que despliega los valores en un option
 	// function showOptionList($tabs = 8, $selected = 0, $lang = 0)
 	// {

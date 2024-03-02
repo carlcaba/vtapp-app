@@ -139,22 +139,22 @@
 						</div>
 						<div id="test-l-3" class="content">
 							<div class="card">
-								<h5 class="card-header bg-info">Tus Datos de Facturación</h5>
+								<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_BILLING_DATA"] ?></h5>
 								<div class="card-body">
 									<form>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputNombre">RAZÓN SOCIAL</label>
+												<label for="inputNombre"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?></label>
 												<input type="text" class="form-control" id="inputNombre" placeholder="Nombre">
 											</div>
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-6">
-												<label for="inputApellido">NIT</label>
+												<label for="inputApellido"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?></label>
 												<input type="text" class="form-control" id="inputApellido" placeholder="Apellido">
 											</div>
 											<div class="form-group col-md-6">
-												<label for="inputTelefono">TELÉFONO PRINICIPAL</label>
+												<label for="inputTelefono"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?></label>
 												<div class="input-group mb-2 mr-sm-2">
 													<div class="input-group-prepend">
 														<div class="input-group-text"><i class="fa fa-phone"></i></div>
@@ -165,7 +165,7 @@
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputEmail">DIRECCIÓN PRINCIPAL</label>
+												<label for="inputEmail"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?></label>
 												<div class="input-group mb-2 mr-sm-2">
 													<div class="input-group-prepend">
 														<div class="input-group-text"><i class="fa fa-map"></i></div>
@@ -185,55 +185,29 @@
 							</div>
 
 							<div class="card">
-								<h5 class="card-header bg-info">Detalles de la tarjeta</h5>
+								<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_CARD_DETAILS"] ?></h5>
 								<div class="card-body">
 									<form>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputNombre">NÚMERO DE TARJETA</label>
-												<div class="input-group mb-2 mr-sm-2">
-													<div class="input-group-prepend">
-														<div class="input-group-text"><i class="fa fa-cc-mastercard"></i></div>
-													</div>
-													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
-												</div>
+												<?= $affiliate_subscription->showField("CREDIT_CARD_NUMBER", $as_dataForm["tabs"], "fa fa-credit-card-alt", "", false, "", false, "9,9,12", '') ?>
 											</div>
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputApellido">NOMBRE EN TARJETA</label>
-												<div class="input-group mb-2 mr-sm-2">
-													<div class="input-group-prepend">
-														<div class="input-group-text"><i class="fa fa-user"></i></div>
-													</div>
-													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
-												</div>
+												<?= $affiliate_subscription->showField("CREDIT_CARD_NAME", $as_dataForm["tabs"], "fa fa-user", "", false, "", false, "9,9,12", '') ?>
 											</div>
 										</div>
 										<div class="form-row">
 
 											<div class="form-group col-md-6">
-												<label for="inputTelefono">FECHA DE VENCIMIENTO</label>
-												<div class="input-group mb-2 mr-sm-2">
-													<div class="input-group-prepend">
-														<div class="input-group-text"><i class="fa fa-calendar-times-o"></i></div>
-													</div>
-													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
-												</div>
+												<?= $affiliate_subscription->showField("DATE_EXPIRATION", $as_dataForm["tabs"], "fa fa-calendar-times-o", "", false, "", false, "9,9,12", '') ?>
 											</div>
 
 											<div class="form-group col-md-6">
-												<label for="inputEmail">CVC</label>
-												<div class="input-group mb-2 mr-sm-2">
-													<div class="input-group-prepend">
-														<div class="input-group-text"><i class="fa fa-cc"></i></div>
-													</div>
-													<input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
-												</div>
+												<?= $affiliate_subscription->showField("VERIFICATION_CODE", $as_dataForm["tabs"], "fa fa-cc", "", false, "", false, "9,9,12", '') ?>
 											</div>
 										</div>
-										
-										<!-- <?= $user->showField("BUSINESS_NAME", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?> -->
 									</form>
 								</div>
 							</div>

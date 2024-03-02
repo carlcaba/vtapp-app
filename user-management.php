@@ -76,11 +76,14 @@
 	
 	switch($action) {
 		case "new": {
-			require_once("core/classes/affiliate_subscription.php");
 			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			$user = new users();
+			//TODO Nativapps
+			require_once("core/classes/affiliate_subscription.php");
 			$affiliate_subscription = new affiliate_subscription();
+			$as_dataForm = $affiliate_subscription->dataForm($action);
+			////////
 			break;
 		}
 		case "edit": {
@@ -620,7 +623,7 @@
 	include("core/templates/__mapModal.tpl");
 	include("core/templates/__messages.tpl");
 	
-	error_log(date('d.m.Y h:i:s') . " - " . json_encode($_SESSION) . PHP_EOL, 3, 'my-errors.log');
+	// error_log(date('d.m.Y h:i:s') . " - " . json_encode($_SESSION) . PHP_EOL, 3, 'my-errors.log');	
 ?>
 </body>
 </html>
