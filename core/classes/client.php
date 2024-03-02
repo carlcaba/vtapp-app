@@ -590,12 +590,12 @@ class client extends table {
     }
 
 	//Retorna el tipo de cliente 
-	function getPaymentTypeIdByID($idClient)
+	function getDataByID($idClient)
 	{
-		$this->sql = "SELECT PAYMENT_TYPE_ID FROM " . $this->table . " WHERE ID = '".$idClient."' AND IS_BLOCKED = FALSE ";
+		$this->sql = "SELECT * FROM " . $this->table . " WHERE ID = '".$idClient."' AND IS_BLOCKED = FALSE ";
 		//Obtiene los resultados
-		$row = $this->__getData();
-		$row = $row ? $row[0] : null;
+		$row = $this->__getDataByMode();
+		// $row = $row ? $row[0] : null;
 		return $row;
 	}	
 	

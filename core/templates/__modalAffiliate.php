@@ -46,13 +46,10 @@
 
 						</div>
 						<div id="test-l-2" class="content">
-							<!-- <h3><?= $_SESSION["AFFILIATION_RATE_STEP2_H2"] ?> </h3> -->
-							<div class="container px-3 my-5 clearfix">
+							<h2><?= $_SESSION["AFFILIATION_RATE_STEP2_H4"] ?></h2>
+							<div class="container my-4 clearfix">
 								<!-- Shopping cart table -->
 								<div class="card">
-									<div class="card-header">
-										<h4><?= $_SESSION["AFFILIATION_RATE_STEP2_H4"] ?></h4>
-									</div>
 									<div class="card-body">
 										<div class="table-responsive">
 											<form id="frmAffiliateRates">
@@ -141,8 +138,105 @@
 							</div>
 						</div>
 						<div id="test-l-3" class="content">
-							<h2>Step 3 Content</h2>
-							<!-- Aquí va el contenido del paso 3 -->
+							<div class="card">
+								<h5 class="card-header bg-info">Tus Datos de Facturación</h5>
+								<div class="card-body">
+									<form>
+										<div class="form-row">
+											<div class="form-group col-md-12">
+												<label for="inputNombre">RAZÓN SOCIAL</label>
+												<input type="text" class="form-control" id="inputNombre" placeholder="Nombre">
+											</div>
+										</div>
+										<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="inputApellido">NIT</label>
+												<input type="text" class="form-control" id="inputApellido" placeholder="Apellido">
+											</div>
+											<div class="form-group col-md-6">
+												<label for="inputTelefono">TELÉFONO PRINICIPAL</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-phone"></i></div>
+													</div>
+													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
+												</div>
+											</div>
+										</div>
+										<div class="form-row">
+											<div class="form-group col-md-12">
+												<label for="inputEmail">DIRECCIÓN PRINCIPAL</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-map"></i></div>
+													</div>
+													<input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
+												</div>
+											</div>
+										</div>
+										<div class="form-row">
+											<div class="form-group col-md-12">
+												<label for="inputDireccion">NOMBRE REPRESENTANTE LEGAL</label>
+												<input type="text" class="form-control" id="inputDireccion" placeholder="Dirección">
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+
+							<div class="card">
+								<h5 class="card-header bg-info">Detalles de la tarjeta</h5>
+								<div class="card-body">
+									<form>
+										<div class="form-row">
+											<div class="form-group col-md-12">
+												<label for="inputNombre">NÚMERO DE TARJETA</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-cc-mastercard"></i></div>
+													</div>
+													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
+												</div>
+											</div>
+										</div>
+										<div class="form-row">
+											<div class="form-group col-md-12">
+												<label for="inputApellido">NOMBRE EN TARJETA</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-user"></i></div>
+													</div>
+													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
+												</div>
+											</div>
+										</div>
+										<div class="form-row">
+
+											<div class="form-group col-md-6">
+												<label for="inputTelefono">FECHA DE VENCIMIENTO</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-calendar-times-o"></i></div>
+													</div>
+													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
+												</div>
+											</div>
+
+											<div class="form-group col-md-6">
+												<label for="inputEmail">CVC</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-cc"></i></div>
+													</div>
+													<input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
+												</div>
+											</div>
+										</div>
+										
+										<!-- <?= $user->showField("BUSINESS_NAME", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?> -->
+									</form>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

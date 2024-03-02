@@ -5,6 +5,7 @@ session_start();
 require_once("../../classes/client.php");
 
 $is_affiliated_client = false;
+$data_client = null;
 
 try {
 
@@ -13,18 +14,19 @@ try {
 
 	//Lógica
 	$cbReference = array_key_exists('cbReference', $data) ? $data['cbReference'] : null;
-
-	$client = new client($cbReference);
-	$payment_type_id = $client->getPaymentTypeIdByID($cbReference);
-	if ($payment_type_id == '5') {
-		$is_affiliated_client = true;
+	if ($cbReference) {
+		$client = new client($cbReference);
+		$data_client = $client->getDataByID($cbReference);
+		if ($data_client['PAYMENT_TYPE_ID'] == '5') {
+			$is_affiliated_client = true;
+		}
 	}
 
 	$resp = array(
 		'code' => '202',
 		'status' => 'success',
 		'message' => '',
-		'data' => ['payment_type_id' => $payment_type_id],
+		'data' => $data_client,
 		'is_affiliated_client' => $is_affiliated_client
 	);
 
