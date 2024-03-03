@@ -81,8 +81,11 @@
 			$user = new users();
 			//TODO Nativapps
 			require_once("core/classes/affiliate_subscription.php");
+			require_once("core/classes/client.php");
 			$affiliate_subscription = new affiliate_subscription();
 			$as_dataForm = $affiliate_subscription->dataForm($action);
+			$client = new client();
+			$c_dataForm = $client->dataForm($action);
 			////////
 			break;
 		}
@@ -324,7 +327,11 @@
 	$userModal = true;
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
-	include("core/templates/__modalAffiliate.php"); //TODO Nativapps
+	//TODO Nativapps
+	if ($action === 'new') {
+		include("core/templates/__modalAffiliate.php"); 
+	}
+	/////////////
 ?>
 
 	<!-- SlimScroll -->
@@ -335,8 +342,14 @@
 	<script src="plugins/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>	
 	<!-- Resources -->
 	<script src="js/resources.js"></script>	
+	<!-- TODO Nativapps -->
 	<!-- bs-stepper -->
-	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	<!--TODO Nativapps -->
+	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	
+	<!-- Credit card number validator -->
+	<script src="plugins/jquery.cc.validator/jquery.creditCardValidator.js"></script>
+	<!-- Cleave -->
+	<script src="plugins/cleave/cleave.min.js"></script>
+	<!-- ------------------- -->
 	
     <script>
 	$(document).ready(function() {
@@ -356,7 +369,24 @@
 		var numberUsersTotalRate3 = $('.number-users-total-rate-3');
 		var totalMembershipValue = $('.total-membership-value');
 		var frmAffiliateRates = $("#frmAffiliateRates input");
+		var idFrmBillingData = "#frmBillingData";
+		var idFrmCardDetails = "#frmCardDetails";
+		var frmBillingData = $(idFrmBillingData + " input");
+		var frmCardDetails = $(idFrmCardDetails + " input");
+		var formsValidationRequired = "<?= $_SESSION["FORMS_VALIDATION_REQUIRED"] ?>";
 		var dataPersonalizePlan = [];
+		var dataBillingData = {};
+		var dataCardDetails = {};
+		var subscriptionFormValidation = true;
+
+		new Cleave('#txtCREDIT_CARD_NUMBER', {
+			creditCard: true
+		});
+
+		new Cleave('#txtDATE_EXPIRATION', {
+			date: true,
+			datePattern: ['m', 'y']
+		});
 	
 		var lastStep = 2;
 		previousBtn.hide();
@@ -368,22 +398,13 @@
 			var indexStep = event.detail.indexStep;
 			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
 			if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
-			if (indexStep === lastStep)  {nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+			if (indexStep === lastStep)  {nextBtn.show(); nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+			if (indexStep === 3) {nextBtn.hide()} 
 
 			//TODO prueba para obtener los datos de un formulario en jquery
-			if (indexStep === lastStep) {
-				dataPersonalizePlan = []
-				frmAffiliateRates.each(function() {
-					var name = $(this).attr('name');
-					var quantities = $(this).val();
-					var unitValue = $(this).data('rateValue');
-					var data = {};
-					data['field'] = name;
-					data['quantities'] = quantities;
-					data['unit_value'] = unitValue;
-					dataPersonalizePlan.push(data)
-				})
-				console.log(dataPersonalizePlan, calculateTotalPrice())
+			if (indexStep === 3) {
+				var datos = getDataSubscription();
+				console.log(datos)
 			}
 			
 		})
@@ -449,6 +470,8 @@
 				$(this).val(min)
 				calculateUnitTotal($(this))
 			})
+			$(idFrmBillingData)[0].reset()
+			$(idFrmCardDetails)[0].reset()
 			/////////////////////
 
 			var form = document.getElementById('frmUser');
@@ -520,6 +543,18 @@
 		});
 
 		//TODO Nativapps
+
+		$("#txtCREDIT_CARD_NUMBER").on("change", function(e) {
+			$('#txtCREDIT_CARD_NUMBER').validateCreditCard(function(result) {
+				console.log(result.valid)
+				var type = result.card_type.name;
+				type = (type == "diners") ? "diners-club" : type;
+				var icon = "fa fa-cc-" + type;
+				$("#icontxtCREDIT_CARD_NUMBER").removeClass().addClass(icon);
+				$("#hfValidCard").val(result.valid);
+			});
+		});
+
 		acceptTermsConditionsId.change(function(){
             if ($(this).is(':checked')) {
                 nextBtn.prop('disabled', false);
@@ -584,6 +619,53 @@
 			totalMembershipValue.text(totalValue)
 
 			return totalValue;
+		}
+
+		function getDataSubscription () {
+			dataPersonalizePlan = []
+			dataBillingData = {}
+			dataCardDetails = {}
+			subscriptionFormValidation = true;
+			frmAffiliateRates.each(function() {
+				var name = $(this).attr('name');
+				var quantities = $(this).val();
+				var unitValue = $(this).data('rateValue');
+				var data = {};
+				data['field'] = name;
+				data['quantities'] = quantities;
+				data['unit_value'] = unitValue;
+				dataPersonalizePlan.push(data)
+			})
+
+			frmBillingData.each(function() {
+				var name = $(this).attr('name');
+				var is_required = $(this).prop('required');
+				var value = $(this).val();
+				var placeholder = $(this).attr('placeholder')
+				//formsValidationRequired
+				if (is_required && value === '') {
+					subscriptionFormValidation = false;
+					notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+				}
+				dataBillingData[name] = value;
+			})
+			
+			frmCardDetails.each(function() {
+				var name = $(this).attr('name');
+				var is_required = $(this).prop('required');
+				var value = $(this).val();
+				var placeholder = $(this).attr('placeholder')
+				//formsValidationRequired
+				if (is_required && value === '') {
+					subscriptionFormValidation = false;
+					notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+				}
+				dataCardDetails[name] = value;
+			})
+
+			var totalSubscription = calculateTotalPrice();
+
+			return { dataPersonalizePlan, dataBillingData, dataCardDetails, totalSubscription }
 		}
 
 		

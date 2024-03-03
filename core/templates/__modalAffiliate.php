@@ -31,6 +31,13 @@
 								<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_3"] ?></span>
 							</button>
 						</div>
+						<div class="line"></div>
+						<div class="step" data-target="#test-l-4">
+							<button type="button" class="step-trigger">
+								<span class="bs-stepper-circle">4</span>
+								<span class="bs-stepper-label">Fin</span>
+							</button>
+						</div>
 					</div>
 					<div class="bs-stepper-content">
 						<div id="test-l-1" class="content">
@@ -141,43 +148,49 @@
 							<div class="card">
 								<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_BILLING_DATA"] ?></h5>
 								<div class="card-body">
-									<form>
+									<form id="frmBillingData">
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputNombre"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?></label>
-												<input type="text" class="form-control" id="inputNombre" placeholder="Nombre">
+												<label for="business_name"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?></label>
+												<input type="text" class="form-control" id="business_name" name="business_name" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?>" disabled>
 											</div>
+											<input type="hidden" name="client_id" id="client_id" />
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-6">
-												<label for="inputApellido"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?></label>
-												<input type="text" class="form-control" id="inputApellido" placeholder="Apellido">
+												<label for="nit"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?></label>
+												<input type="text" class="form-control" id="nit" name="nit" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?>" disabled>
 											</div>
 											<div class="form-group col-md-6">
-												<label for="inputTelefono"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?></label>
+												<label for="main_phone"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?></label>
 												<div class="input-group mb-2 mr-sm-2">
 													<div class="input-group-prepend">
 														<div class="input-group-text"><i class="fa fa-phone"></i></div>
 													</div>
-													<input type="text" class="form-control" id="inputTelefono" placeholder="Teléfono">
+													<input type="text" class="form-control" id="main_phone" name="main_phone" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?>" disabled>
 												</div>
 											</div>
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputEmail"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?></label>
+												<label for="main_address"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?></label>
 												<div class="input-group mb-2 mr-sm-2">
 													<div class="input-group-prepend">
 														<div class="input-group-text"><i class="fa fa-map"></i></div>
 													</div>
-													<input type="email" class="form-control" id="inputEmail" placeholder="Correo Electrónico">
+													<input type="email" class="form-control" id="main_address" name="main_address" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?>" disabled>
 												</div>
 											</div>
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-12">
-												<label for="inputDireccion">NOMBRE REPRESENTANTE LEGAL</label>
-												<input type="text" class="form-control" id="inputDireccion" placeholder="Dirección">
+												<label for="legal_representative"><?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[1] ?> *</label>
+												<div class="input-group mb-2 mr-sm-2">
+													<div class="input-group-prepend">
+														<div class="input-group-text"><i class="fa fa-user"></i></div>
+													</div>
+													<input type="<?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[0] ?>" class="form-control" id="legal_representative" name="legal_representative" placeholder="<?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[2] ?>" required>
+												</div>
 											</div>
 										</div>
 									</form>
@@ -187,11 +200,12 @@
 							<div class="card">
 								<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_CARD_DETAILS"] ?></h5>
 								<div class="card-body">
-									<form>
+									<form id="frmCardDetails">
 										<div class="form-row">
 											<div class="form-group col-md-12">
 												<?= $affiliate_subscription->showField("CREDIT_CARD_NUMBER", $as_dataForm["tabs"], "fa fa-credit-card-alt", "", false, "", false, "9,9,12", '') ?>
 											</div>
+											<input type="hidden" name="hfValidCard" id="hfValidCard" value="false" />
 										</div>
 										<div class="form-row">
 											<div class="form-group col-md-12">
@@ -211,6 +225,11 @@
 									</form>
 								</div>
 							</div>
+						</div>
+
+						<div id="test-l-4" class="content">
+							
+
 						</div>
 					</div>
 				</div>
