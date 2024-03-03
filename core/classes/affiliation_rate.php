@@ -6,23 +6,23 @@
 require_once("table.php");
 require_once("resources.php");
 
-class affiliate_subscription extends table
+class affiliation_rate extends table
 {
 	var $resources;
 
 	//Constructor
 	function __constructor($document_type = "")
 	{
-		$this->affiliate_subscription($document_type);
+		$this->affiliation_rate($document_type);
 	}
 
 	//Constructor anterior
-	function affiliate_subscription($document_type = '')
+	function affiliation_rate($document_type = '')
 	{
 		//Llamado al constructor padre
-		parent::table("TBL_AFFILIATE_SUBSCRIPTION");
+		parent::table("TBL_AFFILIATION_RATE");
 		//Inicializa los atributos
-		// $this->RESOURCE_NAME = $document_type;
+		$this->RESOURCE_NAME = $document_type;
 		$this->REGISTERED_ON = "NOW()";
 		$this->REGISTERED_BY = $_SESSION['vtappcorp_userid'];
 		//Especifica los valores unicos

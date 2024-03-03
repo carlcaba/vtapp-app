@@ -356,74 +356,83 @@
 		//TODO Nuevo desarrollo Nativapps
 		var action = "<?= $action ?>";
 		// Inicializar el stepper
-		var stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
-		var stepper = new Stepper(stepperCompanyUserAffiliation[0]);
-		var nextBtn = $('#nextBtn');
-		var previousBtn = $('#previousBtn');
-		var btnCancelActivate = $('#btnCancelActivate');
-		var acceptTermsConditionsId = $('#acceptTermsConditionsId');
-		var numberUsersAffiliation = $( ".number-users-affiliation" );
-		var numberUsersTotalBasic = $('.number-users-total-rate-basic');
-		var numberUsersTotalRate1 = $('.number-users-total-rate-1');
-		var numberUsersTotalRate2 = $('.number-users-total-rate-2');
-		var numberUsersTotalRate3 = $('.number-users-total-rate-3');
-		var totalMembershipValue = $('.total-membership-value');
-		var frmAffiliateRates = $("#frmAffiliateRates input");
-		var idFrmBillingData = "#frmBillingData";
-		var idFrmCardDetails = "#frmCardDetails";
-		var frmBillingData = $(idFrmBillingData + " input");
-		var frmCardDetails = $(idFrmCardDetails + " input");
-		var formsValidationRequired = "<?= $_SESSION["FORMS_VALIDATION_REQUIRED"] ?>";
-		var dataPersonalizePlan = [];
-		var dataBillingData = {};
-		var dataCardDetails = {};
-		var subscriptionFormValidation = true;
-
-		new Cleave('#txtCREDIT_CARD_NUMBER', {
-			creditCard: true
-		});
-
-		new Cleave('#txtDATE_EXPIRATION', {
-			date: true,
-			datePattern: ['m', 'y']
-		});
+		if (action === 'new') {
+			var stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
+			var stepper = new Stepper(stepperCompanyUserAffiliation[0]);
+			var nextBtn = $('#nextBtn');
+			var previousBtn = $('#previousBtn');
+			var btnCancelActivate = $('#btnCancelActivate');
+			var acceptTermsConditionsId = $('#acceptTermsConditionsId');
+			var numberUsersAffiliation = $( ".number-users-affiliation" );
+			var numberUsersTotalBasic = $('.number-users-total-rate-basic');
+			var numberUsersTotalRate1 = $('.number-users-total-rate-1');
+			var numberUsersTotalRate2 = $('.number-users-total-rate-2');
+			var numberUsersTotalRate3 = $('.number-users-total-rate-3');
+			var totalMembershipValue = $('.total-membership-value');
+			var frmAffiliateRates = $("#frmAffiliateRates input");
+			var idFrmBillingData = "#frmBillingData";
+			var idFrmCardDetails = "#frmCardDetails";
+			var frmBillingData = $(idFrmBillingData + " input");
+			var frmCardDetails = $(idFrmCardDetails + " input");
+			var formsValidationRequired = "<?= $_SESSION["FORMS_VALIDATION_REQUIRED"] ?>";
+			var dataPersonalizePlan = [];
+			var dataBillingData = {};
+			var dataCardDetails = {};
+			var subscriptionFormValidation = true;
 	
-		var lastStep = 2;
-		previousBtn.hide();
-		nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
-		previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
-		var unitPrice = parseFloat("<?= $user_affiliate_basic_rate ?>");
-
-		stepperCompanyUserAffiliation[0].addEventListener('show.bs-stepper', function (event) {
-			var indexStep = event.detail.indexStep;
-			if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
-			if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
-			if (indexStep === lastStep)  {nextBtn.show(); nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
-			if (indexStep === 3) {nextBtn.hide()} 
-
-			//TODO prueba para obtener los datos de un formulario en jquery
-			if (indexStep === 3) {
-				var datos = getDataSubscription();
-				console.log(datos)
-			}
-			
-		})
-
-		stepperCompanyUserAffiliation[0].addEventListener('shown.bs-stepper', function(event){
-			
-		});
-
-		nextBtn.click(function(event) {
-			stepper.next();
-		});
-
-		previousBtn.click(function() {
-			stepper.previous();
-		});
-
-		$('#divActivateModalAffiliateUsers').on('hidden.bs.modal', function (event) {
-			stepper.reset();
-		})
+			new Cleave('#txtCREDIT_CARD_NUMBER', {
+				creditCard: true
+			});
+	
+			new Cleave('#txtDATE_EXPIRATION', {
+				date: true,
+				datePattern: ['m', 'y']
+			});
+		
+			var lastStep = 2;
+			previousBtn.hide();
+			nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
+			previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
+			var unitPrice = parseFloat("<?= $user_affiliate_basic_rate ?>");
+	
+			stepperCompanyUserAffiliation[0].addEventListener('show.bs-stepper', function (event) {
+				var indexStep = event.detail.indexStep;
+				if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
+				if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
+				if (indexStep === lastStep)  {nextBtn.show(); nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+				if (indexStep === 3) {nextBtn.hide()} 
+	
+				//TODO prueba para obtener los datos de un formulario en jquery
+				if (indexStep === 3) {
+					var datos = getDataSubscription();
+					if (datos) {
+						console.log(datos)
+						$("#btnActivate").click();
+					} else { 
+						setTimeout(() => {
+							stepper.to(indexStep)
+						}, 50);
+					 }
+				}
+				
+			})
+	
+			stepperCompanyUserAffiliation[0].addEventListener('shown.bs-stepper', function(event){
+				
+			});
+	
+			nextBtn.click(function(event) {
+				stepper.next();
+			});
+	
+			previousBtn.click(function() {
+				stepper.previous();
+			});
+	
+			$('#divActivateModalAffiliateUsers').on('hidden.bs.modal', function (event) {
+				stepper.reset();
+			})
+		}
 		//////////////////////////////////////////////////////////////////////////////
 
 		$('[data-toggle="tooltip"]').tooltip();
@@ -461,17 +470,20 @@
 			}
 		});		
 		$("#btnSave").on("click", function(e) {		
-			$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO Quitar al pasar a produccion	
+			//$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO Quitar al pasar a produccion	
 			//TODO Nativapps
-			acceptTermsConditionsId.bootstrapToggle('off');
-			nextBtn.prop("disabled", true);
-			numberUsersAffiliation.each(function() {
-				var min = parseInt($(this).attr('min'));
-				$(this).val(min)
-				calculateUnitTotal($(this))
-			})
-			$(idFrmBillingData)[0].reset()
-			$(idFrmCardDetails)[0].reset()
+			if (action === 'new') {
+				console.log('Hola que tal')
+				acceptTermsConditionsId.bootstrapToggle('off');
+				nextBtn.prop("disabled", true);
+				numberUsersAffiliation.each(function() {
+					var min = parseInt($(this).attr('min'));
+					$(this).val(min)
+					calculateUnitTotal($(this))
+				})
+				$(idFrmBillingData)[0].reset()
+				$(idFrmCardDetails)[0].reset()
+			}
 			/////////////////////
 
 			var form = document.getElementById('frmUser');
@@ -506,11 +518,18 @@
 			$("#btnActivate").unbind("click");
 
 			$("#btnActivate").bind("click", function() {
+				// TODO Nativapps
+				var data = { strModel: datas };
+				if (action === "new") {
+					var dataSubscription = getDataSubscription();
+					data = { strModel: datas, dataSubscription: JSON.stringify(dataSubscription) }
+				}
+				////////////////////
 				var noty;
 				$.ajax({
 					url: url,
 					method: "POST",
-					data: { strModel: datas },
+					data: data, //TODO Nativapps
 					dataType: "json",
 					beforeSend: function (xhrObj) {
 						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
@@ -530,6 +549,15 @@
 					if (resp.is_affiliated_client) {
 						$('#acceptTermsConditions').prop('checked', false);
 						$("#divActivateModalAffiliateUsers").modal("toggle");
+						var data = resp.data;
+
+						$("#business_name").val(data.CLIENT_NAME);
+						$("#client_id").val(data.ID);
+						$("#nit").val(data.IDENTIFICATION);
+						$("#main_phone").val(data.CELLPHONE);
+						$("#main_address").val(data.ADDRESS);
+						$("#legal_representative").val(data.LEGAL_REPRESENTATIVE);
+
 					} else {
 						$("#divActivateModal").modal("toggle");
 					}
@@ -555,29 +583,32 @@
 			});
 		});
 
-		acceptTermsConditionsId.change(function(){
-            if ($(this).is(':checked')) {
-                nextBtn.prop('disabled', false);
-            } else {
-                nextBtn.prop('disabled', true);
-            }
-        });
-		numberUsersAffiliation.change(function() {
-			var max = parseInt($(this).attr('max'));
-			var min = parseInt($(this).attr('min'));
-			if ($(this).val() > max)
-			{
-				$(this).val(max);
-			}
-			else if ($(this).val() < min)
-			{
-				$(this).val(min);
-			}
-			calculateUnitTotal($(this))
-		});
-		numberUsersAffiliation.on('input', function() {
-			calculateUnitTotal($(this))
-		});
+		if (action === 'new') {
+			acceptTermsConditionsId.change(function(){
+				if ($(this).is(':checked')) {
+					nextBtn.prop('disabled', false);
+				} else {
+					nextBtn.prop('disabled', true);
+				}
+			});
+			numberUsersAffiliation.change(function() {
+				var max = parseInt($(this).attr('max'));
+				var min = parseInt($(this).attr('min'));
+				if ($(this).val() > max)
+				{
+					$(this).val(max);
+				}
+				else if ($(this).val() < min)
+				{
+					$(this).val(min);
+				}
+				calculateUnitTotal($(this))
+			});
+			numberUsersAffiliation.on('input', function() {
+				calculateUnitTotal($(this))
+			});
+		}
+
 
 		function calculateUnitTotal(field) {
 			var amount = parseInt(field.val());
@@ -630,10 +661,12 @@
 				var name = $(this).attr('name');
 				var quantities = $(this).val();
 				var unitValue = $(this).data('rateValue');
+				var resourceName = $(this).data('resourceName');
 				var data = {};
 				data['field'] = name;
 				data['quantities'] = quantities;
 				data['unit_value'] = unitValue;
+				data['resource_name'] = resourceName;
 				dataPersonalizePlan.push(data)
 			})
 
@@ -665,9 +698,12 @@
 
 			var totalSubscription = calculateTotalPrice();
 
-			return { dataPersonalizePlan, dataBillingData, dataCardDetails, totalSubscription }
-		}
+			if (subscriptionFormValidation) {
+				return { dataPersonalizePlan, dataBillingData, dataCardDetails, totalSubscription }
+			}
+			return subscriptionFormValidation;
 
+		}
 		
 		///////////////////
 

@@ -17,7 +17,7 @@ try {
 	if ($cbReference) {
 		$client = new client($cbReference);
 		$data_client = $client->getDataByID($cbReference);
-		if ($data_client['PAYMENT_TYPE_ID'] == '5') {
+		if ($data_client['PAYMENT_TYPE_ID'] == '5' || $data_client['PAYMENT_TYPE_ID'] == '1') {
 			$is_affiliated_client = true;
 		}
 	}

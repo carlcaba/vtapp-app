@@ -20,7 +20,7 @@ class connector_db {
 										"port" => 3306,
 										"user" => "logicaad_vtapp_u",
 										"pass" => "Vt4ppC0rp0r1t3$"),
-						"deve" => array("db" => "vtapp",
+						"deve" => array("db" => "vtapp_dev",
 										"host" => "mysql",
 										"port" => 3306,
 										"user" => "root",

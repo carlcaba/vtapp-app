@@ -78,7 +78,7 @@
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_basic_rate ?></td>
 															<td class="align-middle p-3">
 
-																<input type="number" name="number_users_rate_basic" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>" readonly>
+																<input type="number" name="number_users_rate_basic" data-resource-name="AFFILIATION_RATE_NAME_BASIC" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>" readonly>
 
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-basic">0</span></td>
@@ -90,7 +90,7 @@
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_allied_company ?></td>
 															<td class="align-middle p-3">
 
-																<input type="number" name="number_users_rate_1" data-rate-value="<?= $user_affiliate_allied_company ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_allied_company ?>">
+																<input type="number" name="number_users_rate_1" data-resource-name="AFFILIATION_RATE_NAME_1" data-rate-value="<?= $user_affiliate_allied_company ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_allied_company ?>">
 
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-1">0</span></td>
@@ -101,7 +101,7 @@
 															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_company_users ?></td>
 															<td class="align-middle p-3">
-																<input type="number" name="number_users_rate_2" data-rate-value="<?= $user_affiliate_company_users ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_company ?>">
+																<input type="number" name="number_users_rate_2" data-resource-name="AFFILIATION_RATE_NAME_2" data-rate-value="<?= $user_affiliate_company_users ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_company ?>">
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-2">0</span></td>
 
@@ -112,7 +112,7 @@
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_delivery_allied ?></td>
 															<td class="align-middle p-3">
 
-																<input type="number" name="number_users_rate_3" data-rate-value="<?= $user_affiliate_delivery_allied ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_delivery_allied ?>">
+																<input type="number" name="number_users_rate_3" data-resource-name="AFFILIATION_RATE_NAME_3" data-rate-value="<?= $user_affiliate_delivery_allied ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_delivery_allied ?>">
 
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-3">0</span></td>
