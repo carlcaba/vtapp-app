@@ -46,13 +46,13 @@ function registerSubscriptionData($dataSubscription)
         $quota->CREDIT_CARD_NAME = $credit_card_name;
         $quota->DATE_EXPIRATION = $date_expiration;
         $quota->VERIFICATION_CODE = $verification_code;
-        $quota->DIFERRED_TO = 0;
+        $quota->DIFERRED_TO = 1;
         $quota->PAYMENT_ID = '';
         $quota->IS_PAYED = 'FALSE';
         $quota->IS_VERIFIED = strtoupper($valid_card);
         $quota->IS_REPEATED = 'TRUE';
         $quota->PERIOD = 'M';
-        $quota->LAST_DATE = date("Y-m-d", strtotime(date('Y') . "-" . date('m', strtotime('+1 month')) . '-01'));
+        $quota->LAST_DATE = 'NOW()';
         $quota->IS_BLOCKED = "FALSE";
         $quota->_add();
 
