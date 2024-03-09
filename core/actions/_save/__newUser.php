@@ -146,58 +146,9 @@
 
 		//TODO Nativapps
 		if (isset($_POST['dataSubscription'])) {
-			//Realiza la operacion
-			require_once("../../classes/affiliation_rate.php");
-			require_once("../../classes/affiliate_subscription.php");
-			require_once("../../classes/client.php");
+			require_once("__registerSubscriptionData.php");
 
-			$dataSubscription = json_decode($_POST['dataSubscription']);
-
-			/** Datos de facturación */
-			$client_id = $dataSubscription->dataBillingData->client_id;
-			$legal_representative = $dataSubscription->dataBillingData->legal_representative;
-			
-			/** Datos de la tarjeta */
-			$credit_card_number = $dataSubscription->dataCardDetails->txtCREDIT_CARD_NUMBER;
-			$valid_card = $dataSubscription->dataCardDetails->hfValidCard;
-			$credit_card_name = $dataSubscription->dataCardDetails->txtCREDIT_CARD_NAME;
-			$date_expiration = $dataSubscription->dataCardDetails->txtDATE_EXPIRATION;
-			$verification_code = $dataSubscription->dataCardDetails->txtVERIFICATION_CODE;
-			$total_subscription = $dataSubscription->totalSubscription;
-
-			/** Guardando suscripción */
-			$affiliate_subscription = new affiliate_subscription();
-			$affiliate_subscription->CLIENT_ID = $client_id;
-			$affiliate_subscription->DETAILED_PLAN = '';
-			$affiliate_subscription->AMOUNT = $total_subscription;
-			$affiliate_subscription->START_DATE = 'NOW()';
-			$affiliate_subscription->CREDIT_CARD_NUMBER = str_replace(' ', '', $credit_card_number);
-			$affiliate_subscription->CREDIT_CARD_NAME = $credit_card_name;
-			$affiliate_subscription->DATE_EXPIRATION = $date_expiration;
-			$affiliate_subscription->VERIFICATION_CODE = $verification_code;
-			$affiliate_subscription->CARD_STATUS = $valid_card === 'true' ? 'valid' : 'invalid';
-			$affiliate_subscription->_add("", LANGUAGE);
-
-			/** Detalles de la suscripción */
-			foreach ($dataSubscription->dataPersonalizePlan as $key => $rates) {
-				$affiliation_rate = new affiliation_rate();
-				$affiliation_rate->RESOURCE_NAME = $rates->resource_name;
-				$affiliation_rate->CLIENT_ID = $client_id;
-				$affiliation_rate->SUBSCRIPTION_ID = $affiliate_subscription->ID;
-				$affiliation_rate->QUANTITY_USERS = $rates->quantities;
-				$affiliation_rate->COST = $rates->unit_value;
-				$affiliation_rate->_add("", LANGUAGE);
-			}
-
-			//Agrega representante legal al cliente
-			$client = new client();
-			$client->ID = $client_id;
-			//Consulta la información
-			$client->__getInformation();
-
-			$client->LEGAL_REPRESENTATIVE = $legal_representative;
-			$client->_modify();
-
+			$client_id = registerSubscriptionData($_POST['dataSubscription']);
 
 			// error_log(date('d.m.Y h:i:s') . " - " . print_r($dataSubscription, true) . PHP_EOL, 3, 'my-errors.log');
 
