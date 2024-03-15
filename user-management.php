@@ -379,6 +379,9 @@
 			var dataBillingData = {};
 			var dataCardDetails = {};
 			var subscriptionFormValidation = true;
+
+			var number_users_rate_basic = $("input[name='number_users_rate_basic']");
+			var number_users_rate_1 = $("input[name='number_users_rate_1']");
 	
 			new Cleave('#txtCREDIT_CARD_NUMBER', {
 				creditCard: true
@@ -473,7 +476,7 @@
 			//$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO Quitar al pasar a produccion	
 			//TODO Nativapps
 			if (action === 'new') {
-				console.log('Hola que tal')
+				
 				acceptTermsConditionsId.bootstrapToggle('off');
 				nextBtn.prop("disabled", true);
 				numberUsersAffiliation.each(function() {
@@ -574,7 +577,7 @@
 
 		$("#txtCREDIT_CARD_NUMBER").on("change", function(e) {
 			$('#txtCREDIT_CARD_NUMBER').validateCreditCard(function(result) {
-				console.log(result.valid)
+				
 				var type = result.card_type.name;
 				type = (type == "diners") ? "diners-club" : type;
 				var icon = "fa fa-cc-" + type;
@@ -724,7 +727,21 @@
 						// noty = notify("", "dark", "", message, "", false);												
 					},
 					success:function(response){
-						console.log(response)
+						console.log(response.client_type, <?= $max_users_affiliation_basic_rate ?>)
+						client_type = response.client_type;
+						if (client_type === 'client') {
+							number_users_rate_basic.prop('readonly', true);							
+							number_users_rate_1.prop('readonly', false);
+
+							number_users_rate_basic.prop('max', <?= $max_users_affiliation_basic_rate ?>);
+							number_users_rate_1.prop('max', <?= $max_users_affiliation_allied_company ?>);
+						} else {
+							number_users_rate_basic.prop('readonly', false);							
+							number_users_rate_1.prop('readonly', true);
+							
+							number_users_rate_basic.prop('max', <?= $max_users_affiliation_allied_company ?>);
+							number_users_rate_1.prop('max', <?= $max_users_affiliation_basic_rate ?>);
+						}
 						resolve(response)
 					},error: function(xhr, status, error) {
 						reject(error)

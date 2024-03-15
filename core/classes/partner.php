@@ -449,6 +449,17 @@ class partner extends table {
 		return $return;
 	}	
 
+	//TODO Nativapps
+	//Retorna el tipo de cliente 
+	function getDataByID($idClient)
+	{
+		$this->sql = "SELECT * FROM " . $this->table . " WHERE ID = '".$idClient."' AND IS_BLOCKED = FALSE ";
+		//Obtiene los resultados
+		$row = $this->__getDataByMode();
+		// $row = $row ? $row[0] : null;
+		return $row;
+	}
+
 	
 }
 

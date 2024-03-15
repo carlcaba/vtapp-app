@@ -589,6 +589,7 @@ class client extends table {
 		return $return;
     }
 
+	//TODO Nativapps
 	//Retorna el tipo de cliente 
 	function getDataByID($idClient)
 	{

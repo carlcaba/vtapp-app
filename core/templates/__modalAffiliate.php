@@ -74,11 +74,13 @@
 													<tbody>
 
 														<tr>
-															<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></td>
+															<td class="font-weight-semibold align-middle p-3">
+																<div><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></div>
+															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_basic_rate ?></td>
 															<td class="align-middle p-3">
 
-																<input type="number" name="number_users_rate_basic" data-resource-name="AFFILIATION_RATE_NAME_BASIC" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>" readonly>
+																<input type="number" name="number_users_rate_basic" data-resource-name="AFFILIATION_RATE_NAME_BASIC" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>">
 
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<span class="number-users-total-rate-basic">0</span></td>

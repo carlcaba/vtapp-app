@@ -2,10 +2,10 @@
 //Inicio de sesion
 session_name('vtappcorp_session');
 session_start();
-require_once("../../classes/client.php");
 
 $is_affiliated_client = false;
 $data_client = null;
+$client_type = '';
 
 try {
 
@@ -14,12 +14,27 @@ try {
 
 	//Lógica
 	$cbReference = array_key_exists('cbReference', $data) ? $data['cbReference'] : null;
-	if ($cbReference) {
-		$client = new client($cbReference);
-		$data_client = $client->getDataByID($cbReference);
-		if ($data_client['PAYMENT_TYPE_ID'] == '5' || $data_client['PAYMENT_TYPE_ID'] == '1') {
+	$cbAccess = array_key_exists('cbAccess', $data) ? $data['cbAccess'] : null;
+
+	if ($cbReference && $cbAccess) {
+
+		if ($cbAccess >= 20 && $cbAccess < 60) {
+			require_once("../../classes/client.php");
+			$client = new client($cbAccess);
+			$data_client = $client->getDataByID($cbReference);
+			if ($data_client['PAYMENT_TYPE_ID'] == '5' || $data_client['PAYMENT_TYPE_ID'] == '1') {
+				$is_affiliated_client = true;
+				$client_type = 'client';
+			}
+		} elseif ($cbAccess >= 60 && $cbAccess < 90) {
+			require_once("../../classes/partner.php");
+			$client = new partner();
+			$data_client = $client->getDataByID($cbReference);
 			$is_affiliated_client = true;
+			$client_type = 'partner';
 		}
+
+		// error_log(date('d.m.Y h:i:s') . " - " . json_encode($data_client) . PHP_EOL, 3, 'my-errors.log');
 	}
 
 	$resp = array(
@@ -27,7 +42,8 @@ try {
 		'status' => 'success',
 		'message' => '',
 		'data' => $data_client,
-		'is_affiliated_client' => $is_affiliated_client
+		'is_affiliated_client' => $is_affiliated_client,
+		'client_type' => $client_type
 	);
 
 	//////////////////////
