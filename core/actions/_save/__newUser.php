@@ -148,9 +148,7 @@
 		if (isset($_POST['dataSubscription'])) {
 			require_once("__registerSubscriptionData.php");
 
-			$client_id = registerSubscriptionData($_POST['dataSubscription']);
-
-			// error_log(date('d.m.Y h:i:s') . " - " . print_r($dataSubscription, true) . PHP_EOL, 3, 'my-errors.log');
+			$client_id = registerSubscriptionData($_POST['dataSubscription'], $datas);
 
 			$result["link"] = $result["link"]."&subscribed_customer=".$client_id;
 		}

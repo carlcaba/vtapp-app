@@ -382,6 +382,8 @@
 
 			var number_users_rate_basic = $("input[name='number_users_rate_basic']");
 			var number_users_rate_1 = $("input[name='number_users_rate_1']");
+
+			var rateNameBasic = $(".rate-name-basic");
 	
 			new Cleave('#txtCREDIT_CARD_NUMBER', {
 				creditCard: true
@@ -735,12 +737,18 @@
 
 							number_users_rate_basic.prop('max', <?= $max_users_affiliation_basic_rate ?>);
 							number_users_rate_1.prop('max', <?= $max_users_affiliation_allied_company ?>);
+
+							rateNameBasic.text('<?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?>');
+							number_users_rate_basic.attr('data-resource-name', 'AFFILIATION_RATE_NAME_BASIC');
 						} else {
 							number_users_rate_basic.prop('readonly', false);							
 							number_users_rate_1.prop('readonly', true);
 							
 							number_users_rate_basic.prop('max', <?= $max_users_affiliation_allied_company ?>);
 							number_users_rate_1.prop('max', <?= $max_users_affiliation_basic_rate ?>);
+
+							rateNameBasic.text('<?= $_SESSION["AFFILIATION_RATE_NAME_BASIC_2"] ?>');
+							number_users_rate_basic.attr('data-resource-name', 'AFFILIATION_RATE_NAME_BASIC_2');
 						}
 						resolve(response)
 					},error: function(xhr, status, error) {

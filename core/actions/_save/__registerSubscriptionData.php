@@ -7,10 +7,14 @@ require_once("../../classes/client.php");
 
 // $dataSubscription = json_decode($_POST['dataSubscription']);
 
-function registerSubscriptionData($dataSubscription)
+function registerSubscriptionData($dataSubscription, $datas)
 {
     try {
         $dataSubscription = json_decode($dataSubscription);
+
+        error_log(date('d.m.Y h:i:s') . " - " . print_r($dataSubscription, true) . PHP_EOL, 3, 'my-errors.log');
+        error_log(date('d.m.Y h:i:s') . " - " . print_r($datas, true) . PHP_EOL, 3, 'my-errors.log');
+
         /** Datos de facturación */
         $client_id = $dataSubscription->dataBillingData->client_id;
         $legal_representative = $dataSubscription->dataBillingData->legal_representative;
@@ -36,6 +40,19 @@ function registerSubscriptionData($dataSubscription)
         $affiliate_subscription->CARD_STATUS = $valid_card === 'true' ? 'valid' : 'invalid';
         $affiliate_subscription->_add("", LANGUAGE);
 
+        //Si hay error
+        if ($affiliate_subscription->nerror > 0) {
+            $sql = $affiliate_subscription->sql;
+            //Si es error de correo
+            if ($affiliate_subscription->nerror != 18)
+                //Confirma mensaje al usuario
+                $message = $affiliate_subscription->nerror . ". " . $affiliate_subscription->error;
+            else
+                $message = $affiliate_subscription->nerror . ". " . $affiliate_subscription->error;
+            $error = true;
+            error_log(date('d.m.Y h:i:s') . " - " . print_r([$sql, $message], true) . PHP_EOL, 3, 'my-errors.log');
+        }
+
         /** Guarda la suscripción en la tabla quota */
         $quota = new quota();
         $quota->setType('6');
@@ -52,9 +69,23 @@ function registerSubscriptionData($dataSubscription)
         $quota->IS_VERIFIED = strtoupper($valid_card);
         $quota->IS_REPEATED = 'TRUE';
         $quota->PERIOD = 'M';
-        $quota->LAST_DATE = 'NOW()';
+        $quota->LAST_DATE = "DATE_SUB(NOW(), INTERVAL 1 MONTH)";
         $quota->IS_BLOCKED = "FALSE";
         $quota->_add();
+
+        //Si hay error
+        if ($quota->nerror > 0) {
+            $sql = $quota->sql;
+            //Si es error de correo
+            if ($quota->nerror != 18)
+                //Confirma mensaje al usuario
+                $message = $quota->nerror . ". " . $quota->error;
+            else
+                $message = $quota->nerror . ". " . $quota->error;
+            $error = true;
+            error_log(date('d.m.Y h:i:s') . " - " . print_r([$sql, $message], true) . PHP_EOL, 3, 'my-errors.log');
+        }
+
 
 
         /** Detalles de la suscripción */

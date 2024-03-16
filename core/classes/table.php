@@ -288,7 +288,7 @@
 					case "datetime": {
 						//Verifica que no este establecido a la fecha del sistema
 						if($this->arrColDatas[$idCol] != "NULL") {
-							$defaults = array("CURDATE()", "CURDATE", "CURRENT_TIMESTAMP()", "CURRENT_TIMESTAMP", "NOW()", "NOW");
+							$defaults = array("CURDATE()", "CURDATE", "CURRENT_TIMESTAMP()", "CURRENT_TIMESTAMP", "NOW()", "NOW", "DATE_SUB(NOW(), INTERVAL 1 MONTH)");
 							if (!in_array($this->arrColDatas[$idCol], $defaults))
 								$datas = "'" . $this->arrColDatas[$idCol] . "'";
 							else

@@ -75,7 +75,7 @@
 
 														<tr>
 															<td class="font-weight-semibold align-middle p-3">
-																<div><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></div>
+																<div class="rate-name-basic"><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></div>
 															</td>
 															<td class="text-right font-weight-semibold align-middle p-3">$<?= $user_affiliate_basic_rate ?></td>
 															<td class="align-middle p-3">
