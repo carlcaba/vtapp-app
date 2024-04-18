@@ -178,6 +178,7 @@ class partner extends table {
 
 	//Funcion para contar los asociados
 	function getTotalCount() {
+		_error_log("Partners getTotalCount loading start at " . date("Y-m-d h:i:s"));		
 		//Arma la sentencia SQL
 		$this->sql = "SELECT COUNT(ID) FROM $this->table WHERE IS_BLOCKED = FALSE";
         //Obtiene los resultados
@@ -187,7 +188,7 @@ class partner extends table {
         //Registro existe
         if($row)
 			$return = $row[0];
-			
+		_error_log("Partners getTotalCount finish at " . date("Y-m-d h:i:s"));		
 		return $return;	
 	}
 

@@ -13,12 +13,12 @@ class partner_rate extends table {
 	var $view;
 
 	//Constructor de la clase
-	function __constructor() {
-		$this->partner_rate();
+	function __constructor($rate = "") {
+		$this->partner_rate($rate);
 	}
 	
 	//Constructor anterior
-	function partner_rate() {
+	function partner_rate($rate = "") {
 		//Llamado al constructor padre
 		parent::table("TBL_PARTNER_RATE");
 		//Valores por defecto

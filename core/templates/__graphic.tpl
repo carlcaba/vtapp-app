@@ -1,4 +1,6 @@
 <?
+	_error_log("Graphic loading start at " . date("Y-m-d h:i:s"));
+
 	require_once("core/classes/service.php");
 	$serv = new service();
 ?>
@@ -49,6 +51,9 @@
 												<strong><?= $_SESSION["GRAPH_1_SUBTITLE_2"] ?></strong>
 											</p>
 <?= $serv->DashboardSummaryGraph() ?>
+<?
+	$arrCount = $serv->getTotal(-1);
+?>
 										</div>
 										<!-- /.col -->
 									</div>
@@ -60,7 +65,7 @@
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
 												<?= $serv->raiseTotal() ?>
-												<h5 class="description-header">$<?= number_format($serv->getTotal(),2,".",",") ?></h5>
+												<h5 class="description-header">$<?= number_format($arrCount["0"],2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_REVENUE"] ?></span>
 											</div>
 											<!-- /.description-block -->
@@ -69,7 +74,7 @@
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
 												<?= $serv->raiseTotal(1) ?>
-												<h5 class="description-header">$<?= number_format($serv->getTotal(1),2,".",",") ?></h5>
+												<h5 class="description-header">$<?= number_format($arrCount["1"],2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_COST"] ?></span>
 											</div>
 											<!-- /.description-block -->
@@ -78,7 +83,7 @@
 										<div class="col-sm-3 col-6">
 											<div class="description-block border-right">
 												<?= $serv->raiseTotal(2) ?>
-												<h5 class="description-header">$<?= number_format($serv->getTotal(2),2,".",",") ?></h5>
+												<h5 class="description-header">$<?= number_format($arrCount["2"],2,".",",") ?></h5>
 												<span class="description-text"><?= $_SESSION["TOTAL_PROFIT"] ?></span>
 											</div>
 											<!-- /.description-block -->
@@ -182,3 +187,6 @@
 			
 		});
 	</script>
+<?
+	_error_log("Graphic finishes at " . date("Y-m-d h:i:s"));
+?>	

@@ -1,4 +1,5 @@
 <?
+
 	//Inicio de sesion
 	session_name('vtappcorp_session');
 	session_start();
@@ -6,11 +7,15 @@
 	//Inicializa la cabecera
 	header('Content-Type: text/plain; charset=utf-8');
 
+
 	//incluye las clases necesarias
 	require_once("classes/resources.php");
 	require_once("classes/users.php");
 	require_once("classes/interfaces.php");
 	require_once("classes/configuration.php");
+
+	_error_log("Validate start at " . date("Y-m-d h:i:s"));
+
 	//Instancia las clases necesarias
 	$inter = new interfaces();
 	$conf = new configuration("SITE_ROOT");
@@ -18,9 +23,7 @@
 	//Carga los valores de la configuraci�n
 	$site_root = $conf->verifyValue();
 	
-	_error_log("load-resources start on " . date('d/m/Y h:i:s a', time()));
     include("__load-resources.php");
-	_error_log("load-resources finishes on " . date('d/m/Y h:i:s a', time()));
 	
 	//Variable del codigo
 	$link = "";
@@ -193,6 +196,8 @@
 		$result['link'] = $site_root . $link;
 	}
 
+	_error_log("Validate finishes at " . date("Y-m-d h:i:s"));
+	
 	//Termina
 	exit(json_encode($result));
 

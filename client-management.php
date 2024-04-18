@@ -233,7 +233,7 @@
 												<label><?= $_SESSION["CONTRACT"] ?> *</label>
 												<select class="form-control" id="cbClientPaymentType" name="cbClientPaymentType" <?= $dataForm["readonly"][$cont++] ?>>
 													<option value="0" data-clienttypeid="12" data-show="false">Sin contrato</option>
-													<option value="1" data-clienttypeid="3" data-show="true">Con contrato</option>
+													<option value="1" data-clienttypeid="5" data-show="true">Con contrato</option>
 												</select>
 											</div>
 										</div>
@@ -406,12 +406,8 @@
 			if(!datasObj.hasOwnProperty("hfPartner")) {
 				datasObj["hfPartner"] = $("#hfPartner").val();
 			}
-			if(!datasObj.hasOwnProperty("cbClientPaymentType")) {
-				datasObj["cbClientPaymentType"] = $("#cbClientPaymentType option:selected").val()
-			}
-			if(datasObj["cbClientPaymentType"] == "0") {
-				datasObj["cbClientPaymentType"] = "2";				
-			}
+			datasObj["cbClientPaymentType"] = $("#cbClientPaymentType option:selected").data("clienttypeid");
+
 			datasObj["cbTBL_CLIENT_IDENTIFICATION"] = $("#hfDocType_" + $("#cbTBL_CLIENT_IDENTIFICATION").val()).val();
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);

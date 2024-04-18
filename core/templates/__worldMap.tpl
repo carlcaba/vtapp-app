@@ -1,4 +1,7 @@
 <?
+
+	_error_log("World map loading start at " . date("Y-m-d h:i:s"));
+
 	require_once("core/classes/logs.php");
 	$log = new logs();
 
@@ -102,3 +105,6 @@
 									console.log("Extra .y: " + Math.round(1000 * coords.y) / 1000);
 								});
 							</script>
+<?
+	_error_log("World map finishes at " . date("Y-m-d h:i:s"));
+?>

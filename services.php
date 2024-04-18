@@ -344,6 +344,9 @@
 	function startBid(id) {
 		$.ajax({
 			url:'core/actions/_load/__getOnlineEmployees.php',
+			data: {
+				id: id
+			},
 			dataType: "json",
 			beforeSend: function (xhrObj) {
 				var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";

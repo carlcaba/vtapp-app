@@ -1,4 +1,6 @@
 <?
+	_error_log("Widgets loading start at " . date("Y-m-d h:i:s"));
+
 	require_once("core/classes/users.php");
 	require_once("core/classes/client.php");
 	require_once("core/classes/partner.php");
@@ -75,3 +77,6 @@
 				</div>
 				<!-- ./col -->
 			</div>
+<?
+	_error_log("Widgets finishes at " . date("Y-m-d h:i:s"));
+?>

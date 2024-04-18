@@ -294,6 +294,7 @@
 			localStorage.setItem('UBIODC_FROM', '');			
 			localStorage.setItem('UBIODC_FROM_IMAGE', '');			
 			
+			/*
 			try {
 				websocket = new WebSocket(wsUri); 
 				websocket.onopen = wsOO;
@@ -304,7 +305,8 @@
 			catch(error) {
 				notify("", 'danger', "", "<i class=\"fa-solid fa-land-mine-on\"></i> <?= $_SESSION["DIRECTCHAT_NOT_AVAILABLE"] ?>", "");				
 			}
-
+			*/
+			
 			$("#txtMESSAGE").on("keydown", function( event ) {
 				event.preventDefault();
 				if(event.which == 13){

@@ -1,4 +1,5 @@
 <?
+	_error_log("Contacts loading start at " . date("Y-m-d h:i:s"));
 	require_once("core/classes/users.php");
 	$contact = new users();
 ?>
@@ -7,6 +8,9 @@
 										<ul class="contacts-list" id="ulContactList">
 <?
 	echo $contact->showContactPanel();
+	
+	_error_log("Contacts finishes at " . date("Y-m-d h:i:s"));
+	
 ?>
 										</ul>
 										<!-- /.contacts-list -->

@@ -311,17 +311,21 @@ class service extends table {
 	
 	//Funcion para contar los asociados
 	function getTotalCount() {
+		_error_log("Service getTotalCount start at " . date("Y-m-d h:i:s"));		
 		//Arma la sentencia SQL
-		$this->sql = "SELECT COUNT(DISTINCT SERVICE_ID) FROM $this->view WHERE IS_BLOCKED = FALSE ";
+		$this->sql = "SELECT COUNT(DISTINCT S.ID) FROM $this->table S ";
+		$where = "WHERE S.IS_BLOCKED = FALSE ";
 		if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "CL") {
-			$this->sql .= "AND CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			$where .= "AND S.CLIENT_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
 		else if(substr($_SESSION["vtappcorp_useraccess"],0,2) == "AL") {
-			$this->sql .= "AND PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			$this->sql .= "INNER JOIN TBL_PARTNER_CLIENT PC ON (PC.CLIENT_ID = S.CLIENT_ID) ";
+			$where .= "AND PC.PARTNER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
 		else if($_SESSION["vtappcorp_useraccess"] == "VIS") {
-			$this->sql .= "AND USER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
+			$where .= "AND S.USER_ID = '" . $_SESSION["vtappcorp_referenceid"] . "'";
 		}
+		$this->sql .= $where;
         //Obtiene los resultados
         $row = $this->__getData();
 		//Numero a retornar
@@ -329,7 +333,7 @@ class service extends table {
         //Registro existe
         if($row)
 			$return = $row[0];
-			
+		_error_log("Service getTotalCount finish at " . date("Y-m-d h:i:s"),$this->sql);		
 		return $return;	
 	}
 	
@@ -372,6 +376,7 @@ class service extends table {
 	}
 
 	function getTotal($type = 0, $curmon = true) {
+		_error_log("Service getTotal start at " . date("Y-m-d h:i:s"));		
 		//Arma la sentencia SQL
 		$this->sql = "SELECT SUM(PRICE) FROM $this->table ";
 		if($curmon) 
@@ -385,6 +390,11 @@ class service extends table {
         //Registro existe
         if($row) {
 			switch($type) {
+			case -1:
+				$return = array("0" => floatval($row[0]),
+								"1" => floatval($row[0] * 0.7),
+								"2" => floatval($row[0] * 0.3));
+				break;
 			case 0:
 				$return = floatval($row[0]);
 				break;
@@ -396,6 +406,7 @@ class service extends table {
 				break;
 			}
 		}
+		_error_log("Service getTotal finish at " . date("Y-m-d h:i:s"),$this->sql);		
 		return $return;	
 	}
 
@@ -1231,10 +1242,13 @@ class service extends table {
 	}
 	
 	function DashboardSummaryGraph() {
+		_error_log("Service DashboardSummaryGraph start at " . date("Y-m-d h:i:s"));		
 		//Valor a retornar
 		$return = "";
-		$this->sql = "SELECT SERVICE_STATE_NAME, (SELECT COUNT(*) FROM VIE_SERVICE_SUMMARY) TOTAL, BACKGROUND_COLOR, COUNT(SERVICE_ID) ".
-					"FROM $this->view GROUP BY SERVICE_STATE_NAME LIMIT 4";
+		$this->sql = "SELECT SS.SERVICE_STATE_NAME, (SELECT COUNT(*) FROM $this->table) TOTAL, SS.BACKGROUND_COLOR, COUNT(S.ID) " .
+					"FROM $this->table S " .
+					"INNER JOIN " . $this->state->view . " SS ON (SS.SERVICE_STATE_ID = S.STATE_ID) " .
+					"GROUP BY SS.SERVICE_STATE_NAME LIMIT 4";
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
 			$return .= "<div class=\"progress-group\">\n";
@@ -1246,6 +1260,7 @@ class service extends table {
 			$return .= "</div>\n";
 			$return .= "</div>\n";
 		}
+		_error_log("Service DashboardSummaryGraph finish at " . date("Y-m-d h:i:s"),$this->sql);		
 		return $return;
 	}
 
@@ -1296,6 +1311,21 @@ class service extends table {
 		return $return;
     }
 
+	//Funcion que obtiene el aliado asociado a un servicio
+	function getPartner($id = "") {
+		$result = "";
+		if($id != "") {
+			$this->ID = $id;
+		}
+		$this->sql = "SELECT IFNULL(PARTNER_ID,'') FROM $this->view WHERE SERVICE_ID = " . $this->_checkDataType("ID");
+		//Obtiene los resultados
+        $row = $this->__getData();
+        //Registro existe
+        if($row) {
+			$result = $row[0];
+		}
+		return $result;	
+	}
 
 }
 

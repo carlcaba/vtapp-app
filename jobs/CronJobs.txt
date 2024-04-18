@@ -1,0 +1,7 @@
+Trabajos de cron actuales
+Minuto	Hora	Día	Mes	Día de la semana	Comando	Acciones
+*/24	*	*	*	*	/usr/bin/ea-php73 /home/logicaadmin/ubioapp.logicaestudio.com/jobs/__startBidAuto.php >/dev/null 2>&1	    
+*/22	*	*	*	*	/usr/bin/ea-php73 /home/logicaadmin/ubioapp.logicaestudio.com/jobs/__restoreBidAuto.php >/dev/null 2>&1	    
+*	*	*	*	1-5	/usr/bin/ea-php73 /home/logicaadmin/ubioapp.logicaestudio.com/jobs/__repeatedPayment.php >/dev/null 2>&1	    
+*/15	*	*	*	*	/usr/bin/ea-php73 /home/logicaadmin/ubioapp.logicaestudio.com/jobs/__logOutAuto.php >/dev/null 2>&1	    
+*/18	*	*	*	*	/usr/bin/ea-php73 /home/logicaadmin/ubioapp.logicaestudio.com/jobs/__disableUnattended.php >/dev/null 2>&1	    

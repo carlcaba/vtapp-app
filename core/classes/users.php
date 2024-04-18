@@ -285,6 +285,7 @@ class users extends table {
 	
 	//Cuenta el total de usuarios
 	function getTotalUsers() {
+		_error_log("Users getTotalUsers start at " . date("Y-m-d h:i:s"));		
 		//Variable a retornar
 		$return = 0;
 		try {
@@ -301,6 +302,7 @@ class users extends table {
 			$this->error = $e->getMessage();
 			$this->nerror = 40;
 		}
+		_error_log("Users getTotalUsers finish at " . date("Y-m-d h:i:s"),$this->sql);		
 		return $return;
 	}
 	
@@ -1273,6 +1275,8 @@ class users extends table {
 		//Variable a devolver
 		$return = "";
 		//Recorre los valores
+		
+		
 		foreach($this->__getAllData() as $row) {
 			//Imagen del usuario
 			$avatar = "img/users/" . $row[0] . ".jpg";
@@ -1298,13 +1302,13 @@ class users extends table {
 				$logout = strtotime(date("Y-m-d H:i:s") . " -15 minutes");
 			}
 			//Inicia la GUI
-			$return .= "<li id=\"li_$row[0]\"><a href=\"javascript:void(0);\" onclick=\"showDirectChat('$row[0]');\">\n";
-			$return .= "<img class=\"contacts-list-img\" src=\"$avatar\">\n";
+			$return .= "<li id=\"li_" . $row[0] . "\"><a href=\"javascript:void(0);\" onclick=\"showDirectChat('" . $row[0] . "');\">\n";
+			$return .= "<img class=\"contacts-list-img\" src=\"" . $avatar . "\">\n";
 			$return .= "<div class=\"contacts-list-info\">\n";
 			$return .= "<span class=\"contacts-list-name\"><span id=\"spanName_$row[0]\">" . ucwords(strtolower($row[1]));
 			$return .= "</span><small class=\"contacts-list-date float-right\">" . date("d/M/Y") . "</small>\n";
 			$return .= "</span>\n";
-			$return .= "<span class=\"contacts-list-msg\">$row[2] " . ($row[4] ? "($row[4])" : "") . " $badgeStatus</span>\n";
+			$return .= "<span class=\"contacts-list-msg\">$row[2] " . ($row[4] ? "(" . $row[4] . ")" : "") . " " . $badgeStatus . "</span>\n";
 			$return .= "</div></a></li>\n";
 		}
 		return $return;
@@ -1379,7 +1383,7 @@ class users extends table {
     }
 
     //Funcion que verifica usuarios enlinea
-    function getOnline($value = "") {
+    function getOnline($value = "", $partner = "") {
         //Arma la sentencia SQL
         $this->sql = "SELECT DISTINCT O.* FROM $this->vieac A " .
 						"LEFT JOIN $this->vieol O ON (A.USER_ID = O.USER_ID) " .
@@ -1387,6 +1391,9 @@ class users extends table {
 		//Verify value
 		if($value != "") {
 			$this->sql .= " AND REFERENCE = '$value'";
+		}
+		if($partner != "") {
+			$this->sql .= " AND PARTNER_ID = '$partner'";
 		}
 		//Variable a devolver
 		$return = array();

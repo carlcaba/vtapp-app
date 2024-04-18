@@ -1,4 +1,6 @@
 <?
+	_error_log("Direct chat loading start at " . date("Y-m-d h:i:s"));
+
 	require_once("core/classes/directchat.php");
 	$chat = new directchat();
 	$userChat = $chat->getLastChat();
@@ -25,6 +27,9 @@
 <?
 	if(($myChats + $sentChats) > 0) 
 		echo $chat->showForm($userChat);
+	
+	_error_log("Direct chat finishes at " . date("Y-m-d h:i:s"));
+	
 ?>
 								</div>
 								<!-- /.card-footer-->

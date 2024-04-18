@@ -1,6 +1,5 @@
 <?
-
-// LOGICA ESTUDIO 2019
+// LOGICA ESTUDIO 2023
 
 //Incluye las clases dependientes
 require_once("table.php");
@@ -242,7 +241,8 @@ class client extends table {
 			$ccard = $payment ? ($row[10] == 1 ? "true" : "false") : "true";
 			$requirecard = $payment ? ($row[7] == 4 ? "true" : "false") : "true";
 			$contract = ($row[11] == 1 ? "true" : "false");
-			$datas = "data-optionpy='" . $pay . "' data-bid='" . $bid . "' data-partner='" . $pid . "' data-cc='" . $ccard . "' data-crequired='" . $requirecard . "' data-ctrct='$contract' data-pymttype='$row[5]'";
+			$cltype = ($row[7] == 1 ? "true" : "false");
+			$datas = "data-optionpy='" . $pay . "' data-bid='" . $bid . "' data-partner='" . $pid . "' data-cc='" . $ccard . "' data-crequired='" . $requirecard . "' data-ctrct='$contract' data-pymttype='$row[5]' data-cltype='$cltype' ";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
@@ -287,6 +287,7 @@ class client extends table {
 
 	//Funcion para contar los clientes
 	function getTotalCount() {
+		_error_log("Clients getTotalCount loading start at " . date("Y-m-d h:i:s"));		
 		//Arma la sentencia SQL
 		$this->sql = "SELECT COUNT(ID) FROM $this->table WHERE IS_BLOCKED = FALSE";
         //Obtiene los resultados
@@ -296,7 +297,7 @@ class client extends table {
         //Registro existe
         if($row)
 			$return = $row[0];
-			
+		_error_log("Clients getTotalCount finish at " . date("Y-m-d h:i:s"));		
 		return $return;	
 	}
 	
@@ -565,7 +566,7 @@ class client extends table {
     function showListJSON($ref) {
 		$return = array();		
 		//Arma la sentencia SQL
-        $this->sql = "SELECT ID, CLIENT_NAME FROM " . $this->table . " WHERE IS_BLOCKED = FALSE ";
+        $this->sql = "SELECT DISTINCT CLIENT_ID, CLIENT_NAME, PAYMENT_TYPE_NAME, CLIENT_TYPE_NAME FROM " . $this->view . " WHERE IS_BLOCKED = FALSE ";
 		//Agrega la referencia si hay
 		if ($ref != "") {
 			$this->sql .= "AND ID = '$ref' ";
@@ -580,7 +581,7 @@ class client extends table {
 		$this->sql .= "ORDER BY CLIENT_NAME";
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
-			$data = array("text" => $row[1],
+			$data = array("text" => $row[1] . " (" . $row[2] . "-" . $row[3] . ")",
 							"value" => $row[0],
 							"selected" => ($ref == $row[0]));
 			array_push($return,$data);
@@ -588,7 +589,5 @@ class client extends table {
 		//Retorna
 		return $return;
     }	
-	
 }
-
 ?>
