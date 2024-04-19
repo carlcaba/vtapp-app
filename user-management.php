@@ -13,9 +13,17 @@
 	if(!empty($_GET['src'])) {
 		$source = $_GET['src'];
 	}
+
+	$is_client_ally = false;
+	if (isset($_GET['type_client']) && $_GET['type_client'] === 'ally') {
+		$path = "user-management.php?action=new&src=cli&type_client=ally";
+		$is_client_ally = true;
+	}
 	
 	$filename = "users-manager.php" . ($source == "" ? "" : "?src=" . $source);
 
+	$filename = $is_client_ally ? $path : $filename;
+	
 	//Define el menu
 	$_SESSION["menu_id"] = $inter->getMenuId($filename);
 	
@@ -76,10 +84,10 @@
 	
 	switch($action) {
 		case "new": {
-			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			$user = new users();
 			//TODO Nativapps
+			$titlepage = $is_client_ally ? 'Nuevo Usuario Aliado' : $_SESSION["MENU_NEW"];
 			require_once("core/classes/affiliate_subscription.php");
 			require_once("core/classes/client.php");
 			$affiliate_subscription = new affiliate_subscription();
@@ -154,7 +162,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $is_client_ally ? '' : $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
 						</div>
 						<!-- /.col -->
 <?
@@ -516,6 +524,7 @@
 			datasObj["cbChangePassword"] = $("#cbChangePassword").is(':checked');
 			datasObj["cbTBL_SYSTEM_USER_IDENTIFICATION"] = $("#hfDocType_" + $("#cbTBL_SYSTEM_USER_IDENTIFICATION").val()).val();
 			datasObj["src"] = "<?= $source ?>";
+			datasObj["is_client_ally"] = "<?= $is_client_ally ?>"; //TODO Nativapps
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);
 			$("#spanTitleName").html("");
@@ -549,7 +558,7 @@
 				});
 			});
 			//TODO Aca se va a realizar la lógica para afilia tu empresa
-			if (action === "new") {
+			if (action === "new") {				
 				checkClientIsAffiliationType(datas).then(function(resp) {
 					if (resp.is_affiliated_client) {
 						$('#acceptTermsConditions').prop('checked', false);

@@ -15,6 +15,7 @@ try {
 	//Lógica
 	$cbReference = array_key_exists('cbReference', $data) ? $data['cbReference'] : null;
 	$cbAccess = array_key_exists('cbAccess', $data) ? $data['cbAccess'] : null;
+	$is_client_ally = array_key_exists('is_client_ally', $data) ? $data['is_client_ally'] : false;
 
 	if ($cbReference && $cbAccess) {
 
@@ -26,13 +27,18 @@ try {
 				$is_affiliated_client = true;
 				$client_type = 'client';
 			}
-		} elseif ($cbAccess >= 60 && $cbAccess < 90) {
-			require_once("../../classes/partner.php");
-			$client = new partner();
-			$data_client = $client->getDataByID($cbReference);
-			$is_affiliated_client = true;
-			$client_type = 'partner';
-		}
+
+			if ($is_client_ally == '1') {
+				$client_type = 'ally';
+			}
+		} 
+		// elseif ($cbAccess >= 60 && $cbAccess < 90) {
+		// 	require_once("../../classes/partner.php");
+		// 	$client = new partner();
+		// 	$data_client = $client->getDataByID($cbReference);
+		// 	$is_affiliated_client = true;
+		// 	$client_type = 'partner';
+		// }
 
 		// error_log(date('d.m.Y h:i:s') . " - " . json_encode($data_client) . PHP_EOL, 3, 'my-errors.log');
 	}
