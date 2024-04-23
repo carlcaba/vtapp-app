@@ -16,8 +16,9 @@ try {
 	$cbReference = array_key_exists('cbReference', $data) ? $data['cbReference'] : null;
 	$cbAccess = array_key_exists('cbAccess', $data) ? $data['cbAccess'] : null;
 	$is_client_ally = array_key_exists('is_client_ally', $data) ? $data['is_client_ally'] : false;
+	$src = array_key_exists('src', $data) ? $data['src'] : false;
 
-	if ($cbReference && $cbAccess) {
+	if ($cbReference && $cbAccess && $src !== 'ali') {
 
 		if ($cbAccess >= 20 && $cbAccess < 60) {
 			require_once("../../classes/client.php");

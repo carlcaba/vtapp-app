@@ -12,8 +12,8 @@ function registerSubscriptionData($dataSubscription, $datas)
     try {
         $dataSubscription = json_decode($dataSubscription);
 
-        error_log(date('d.m.Y h:i:s') . " - " . print_r($dataSubscription, true) . PHP_EOL, 3, 'my-errors.log');
-        error_log(date('d.m.Y h:i:s') . " - " . print_r($datas, true) . PHP_EOL, 3, 'my-errors.log');
+        // error_log(date('d.m.Y h:i:s') . " - " . print_r($dataSubscription, true) . PHP_EOL, 3, 'my-errors.log');
+        // error_log(date('d.m.Y h:i:s') . " - " . print_r($datas, true) . PHP_EOL, 3, 'my-errors.log');
 
         /** Datos de facturación */
         $client_id = $dataSubscription->dataBillingData->client_id;

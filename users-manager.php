@@ -387,7 +387,7 @@
     </script>
 <?
 	include("core/templates/__messages.tpl");
-	include("core/templates/__modalAffiliateStep4.php");
+	include("core/templates/__modalAffiliateStep4.tpl"); //TODO Nativapps
 ?>
 
 </body>

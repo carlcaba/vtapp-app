@@ -337,7 +337,7 @@
 	include("core/templates/__footer.tpl");
 	//TODO Nativapps
 	if ($action === 'new') {
-		include("core/templates/__modalAffiliate.php"); 
+		include("core/templates/__modalAffiliate.tpl"); 
 	}
 	/////////////
 ?>
@@ -363,6 +363,7 @@
 	$(document).ready(function() {
 		//TODO Nuevo desarrollo Nativapps
 		var action = "<?= $action ?>";
+		var src = "<?= $source ?>";
 		// Inicializar el stepper
 		if (action === 'new') {
 			var stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
@@ -534,10 +535,11 @@
 			$("#btnActivate").bind("click", function() {
 				// TODO Nativapps
 				var data = { strModel: datas };
-				if (action === "new") {
-					var dataSubscription = getDataSubscription();
-					data = { strModel: datas, dataSubscription: JSON.stringify(dataSubscription) }
+				var dataSubscription = false;
+				if (action === "new" && src === "cli") {
+					dataSubscription = getDataSubscription();
 				}
+				data = { strModel: datas, dataSubscription: JSON.stringify(dataSubscription) }
 				////////////////////
 				var noty;
 				$.ajax({
