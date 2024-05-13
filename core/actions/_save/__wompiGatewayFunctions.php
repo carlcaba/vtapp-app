@@ -124,7 +124,7 @@
 		return $result;
 	}
 	
-	function generateTransaction($quota, $token, $accTok, $urlTranx, $pubkey, $urlRet, $value = null) {
+	function generateTransaction($quota, $token, $accTok, $urlTranx, $pubkey, $urlRet, $prvkey, $value = null) {
 		$result = array("success" => true,
 						"transaction" => null,
 						"status" => "",
@@ -132,19 +132,24 @@
 		$transaction = "";
 		if($value == null)
 			$value = $quota->AMOUNT;
-		$headers = array ('authorization: Bearer ' . $pubkey);
+		$headers = array ('authorization: Bearer ' . $prvkey);
+		$currency = "COP";
+		//Se agrega un hexadecimal correspondiente a la fecha y hora para distinguirlo en caso que la referencia ya haya sido usada
+		$reference = $quota->ID . "-" . dechex(round(floatval(date("YmdHis")),0));
+		$integ = getIntegrityKey($reference,(round(floatval($value),2) * 100),$currency);
 		//Arma la trama de la transaccion
 		$dataTx = array("acceptance_token" => $accTok,
 						"amount_in_cents" => (round(floatval($value),2) * 100),
-						"currency" => "COP",
+						"currency" => $currency,
+						"signature" => $integ,
+						"public_key" => $pubkey,
 						"customer_email" => $quota->client->EMAIL,
 						"payment_method" => array("type" => "CARD",
 													"token" => $token,
 													"installments" => $quota->DIFERRED_TO),
 						//"payment_source_id" => 1234,
 						"redirect_url" =>  $urlRet,
-						//Se agrega un hexadecimal correspondiente a la fecha y hora para distinguirlo en caso que la referencia ya haya sido usada
-						"reference" => $quota->ID . "-" . dechex(round(floatval(date("YmdHis")),0)),
+						"reference" => $reference,
 						"customer_data" => array("phone_number" => $quota->client->CELLPHONE,
 													"full_name" => $quota->CREDIT_CARD_NAME),
 						"shipping_address" => array("address_line_1" => $quota->client->ADDRESS,
@@ -289,6 +294,13 @@
 			$ws->updateResult();
 		}
 		return $result;
+	}
+
+	function getIntegrityKey($ref,$value,$currency = "COP",$enc = true) {
+		require_once("../../classes/configuration.php");
+		$conf = new configuration("PAYMENT_WOMPI_INTEGRITY_KEY");
+		$key = $ref . $value . $currency . $conf->verifyValue();
+		return $enc ? hash("sha256", $key) : $key;
 	}
 
 ?>

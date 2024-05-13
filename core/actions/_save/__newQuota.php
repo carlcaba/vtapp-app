@@ -190,7 +190,8 @@
 			//Generar transaccion
 			//Verifica si hay no error, para generar la transaccion
 			if($result['success']) {
-				$createTx = generateTransaction($quota, $tokRet["token"], $accTok, $urlTranx, $prvkey, $urlRet);
+				$createTx = generateTransaction($quota, $tokRet["token"], $accTok, $urlTranx, $pubkey, $urlRet, $prvkey);
+				//$createTx = generateTransaction($quota, $tokRet["token"], $accTok, $urlTranx, $prvkey, $urlRet);
 				//Actualiza la respuesta
 				$result["success"] = $createTx["success"];
 				$result["message"] = $createTx["message"];
