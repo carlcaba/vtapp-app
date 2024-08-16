@@ -165,12 +165,39 @@ class external_session extends table {
 		}
 	}		
 	
+	//Funcion para obtener la ultima actualizacion de la sesion
+	function getLastDate($usrid) {
+		$this->sql = "SELECT IFNULL(MODIFIED_ON,REGISTERED_ON), ID FROM $this->table WHERE USER_ID = '$usrid' ORDER BY IFNULL(MODIFIED_ON,REGISTERED_ON) DESC LIMIT 1";
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = $_SESSION["NOT_REGISTERED"];
+			return null;
+        }
+        else {
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+			$this->ID = $row[1];
+			return $row[0];
+        }
+	}		
+
 	//Funcion para logout
-	function logOut() {
+	function logOut($table = "TBL_SYSTEM_USER") {
         //Arma la sentencia SQL
         $this->sql = "UPDATE " . $this->table . " SET IS_BLOCKED = TRUE WHERE ID = " . $this->_checkDataType("ID");
         //Verifica que no se presenten errores
         $this->executeQuery();
+		if($this->nerror == 0) {
+			//Arma la sentencia SQL
+			$this->sql = "UPDATE $table SET LOGGED = FALSE WHERE ID = " . $this->_checkDataType("USER_ID");
+			//Verifica que no se presenten errores
+			$this->executeQuery();
+		}
     }	
 	
 }

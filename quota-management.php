@@ -357,9 +357,7 @@
 					let selected = $("option:selected", this);
 					let ismarco = selected.data("optionpy") == "off" ? "1" : "0";
 					let compare = parseInt(selected.data("pymttype")) == 2 ? "2" : ismarco;
-					console.log(compare);
 					$("#cbQuotaType > option").each(function() {
-						console.log($(this).data("ismarco"));
 						if($(this).data("ismarco") == compare)
 							$(this).show();
 						else 

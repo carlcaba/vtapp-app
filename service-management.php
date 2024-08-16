@@ -969,12 +969,44 @@
 					}
 					else if(<?= ($accTok && !$err) ?>) {
 						var reference = "<?= uniqid() ?>";
+						var signature = null;
+						$.ajax({
+							url: "core/actions/_load/__loadSignature.php",
+							data: { 
+								ref: reference,
+								value: $("#hfPRICE").val()
+							},
+							dataType: "json",
+							method: "POST",
+							async: false,
+							success:function(data) {
+								console.log(data);
+								if(data.success)
+									signature = data.message;
+							}
+						});
 						$.getScript("<?= $script ?>", function( data, textStatus, jqxhr ) {
 							var checkout = new WidgetCheckout({
 								currency: 'COP',
 								amountInCents: (parseInt($("#hfPRICE").val()) * 100),
 								reference: reference,
-								publicKey: '<?= $pubkey ?>'
+								publicKey: '<?= $pubkey ?>',
+								signature: {integrity : signature},
+								customerData: { 
+									email: $("#txtREQUESTED_EMAIL").val(),
+									fullName: $("#txtREQUESTED_BY").val(),
+									phoneNumber: $("#txtREQUESTED_CELLPHONE").val(),
+									phoneNumberPrefix: '+57',
+									legalId: $("#txtREQUESTED_PHONE").val(),
+									legalIdType: 'CC'
+								},
+								shippingAddress: {  
+									addressLine1: $("#txtDELIVER_ADDRESS").val(),
+									city: "Bogota",
+									phoneNumber: $("#txtDELIVER_PHONE").val(),
+									region: "Cundinamarca",
+									country: "CO"
+								}
 								//,redirectUrl: '<?= $urlReturn ?>'
 							});
 							checkout.open(function ( result ) {

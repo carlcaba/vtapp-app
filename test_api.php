@@ -46,7 +46,7 @@ print_r($responseData);
 	echo $err;
 	
 	print_r($_SERVER);
-*/
+
 	$url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 	$add1 = "Carrera 7 # 20-00, Bogotá, Colombia";
 	$add2 = "Carrera 98A # 65-10, Bogotá, Colombia";
@@ -62,7 +62,6 @@ print_r($responseData);
 	
 	echo intval(str_replace(",","","1,000 Notificaciones"));
 	
-/*	
 	try {
 		$url = sprintf($url,$this->OtherUrlEncode($this->arrColDatas[$field . "_ADDRESS"]),$key);
 		$ch = curl_init();
@@ -121,6 +120,40 @@ print_r($responseData);
 	echo date("y-m-d h:i:sa");
 	echo "<br />";
 	
+	function uuidToHex($uuid) {
+		return str_replace('-', '', $uuid);
+	}
 	
+	function hexToUuid($hex) {
+		$regex = '/^([\da-f]{8})([\da-f]{4})([\da-f]{4})([\da-f]{4})([\da-f]{12})$/';
+		return preg_match($regex, $hex, $matches) ?
+			"{$matches[1]}-{$matches[2]}-{$matches[3]}-{$matches[4]}-{$matches[5]}" :
+			FALSE;
+	}
+	
+	function hexToIntegers($hex) {
+		$bin = pack('h*', $hex);
+		return unpack('L*', $bin);
+	}
+	
+	function integersToHex($integers) {
+		$args = $integers; 
+		$args[0] = 'L*'; 
+		ksort($args);
+		$bin = call_user_func_array('pack', $args);
+		$results = unpack('h*', $bin);
+		return $results[1];
+	}
+	
+	$uuid = '1968ec4a-2a73-11df-9aca-00012e27a270';
+	var_dump($uuid);
+	
+	$integers = hexToIntegers(uuidToHex('1968ec4a-2a73-11df-9aca-00012e27a270'));
+	var_dump($integers);
+
+
+	
+	$uuid = hexToUuid(integersToHex($integers));
+	var_dump($uuid);	
 	
 ?>

@@ -272,7 +272,7 @@
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];
 	}
-	$result = utf8_converter($result);
+	//$result = utf8_converter($result);
 	//Termina
 	exit(json_encode($result));
 ?>

@@ -9,7 +9,9 @@
 	require_once("../../classes/partner_rate.php");
 	require_once("../../classes/partner_client.php");
 	require_once("../../classes/quota_employee.php");
-	
+
+	_error_log("__checkRate start " . date("Y-m-d h:i:s"));
+
 	//Variable del codigo
 	$result = array('success' => false,
                     'message' => $_SESSION["NO_DATA_FOR_VALIDATE_RATES"]);
@@ -89,8 +91,14 @@
 		else if($client != "") {
 			$ptcl = new partner_client();
 			$ptcl->setClient($client);
+
+			_error_log("getMyPartners " . date("Y-m-d h:i:s"));
+
 			//Obtiene los aliados
 			$partners = $ptcl->getMyPartners();
+
+			_error_log("getMyPartners finish " . date("Y-m-d h:i:s"));
+
 			//Crea el filtro
 			$arrFilter = array();
 			$emp = array(); 
@@ -144,8 +152,12 @@
 			}
 		}
 		
+		_error_log("selectPartner " . date("Y-m-d h:i:s"));
+
 		$datos = $rate->selectPartner($distance,$round == "true",$filter,$quota,$balance,(($quot == null) ? $quot : $quot->quota->type->discountType()),$pmnttype);
 		
+		_error_log("selectPartner finish " . date("Y-m-d h:i:s"), $rate->sql);
+
 		if($rate->nerror > 0) {
 			$result["message"] = $_SESSION["NO_INFORMATION"];
 			$result = utf8_converter($result);
@@ -164,8 +176,10 @@
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];
 	}
+
+	_error_log("__checkRate finish " . date("Y-m-d h:i:s"));
+
 	$result = utf8_converter($result);
 	//Termina
 	exit(json_encode($result));
-
 ?>

@@ -7,6 +7,8 @@
 	header('Content-Type: text/plain; charset=utf-8');
 
 	require_once("../../classes/quota_employee.php");
+
+	_error_log("__loadClientQuota start " . date("Y-m-d h:i:s"));
 	
 	//Variable del codigo
 	$result = array('success' => false,
@@ -52,6 +54,8 @@
 			}
 		}
 		
+		_error_log("getInformationByOtherInfo2 " . date("Y-m-d h:i:s"));
+
 		//Asigna la informacion
 		$quota = new quota_employee();
 		//Verifica la fuente
@@ -62,6 +66,8 @@
 			$row = $quota->getInformationByOtherInfo2("CLIENT_ID",$client);
 		}
 		
+		_error_log("getInformationByOtherInfo2 finish " . date("Y-m-d h:i:s"));
+				
 		//Si no hay cupo asignado
 		if($quota->nerror > 0) {
 			$result["message"] = $_SESSION["CLIENT_NO_QUOTA"];
@@ -89,6 +95,9 @@
 	else {
         $result["message"] = $_SESSION["ACCESS_NOT_AUTHORIZED"];
 	}
+
+	_error_log("__loadClientQuota finish " . date("Y-m-d h:i:s"));
+
 	$result = utf8_converter($result);
 	//Termina
 	exit(json_encode($result));

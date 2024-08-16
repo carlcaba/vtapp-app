@@ -288,7 +288,7 @@
 					case "datetime": {
 						//Verifica que no este establecido a la fecha del sistema
 						if($this->arrColDatas[$idCol] != "NULL") {
-							$defaults = array("CURDATE()", "CURDATE", "CURRENT_TIMESTAMP()", "CURRENT_TIMESTAMP", "NOW()", "NOW");
+							$defaults = array("CURDATE()", "CURDATE", "CURRENT_TIMESTAMP()", "CURRENT_TIMESTAMP", "NOW()", "NOW", "DATE_SUB(NOW(), INTERVAL 1 MONTH)");
 							if (!in_array($this->arrColDatas[$idCol], $defaults))
 								$datas = "'" . $this->arrColDatas[$idCol] . "'";
 							else
@@ -974,6 +974,39 @@
             return $return;
         }
 
+        //TODO Nativapps
+        /**
+         * Obtiene los resultados como un array asociativo, numérico, o ambos
+         *
+         * @param boolean $reconnect
+         * @param [type] $mode MYSQLI_ASSOC, MYSQLI_NUM, o MYSQLI_BOTH
+         * @return void
+         */
+        public function __getDataByMode($reconnect = true, $mode = MYSQLI_ASSOC) {
+			$row = null;
+			//Verifica la sentencia SQL
+			if($this->sql != "") {
+				try {
+					//Realiza la consulta
+					$this->doQuery($reconnect);
+					//Asigna el resultado
+					$row = mysqli_fetch_array($this->conx->query_id, $mode);
+					if($row === null)
+						//Log error
+						_error_log($this->error,$this->sql);
+					else 
+						//Lo convierte
+						$row = utf8_converter($row);
+				}
+				catch (Exception $ex) {
+					$this->nerror = 150;
+					$this->error = $ex->getMessage();
+					_error_log($this->error,$this->sql);
+				}
+			}
+			//Retorna el valor de la consulta
+            return $row;
+        }
 
     }
 
@@ -1173,7 +1206,6 @@
 				}
 			});
 	 		return $array;
-			
 		}
 	}
 

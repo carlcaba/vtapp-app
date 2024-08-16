@@ -135,7 +135,8 @@
 		$headers = array ('authorization: Bearer ' . $prvkey);
 		$currency = "COP";
 		//Se agrega un hexadecimal correspondiente a la fecha y hora para distinguirlo en caso que la referencia ya haya sido usada
-		$reference = $quota->ID . "-" . dechex(round(floatval(date("YmdHis")),0));
+//		$reference = $quota->ID; // . "-" . dechex(round(floatval(date("YmdHis")),0));
+		$reference = uniqid();
 		$integ = getIntegrityKey($reference,(round(floatval($value),2) * 100),$currency);
 		//Arma la trama de la transaccion
 		$dataTx = array("acceptance_token" => $accTok,

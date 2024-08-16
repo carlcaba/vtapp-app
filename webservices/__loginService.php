@@ -85,6 +85,7 @@
 	$conf = new configuration("WEB_SITE");
 	$website = $conf->verifyValue();
 	$siteroot = $conf->verifyValue("SITE_ROOT");
+	$max_time = $conf->verifyValue("SESSION_EXPIRATION");	
 
 	//Asigna los valores
 	$usua->THE_PASSWORD = $pass;
@@ -104,13 +105,27 @@
 		$httpcode = 419;
 		goto _Exit;		
 	}
-	
-	_error_log(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN));
 
-	if(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN) || intval($usua->LOGGED) == 1) {
-		$result['message'] = $_SESSION["MESSENGER_ALREADY_LOGGED"];
-		$httpcode = 419;
-		goto _Exit;		
+	$exts = new external_session();
+	//Verifica el ultimo acceso registrado (en la sesion)
+	$lastDate = $exts->getLastDate($usuario);
+	//Toma el dateStamp del servidor
+	$now = date("Y-n-j H:i:s");
+	//Calcula la diferencia
+	$time = (strtotime($now)-strtotime($lastDate));
+	//Si ya expiro la sesion
+	if($time >= $max_time) {
+		//Cierra la sesion anterior
+		$exts->logOut();
+	}
+	else {
+		_error_log(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN));
+
+		if(filter_var($usua->LOGGED, FILTER_VALIDATE_BOOLEAN) || intval($usua->LOGGED) == 1) {
+			$result['message'] = $_SESSION["MESSENGER_ALREADY_LOGGED"];
+			$httpcode = 419;
+			goto _Exit;		
+		}
 	}
 	
 	//Crea el nuevo LOG
@@ -134,7 +149,6 @@
 		$result['message'] = $_SESSION["CHANGE_PASSWORD_REQUIRED"];
 	}
 	
-	$exts = new external_session();
 	
 	//Actualiza la informacion
 	$exts->USER_ID = $usua->ID;
