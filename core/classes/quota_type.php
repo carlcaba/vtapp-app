@@ -140,9 +140,16 @@ class quota_type extends table {
 			$data = array("id" => $row[0],
 							"text" => $row[1],
 							"amount" => number_format($row[2],2,".",""),
-							"ismarco" => $row[3]);
+							"ismarco" => $row[3],
+							"action" => "none");
 			array_push($return,$data);
 		}
+		$data = array("id" => 0,
+						"text" => "Personaliza tu plan",
+						"amount" => number_format(0,2,".",""),
+						"ismarco" => 1,
+						"action" => "showModal");
+		array_push($return,$data);
 		//Retorna
 		return $return;
 	}

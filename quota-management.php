@@ -60,11 +60,20 @@
 			$id = "";
 		}
 	}
-	
+
 	switch($action) {
 		case "new": {
 			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
+			//TODO Nativapps
+			$titlepage = $is_client_ally ? 'Nueva Usuario Aliado' : $_SESSION["MENU_NEW"];
+			require_once("core/classes/affiliate_subscription.php");
+			require_once("core/classes/client.php");
+			$affiliate_subscription = new affiliate_subscription();
+			$as_dataForm = $affiliate_subscription->dataForm($action);
+			$client = new client();
+			$c_dataForm = $client->dataForm($action);
+			////////
 			break;
 		}
 		case "edit": {
@@ -98,6 +107,26 @@
 	$conf = new configuration("PAYMENT_REQUEST_CHARGE");
 	$urlCharge = $conf->verifyValue();
 	
+	//TODO Nativapps
+	$conf = new configuration("USER_AFFILIATE_BASIC_RATE");
+	$user_affiliate_basic_rate =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_ALLIED_COMPANY");
+	$user_affiliate_allied_company =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_COMPANY_USERS");
+	$user_affiliate_company_users =  $conf->verifyValue();
+	$conf = new configuration("USER_AFFILIATE_DELIVERY_ALLIED");
+	$user_affiliate_delivery_allied =  $conf->verifyValue();
+	$conf = new configuration("MAX_USERS_AFFILIATION_BASIC_RATE");
+	$max_users_affiliation_basic_rate =  $conf->verifyValue();
+	$conf = new configuration("MAX_USERS_AFFILIATION_ALLIED_COMPANY");
+	$max_users_affiliation_allied_company =  $conf->verifyValue();
+	$conf = new configuration("MAX_USERS_AFFILIATION_COMPANY");
+	$max_users_affiliation_company =  $conf->verifyValue();
+	$conf = new configuration("MAX_USERS_AFFILIATION_DELIVERY_ALLIED");
+	$max_users_affiliation_delivery_allied =  $conf->verifyValue();
+	////////////////////////////	
+
+
 	$buttonText = $action == "new" ? $_SESSION["PAY"] : $_SESSION["ADD_FUNDS"];
 	
 	$gate = $conf->verifyValue("PAYMENT_GATEWAY");
@@ -136,6 +165,7 @@
 ?>
 	<!-- bootstrap toogle -->
 	<link rel="stylesheet" href="plugins/bootstrap-toggle/css/bootstrap-toggle.min.css"></link>	
+	<link rel="stylesheet" href="plugins/bs-stepper/css/bs-stepper.min.css"></link>	
 </head>
 <body class="hold-transition sidebar-mini <?= $skin[2] ?>">
 	<div class="wrapper">
@@ -205,26 +235,234 @@
 											<?= $quota->showField("AMOUNT", $dataForm["tabs"], "", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 									</div>
+									<div class="row" style="display:none;" id="divAffiliate">
+										<div class="col-md-12">
+											<div id="stepperCompanyUserAffiliation" class="bs-stepper">
+												<div class="bs-stepper-header">
+													<div class="step" data-target="#test-l-1">
+														<button type="button" class="step-trigger">
+															<span class="bs-stepper-circle">1</span>
+															<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_1"] ?></span>
+														</button>
+													</div>
+													<div class="line"></div>
+													<div class="step" data-target="#test-l-2">
+														<button type="button" class="step-trigger">
+															<span class="bs-stepper-circle">2</span>
+															<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_2"] ?></span>
+														</button>
+													</div>
+													<!--
+													<div class="line"></div>
+													<div class="step" data-target="#test-l-3">
+														<button type="button" class="step-trigger">
+															<span class="bs-stepper-circle">3</span>
+															<span class="bs-stepper-label"><?= $_SESSION["AFFILIATION_RATE_STEP_LABEL_3"] ?></span>
+														</button>
+													</div>
+													<div class="line"></div>
+													<div class="step" data-target="#test-l-4">
+														<button type="button" class="step-trigger">
+															<span class="bs-stepper-circle">4</span>
+															<span class="bs-stepper-label">Fin</span>
+														</button>
+													</div>
+													-->
+												</div>
+												<div class="bs-stepper-content">
+													<div id="test-l-1" class="content">
+														<h2 class="text-center"><?= $_SESSION["AFFILIATION_RATE_STEP1_H2"] ?></h2>
+														<p class="text-center"><?= $_SESSION["AFFILIATION_RATE_STEP1_P"] ?></p>
+														<div class="form-check text-center">
+															<input class="form-check-input form-control" id="acceptTermsConditionsId" name="acceptTermsConditions" type="checkbox" data-toggle="toggle" data-on="Si" data-off="No" data-onstyle="success">
+															<label class="form-check-label" for="acceptTermsConditions">
+																<?= $_SESSION["AFFILIATION_RATE_ACCEPT_TERMS_CONDITIONS"] ?>
+															</label>
+														</div>
+													</div>
+													<div id="test-l-2" class="content">
+														<h2 class="text-center"><?= $_SESSION["AFFILIATION_RATE_STEP2_H4"] ?></h2>
+														<div class="container my-4 clearfix">
+															<!-- Shopping cart table -->
+															<div class="card">
+																<div class="card-body">
+																	<div class="table-responsive">
+																		<table class="table table-bordered m-0">
+																			<thead>
+																				<tr>
+																					<!-- Set columns width -->
+																					<th class="text-center py-3 px-4" style="min-width: 200px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL1"] ?></th>
+																					<th class="text-right py-3 px-4" style="width: 180px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL2"] ?></th>
+																					<th class="text-center py-3 px-4" style="width: 120px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL3"] ?></th>
+																					<th class="text-right py-3 px-4" style="width: 200px;"><?= $_SESSION["AFFILIATION_RATE_STEP2_TB_COL4"] ?></th>
+																				</tr>
+																			</thead>
+																			<tbody>
+																				<tr>
+																					<td class="font-weight-semibold align-middle p-3">
+																						<div class="rate-name-basic"><?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?></div>
+																					</td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><?= "$ " . number_format($user_affiliate_basic_rate,2,",",".") ?></td>
+																					<td class="align-middle p-3">
+																						<input type="number" name="number_users_rate_basic" data-resource-name="AFFILIATION_RATE_NAME_BASIC" data-rate-value="<?= $user_affiliate_basic_rate ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_basic_rate ?>" disabled>
+																					</td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><span class="number-users-total-rate-basic"><?= "$ " . number_format($user_affiliate_basic_rate,2,",",".") ?></span></td>
+																				</tr>
+																				<tr>
+																					<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_1"] ?></td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><?= "$ " . number_format($user_affiliate_allied_company,2,",",".") ?></td>
+																					<td class="align-middle p-3">
+																						<input type="number" name="number_users_rate_1" data-resource-name="AFFILIATION_RATE_NAME_1" data-rate-value="<?= $user_affiliate_allied_company ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_allied_company ?>">
+																					</td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><span class="number-users-total-rate-1"><?= "$ " . number_format($user_affiliate_allied_company,2,",",".") ?></span></td>
+																				</tr>
+																				<tr>
+																					<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_2"] ?></td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><?= "$ " . number_format($user_affiliate_company_users,2,",",".") ?></td>
+																					<td class="align-middle p-3">
+																						<input type="number" name="number_users_rate_2" data-resource-name="AFFILIATION_RATE_NAME_2" data-rate-value="<?= $user_affiliate_company_users ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_company ?>">
+																					</td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><span class="number-users-total-rate-2"><?= "$ " . number_format($user_affiliate_company_users,2,",",".") ?></span></td>
+																				</tr>
+																				<tr>
+																					<td class="font-weight-semibold align-middle p-3"><?= $_SESSION["AFFILIATION_RATE_NAME_3"] ?></td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><?= "$ " . number_format($user_affiliate_delivery_allied,2,",",".") ?></td>
+																					<td class="align-middle p-3">
+																						<input type="number" name="number_users_rate_3" data-resource-name="AFFILIATION_RATE_NAME_3" data-rate-value="<?= $user_affiliate_delivery_allied ?>" class="form-control text-center number-users-affiliation " min="1" value="1" max="<?= $max_users_affiliation_delivery_allied ?>">
+																					</td>
+																					<td class="text-right font-weight-semibold align-middle p-3"><span class="number-users-total-rate-3"><?= "$ " . number_format($user_affiliate_delivery_allied,2,",",".") ?></span></td>
+																				</tr>
+																			</tbody>
+																		</table>
+																	</div>
+																	<!-- / Shopping cart table -->
+																	<div class="d-flex flex-wrap justify-content-between align-items-center pb-4">
+																		<div class="mt-4"></div>
+																		<div class="d-flex">
+																			<div class="text-right mt-4 mr-5"></div>
+																			<div class="text-right mt-4">
+																				<label class="text-muted font-weight-normal m-0"><?= $_SESSION["AFFILIATION_RATE_STEP2_LB_TOTAL_VALUE"] ?></label>
+																				<div class="text-large"><strong class="total-membership-value"><?= "$ " . number_format($user_affiliate_basic_rate,2,",",".") ?></strong></div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!--
+													<div id="test-l-3" class="content">
+														<div class="card">
+															<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_BILLING_DATA"] ?></h5>
+															<div class="card-body">
+																<form id="frmBillingData">
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<label for="business_name"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?></label>
+																			<input type="text" class="form-control" id="business_name" name="business_name" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?>" disabled>
+																		</div>
+																		<input type="hidden" name="client_id" id="client_id" />
+																	</div>
+																	<div class="form-row">
+																		<div class="form-group col-md-6">
+																			<label for="nit"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?></label>
+																			<input type="text" class="form-control" id="nit" name="nit" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?>" disabled>
+																		</div>
+																		<div class="form-group col-md-6">
+																			<label for="main_phone"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?></label>
+																			<div class="input-group mb-2 mr-sm-2">
+																				<div class="input-group-prepend">
+																					<div class="input-group-text"><i class="fa fa-phone"></i></div>
+																				</div>
+																				<input type="text" class="form-control" id="main_phone" name="main_phone" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?>" disabled>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<label for="main_address"><?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?></label>
+																			<div class="input-group mb-2 mr-sm-2">
+																				<div class="input-group-prepend">
+																					<div class="input-group-text"><i class="fa fa-map"></i></div>
+																				</div>
+																				<input type="email" class="form-control" id="main_address" name="main_address" placeholder="<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?>" disabled>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<label for="legal_representative"><?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[1] ?> *</label>
+																			<div class="input-group mb-2 mr-sm-2">
+																				<div class="input-group-prepend">
+																					<div class="input-group-text"><i class="fa fa-user"></i></div>
+																				</div>
+																				<input type="<?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[0] ?>" class="form-control" id="legal_representative" name="legal_representative" placeholder="<?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[2] ?>" required>
+																			</div>
+																		</div>
+																	</div>
+																</form>
+															</div>
+														</div>
+														<div class="card">
+															<h5 class="card-header bg-info"><?= $_SESSION["AFFILIATION_RATE_STEP3_TITLE_CARD_DETAILS"] ?></h5>
+															<div class="card-body">
+																<form id="frmCardDetails">
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<?= $affiliate_subscription->showField("CREDIT_CARD_NUMBER", $as_dataForm["tabs"], "fa fa-credit-card-alt", "", false, "", false, "9,9,12", '') ?>
+																		</div>
+																		<input type="hidden" name="hfValidCard" id="hfValidCard" value="false" />
+																	</div>
+																	<div class="form-row">
+																		<div class="form-group col-md-12">
+																			<?= $affiliate_subscription->showField("CREDIT_CARD_NAME", $as_dataForm["tabs"], "fa fa-user", "", false, "", false, "9,9,12", '') ?>
+																		</div>
+																	</div>
+																	<div class="form-row">
+
+																		<div class="form-group col-md-6">
+																			<?= $affiliate_subscription->showField("DATE_EXPIRATION", $as_dataForm["tabs"], "fa fa-calendar-times-o", "", false, "", false, "9,9,12", '') ?>
+																		</div>
+
+																		<div class="form-group col-md-6">
+																			<?= $affiliate_subscription->showField("VERIFICATION_CODE", $as_dataForm["tabs"], "fa fa-cc", "", false, "", false, "9,9,12", '') ?>
+																		</div>
+																	</div>
+																</form>
+															</div>
+														</div>
+													</div>
+													<div id="test-l-4" class="content"></div>
+													-->
+												</div>
+											</div>
+											<div class="justify-content-between text-center mb-3">
+												<button class="btn btn-secondary" id="previousBtn" type="button" style="display: none;"><?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?></button>
+												<button class="btn btn-primary" id="nextBtn" type="button"><?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?></button>
+											</div>
+										</div>
+									</div>
 									<div class="row">
 										<div class="col-md-6">
-											<?= $quota->showField("CREDIT_CARD_NUMBER", $dataForm["tabs"], "fa fa-credit-card-alt", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("CREDIT_CARD_NUMBER", $dataForm["tabs"], "fa fa-credit-card-alt cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<input type="hidden" name="hfValidCard" id="hfValidCard" value="false" />
 										</div>
 										<div class="col-md-6">
-											<?= $quota->showField("CREDIT_CARD_NAME", $dataForm["tabs"], "fa fa-user", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("CREDIT_CARD_NAME", $dataForm["tabs"], "fa fa-user cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-md-3">
-											<?= $quota->showField("DATE_EXPIRATION", $dataForm["tabs"], "fa fa-calendar-times-o", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("DATE_EXPIRATION", $dataForm["tabs"], "fa fa-calendar-times-o cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 										<div class="col-md-3">
-											<?= $quota->showField("VERIFICATION_CODE", $dataForm["tabs"], "fa fa-cc", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("VERIFICATION_CODE", $dataForm["tabs"], "fa fa-cc cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 										<div class="col-md-3">
-											<?= $quota->showField("DIFERRED_TO", $dataForm["tabs"], "fa fa-calendar", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("DIFERRED_TO", $dataForm["tabs"], "fa fa-calendar cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 										<div class="col-md-3">
-											<?= $quota->showField("PAYMENT_ID", $dataForm["tabs"], "fa fa-money-bill-1", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
+											<?= $quota->showField("PAYMENT_ID", $dataForm["tabs"], "fa fa-money-bill-1 cardDetails", "", $dataForm["showvalue"], "", false, "9,9,12", $dataForm["readonly"][$cont++]) ?>
 										</div>
 									</div>
 									<div class="row">
@@ -334,7 +572,16 @@
 	<!-- date-range-picker -->
 	<script src="plugins/moment/moment.min.js"></script>
 	<script src="plugins/daterangepicker/daterangepicker.js"></script>
-	
+
+	<!-- TODO Nativapps -->
+	<!-- bs-stepper -->
+	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	
+	<!-- Credit card number validator -->
+	<script src="plugins/jquery.cc.validator/jquery.creditCardValidator.js"></script>
+	<!-- Cleave -->
+	<script src="plugins/cleave/cleave.min.js"></script>
+	<!-- ------------------- -->
+
 <?
 	if(!$accTok) {
 ?>
@@ -347,11 +594,12 @@
 	<script src="js/resources.js"></script>	
 	
     <script>
+	var stepperCompanyUserAffiliation, stepper = null;
 	$(document).ready(function() {
 		$.getJSON("core/actions/_load/__loadQuota.php", function(data) {
 			if(data.success) {
 				$.each(data.message, function(key, value) {
-					$("#cbQuotaType").append("<option value='" + value.id + "' data-amount=\"" + value.amount + "\" data-ismarco=\"" + value.ismarco + "\">" + value.text + "</option>");
+					$("#cbQuotaType").append("<option value='" + value.id + "' data-amount=\"" + value.amount + "\" data-ismarco=\"" + value.ismarco + "\" data-action=\"" + value.action + "\">" + value.text + "</option>");
 				});
 				$("#cbClient").on("change", function(e) {
 					let selected = $("option:selected", this);
@@ -403,6 +651,68 @@
 ?>
 		$("#cbQuotaType").on("change", function(e) {
 			var selected = $("option:selected", this);
+			if(selected.data("action") != "none") {
+				$("#divAffiliate").fadeIn();
+				if(stepperCompanyUserAffiliation == null) {
+					stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
+					stepper = new Stepper(stepperCompanyUserAffiliation[0]);
+				}
+				else {
+					$('#previousBtn').hide(); 
+					$('#nextBtn').show();
+					$('#nextBtn').html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
+					stepper.to(0);
+				}
+				$('#acceptTermsConditionsId').change(function(){
+					$('#nextBtn').prop('disabled', !($(this).is(':checked')));
+				});			
+				$('#nextBtn').click(function(event) {
+					stepper.next();
+				});
+				$('#previousBtn').click(function() {
+					stepper.previous();
+				});				
+				$(".number-users-affiliation").change(function() {
+					var max = parseInt($(this).attr('max'));
+					var min = parseInt($(this).attr('min'));
+					if ($(this).val() > max) {
+						$(this).val(max);
+					}
+					else if ($(this).val() < min) {
+						$(this).val(min);
+					}
+					calculateUnitTotal($(this));
+				});
+				$(".number-users-affiliation").on('input', function() {
+					calculateUnitTotal($(this));
+				});	
+				$("#stepperCompanyUserAffiliation")[0].addEventListener('show.bs-stepper', function (event) {
+					var indexStep = event.detail.indexStep;
+					if (indexStep === 0) {
+						$('#previousBtn').hide(); 
+						$('#nextBtn').show();
+						$('#nextBtn').html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
+					}
+					else if (indexStep === 1) {
+						var datos = getDataSubscription();
+						$('#previousBtn').hide(); 
+						$('#nextBtn').hide();
+						if (datos) {
+							$("#btnActivate").click();
+						} 
+						else { 
+							setTimeout(() => {
+								stepper.to(indexStep)
+							}, 50);
+						}
+					}
+				});				
+			}
+			else {
+				if($("#divAffiliate").is(":visible")) {
+					$("#divAffiliate").fadeOut();
+				}
+			}
 			$("#txtAMOUNT").val(selected.data("amount"));
 		});
 		$('[data-toggle="tooltip"]').tooltip();
@@ -430,7 +740,7 @@
 			$('#txtCREDIT_CARD_NUMBER').validateCreditCard(function(result) {
 				var type = result.card_type.name;
 				type = (type == "diners") ? "diners-club" : type;
-				var icon = "fa fa-cc-" + type;
+				var icon = "fa fa-cc-" + type + " cardDetails";
 				$("#icontxtCREDIT_CARD_NUMBER").removeClass().addClass(icon);
 				$("#hfValidCard").val(result.valid);
 			});
@@ -455,6 +765,11 @@
 			}
 			if(!datasObj.hasOwnProperty("cbClient")) {
 				datasObj["cbClient"] = $("#cbClient option:selected").val();
+			}
+			if($("#cbQuotaType").find("option:selected").data("action") != "none") {
+				var datos = getDataSubscription();
+				if(datos)
+					datasObj["custom_plan"] = datos;
 			}
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);
@@ -491,6 +806,165 @@
 			notify("", 'danger', "", "<?= $_SESSION["ERROR_ON_PAYMENT"] . $accTokRet["message"] ?>", "");
 		}
 	});
+	function calculateUnitTotal(field) {
+		var amount = parseInt(field.val());
+		var price = parseInt(field.data('rateValue'))
+		var total = amount * price;
+		var nameField = field.attr('name')
+		switch (nameField) {
+			case 'number_users_rate_basic':
+				$('.number-users-total-rate-basic').text(new Intl.NumberFormat(undefined, {
+															style: 'currency',
+															currency: 'COP',
+															currencyDisplay: 'symbol'
+														}).format(total));
+				break;
+			case 'number_users_rate_1':
+				$('.number-users-total-rate-1').text(new Intl.NumberFormat(undefined, {
+															style: 'currency',
+															currency: 'COP',
+															currencyDisplay: 'symbol'
+														}).format(total));
+				break;
+			case 'number_users_rate_2':
+				$('.number-users-total-rate-2').text(new Intl.NumberFormat(undefined, {
+															style: 'currency',
+															currency: 'COP',
+															currencyDisplay: 'symbol'
+														}).format(total));
+				break;
+			case 'number_users_rate_3':
+				$('.number-users-total-rate-3').text(new Intl.NumberFormat(undefined, {
+															style: 'currency',
+															currency: 'COP',
+															currencyDisplay: 'symbol'
+														}).format(total));
+				break;
+			default:
+				break;
+		}
+		calculateTotalPrice();
+	}
+
+	function calculateTotalPrice() {
+		var quantities = 0;
+		var totalValue = 0;
+		$( ".number-users-affiliation" ).each(function() {
+			var price = parseInt($(this).data('rateValue'))
+			quantities = parseInt($(this).val()) * price;
+			totalValue = totalValue + quantities;
+		})
+		$('.total-membership-value').text(new Intl.NumberFormat(undefined, {
+											style: 'currency',
+											currency: 'COP',
+											currencyDisplay: 'symbol'
+										}).format(totalValue));
+		$("#txtAMOUNT").val(totalValue);
+		$("#cbQuotaType").find("option:selected").data("amount",totalValue);		
+		return totalValue;
+	}
+
+	function getDataSubscription () {
+		dataPersonalizePlan = []
+		dataBillingData = {}
+		dataCardDetails = {}
+		subscriptionFormValidation = true;
+		$(".number-users-affiliation").each(function() {
+			var data = {};
+			data['field'] = $(this).attr('name');
+			data['quantities'] = $(this).val();
+			data['unit_value'] = $(this).data('rateValue');
+			data['resource_name'] = $(this).data('resourceName');
+			dataPersonalizePlan.push(data)
+		});
+
+		var name = "business_name";
+		var client = $("#cbClient").find("option:selected");
+		var is_required = true;
+		var value = client.text();
+		var placeholder = "<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_BUSINESS_NAME"] ?>";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+		
+		name = "client_id";
+		is_required = true;
+		value = client.val();
+		placeholder = "";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+
+		name = "main_phone";
+		is_required = true;
+		value = client.data("mainphone");
+		placeholder = "<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_PHONE"] ?>";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+
+		name = "main_address";
+		is_required = true;
+		value = client.data("address");
+		placeholder = "<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_MAIN_ADDRESS"] ?>";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+
+		name = "nit";
+		is_required = true;
+		value = client.data("nit");
+		placeholder = "<?= $_SESSION["AFFILIATION_RATE_STEP3_INPUT_NIT"] ?>";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+
+		name = "legal_representative";
+		is_required = true;
+		value = client.data("contactname");
+		placeholder = "<?= explode(',', $client->arrColComments["LEGAL_REPRESENTATIVE"])[2] ?>";
+		//formsValidationRequired
+		if (is_required && value === '') {
+			subscriptionFormValidation = false;
+			notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+		}
+		dataBillingData[name] = value;
+
+		$(".cardDetails").each(function() {
+			let id = $(this).attr("id");
+			if(typeof id === "undefined") {
+				id = $($(this).parent().parent().parent().children()[1]).attr("id");
+			}
+			else {
+				id = id.substr(4);
+			}
+			dataCardDetails[id] = $("#" + id).val();
+		});
+
+		var totalSubscription = calculateTotalPrice();
+
+		if (subscriptionFormValidation) {
+			return { dataPersonalizePlan, dataBillingData, dataCardDetails, totalSubscription }
+		}
+		return subscriptionFormValidation;
+
+	}
+
 	function pay() {
 		if($("#hfIsSaved").val() != "false")
 			return false;
@@ -523,6 +997,11 @@
 		if(!datasObj.hasOwnProperty("cbClient")) {
 			datasObj["cbClient"] = $("#cbClient option:selected").val();
 		}
+		if($("#cbQuotaType").find("option:selected").data("action") != "none") {
+			var datos = getDataSubscription();
+			if(datos)
+				datasObj["custom_plan"] = datos;
+		}		
 		var datas = JSON.stringify(datasObj);
 		$("#spanTitle").html(title);
 		$("#spanTitleName").html("");

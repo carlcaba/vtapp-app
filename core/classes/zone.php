@@ -514,6 +514,52 @@ class zone extends table {
 		//Retorna
 		return $return;
 	}	
+
+	//Funcion que retorna JSON para autocomplete
+	function getZonesForCity($city, $lang = 0) {
+		//Verifica el lenguaje
+		if($lang == 0) {
+			//Lenguaje establecido
+			$lang = $_SESSION["LANGUAGE"];
+		}
+		//Arma la sentencia SQL
+		$this->sql = "SELECT ZONE_ID, ZONE_NAME, PARENT_ZONE PARENT_ZONE_ID, " .
+						"CASE " .
+							"WHEN PARENT_ZONE IS NULL THEN '' " .
+							"ELSE (SELECT ZONE_NAME FROM TBL_SYSTEM_ZONE WHERE ID = Z.PARENT_ZONE) " .
+							"END PARENT_ZONE_NAME, " .
+							"CITY_NAME, LATITUDE_FROM, LONGITUDE_FROM " .
+							"FROM $this->view Z " .
+							"WHERE CITY_ID = $city " .
+							"ORDER BY PARENT_ZONE, ZONE_NAME";	
+		//Variable a retornar
+		$return = array();
+		//Recorre los valores
+		foreach($this->__getAllData() as $row) {
+            if(!mb_detect_encoding($row[1], 'utf-8', true)) {
+                //Guarda la informacion en GLOBALS
+                $row[1] = utf8_encode($row[1]);
+            }
+            if(!mb_detect_encoding($row[3], 'utf-8', true)) {
+                //Guarda la informacion en GLOBALS
+                $row[3] = utf8_encode($row[3]);
+            }
+            if(!mb_detect_encoding($row[4], 'utf-8', true)) {
+                //Guarda la informacion en GLOBALS
+                $row[4] = utf8_encode($row[4]);
+            }
+			$data = array("id" => $row[0],
+							"name" => $row[1],
+							"parent_id" => $row[2],
+							"parent_name" => $row[3],
+							"city" => $row[4],
+							"lat" => $row[5],
+							"lng" => $row[6]);
+			array_push($return,$data);
+		}
+		//Retorna
+		return $return;
+	}
 		
 }
 

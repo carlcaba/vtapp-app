@@ -86,6 +86,7 @@ class access extends table {
 		//Variable a retornar
 		$return = "";
 		//Recorre los valores
+		_error_log("showAccessOptions",$this->sql);		
 		foreach($this->__getAllData() as $row) {
             if(!mb_detect_encoding($row["1"], 'utf-8', true)) {
                 //Guarda la informacion en GLOBALS

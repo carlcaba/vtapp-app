@@ -288,6 +288,50 @@ class service_log extends table {
 			$this->nerror = 0;
 		}
 	}
+
+	function getJSONInformation($id = "") {
+		$columns = ["SERVICE_LOG_ID","DATE","TIME","STATE_INITIAL_ID","STATE_INITIAL_NAME","STATE_FINAL_ID","STATE_FINAL_NAME","EMPLOYEE_INITIAL_ID","EMPLOYEE_INITIAL_NAME","EMPLOYEE_FINAL_ID",
+					"EMPLOYEE_FINAL_NAME","VEHICLE_INITIAL_ID","VEHICLE_INITIAL_NAME","VEHICLE_FINAL_ID","VEHICLE_FINAL_NAME","PARTNER_INITIAL_ID","PARTNER_INITIAL_NAME",
+					"PARTNER_FINAL_ID","PARTNER_FINAL_NAME","LOG_OBSERVATION","LAST_POSITION","ICON","NOTIFICATION_ID","TOKEN_ID","USER_NOTIFICATION","NOTIFICATION_BLOCKED",
+					"REQUESTED_COORDINATES","DELIVER_COORDINATES","NOTIFIED_EMPLOYEE","IS_DELAYED","TIME_DELAYED"];
+		$this->sql = "SELECT " . implode(",",$columns) . " FROM $this->view WHERE SERVICE_ID = '$id' ORDER BY DATE DESC, TIME DESC";
+		$result = array();
+		foreach($this->__getAllData() as $row) {
+			$data = array("slid" => $row[0],
+							"date" => $row[1] . " " . $row[2],
+							"siid" => $row[3],
+							"sina" => htmlentities($row[4]),
+							"sfid" => $row[5],
+							"sfna" => htmlentities($row[6]),
+							"eiid" => $row[7],
+							"eina" => htmlentities($row[8]),
+							"efid" => $row[9],
+							"efna" => htmlentities($row[10]),
+							"viid" => $row[11],
+							"vina" => htmlentities($row[12]),
+							"vfid" => $row[13],
+							"vfna" =>htmlentities( $row[14]),
+							"piid" => $row[15],
+							"pina" => htmlentities($row[16]),
+							"pfid" => $row[17],
+							"pfna" => htmlentities($row[18]),
+							"obsv" => htmlentities($row[19]),
+							"fipo" => $row[20],
+							"icon" => $row[21],
+							"noid" => $row[22],
+							"toid" => $row[23],
+							"usno" => $row[24],
+							"nobl" => $row[25] == "1",
+							"rqco" => $row[26],
+							"deco" => $row[27],
+							"ntem" => $row[28],
+							"isde" => $row[29] == "1",
+							"tide" => $row[30]
+					);
+			array_push($result,$data);
+		}
+		return $result;
+	}
 	
 	//Funcion para adicionar un registro al log
 	function __add() {

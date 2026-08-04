@@ -1229,6 +1229,7 @@
 					$("#panelBodyPartners").html(data.message);
 					$("#panelBodyPartners").data("state", 1);
 					$("#grpButtons").html(data.buttons);
+					$("#btnSave").attr("disabled",true);
 					if(data.change)
 						$("#hfQUOTAID").val("");
 					if(data.filtered && data.filter != "") {

@@ -361,6 +361,63 @@ class service extends table {
 			$this->nerror = 0;
 		}
 	}
+	
+	//Funcion para buscar una zona por otra informacion
+    function getInformationByOtherInfo($field = "REQUESTED_EMAIL", $value = "") {
+		$indx = "";
+		switch($field) {
+			case "REQUESTED_EMAIL": {
+				$indx = "INDX_REQUESTED_EMAIL";
+				break;
+			}
+			case "DELIVER_EMAIL": {
+				$indx = "INDX_DELIVER_EMAIL";
+				break;
+			}
+			case "REQUESTED_CELLPHONE": {
+				$indx = "INDX_REQUESTED_CELLPHONE";
+				break;
+			}
+			case "DELIVER_CELLPHONE": {
+				$indx = "INDX_DELIVER_CELLPHONE";
+				break;
+			}
+			case "REQUESTED_BY": {
+				$indx = "INDX_REQUESTED_BY";
+				break;
+			}
+			case "DELIVER_TO": {
+				$indx = "INDX_DELIVER_TO";
+				break;
+			}
+			default: {
+				$indx = "PRIMARY";
+				break;
+			}
+		}
+		$this->arrColDatas[$field] = $value;
+        //Arma la sentencia SQL
+        $this->sql = "SELECT ID FROM $this->table USE INDEX ($indx) WHERE $field = " . $this->_checkDataType($field);
+        //Obtiene los resultados
+        $row = $this->__getData();
+        //Registro no existe
+        if(!$row) {
+            //Asigna el ID
+            $this->ID = "0";
+            //Genera el error
+            $this->nerror = 10;
+            $this->error = $_SESSION["NOT_REGISTERED"];
+        }
+        else {
+            //Asigna el ID
+            $this->ID = $row[0];
+            //Llama el metodo
+            $this->__getInformation();
+            //Limpia el error
+            $this->nerror = 0;
+            $this->error = "";
+        }
+    }	
 
 	function CheckToCollect() {
 		//Arma la sentencia SQL
@@ -408,6 +465,65 @@ class service extends table {
 		}
 		_error_log("Service getTotal finish at " . date("Y-m-d h:i:s"),$this->sql);		
 		return $return;	
+	}
+	
+	function getJSONInformation($id = "") {
+		if($this->ID == '' || $this->ID == "UUID()") {
+			if($id == "") {
+				return NULL;
+			}
+			$this->ID = $id;
+			$this->__getInformation();
+			if($this->nerror > 0) {
+				return NULL;
+			}
+		}
+		$arrSer = array("sid" => $this->ID,
+						"cid" => $this->CLIENT_ID,
+						"cna" => htmlentities($this->client->CLIENT_NAME),
+						"cin" => $this->client->IDENTIFICATION,
+						"cad" => htmlentities($this->client->ADDRESS),
+						"cty" => htmlentities($this->client->city->CITY_NAME),
+						"ctp" => $this->client->CELLPHONE,
+						"cma" => $this->client->EMAIL,
+						"rby" => htmlentities(trim($this->REQUESTED_BY)),
+						"rad" => htmlentities($this->REQUESTED_ADDRESS),
+						"rem" => $this->REQUESTED_EMAIL,
+						"rph" => $this->REQUESTED_CELLPHONE,
+						"rzn" => array("id" => $this->request_zone->ID,
+										"zna" => htmlentities($this->request_zone->ZONE_NAME),
+										"zcy" => htmlentities($this->request_zone->city->CITY_NAME),
+										"zla" => $this->request_zone->LATITUDE_FROM,
+										"zlo" => $this->request_zone->LONGITUDE_FROM),
+						"des" => $this->DELIVER_DESCRIPTION,
+						"dto" => htmlentities(trim($this->DELIVER_TO)),
+						"dad" => htmlentities($this->DELIVER_ADDRESS),
+						"dem" => $this->DELIVER_EMAIL,
+						"dph" => $this->DELIVER_CELLPHONE,
+						"dzn" => array("id" => $this->deliver_zone->ID,
+										"zna" => htmlentities($this->deliver_zone->ZONE_NAME),
+										"zcy" => htmlentities($this->deliver_zone->city->CITY_NAME),
+										"zla" => $this->deliver_zone->LATITUDE_FROM,
+										"zlo" => $this->deliver_zone->LONGITUDE_FROM),
+						"sta" => $this->state->getResourceById($this->STATE_ID),
+						"dty" => $this->type->getResourceById($this->DELIVERY_TYPE),
+						"prz" => $this->PRIZE,
+						"qty" => $this->QUANTITY,
+						"rou" => $this->ROUND_TRIP == "1",
+						"fra" => $this->FRAGILE == "1",
+						"ins" => $this->INSURANCE == "1",
+						"tsd" => $this->TIME_START_TO_DELIVER,
+						"tfd" => $this->TIME_FINISH_TO_DELIVER,
+						"wdt" => $this->TOTAL_WIDTH,
+						"hgt" => $this->TOTAL_HEIGHT,
+						"len" => $this->TOTAL_LENGTH,
+						"wei" => $this->TOTAL_WEIGHT,
+						"vty" => $this->vehicle->getResourceById($this->VEHICLE_TYPE_ID),
+						"cre" => $this->REGISTERED_ON,
+						"crb" => $this->REGISTERED_BY,
+						"mov" => array()
+		);
+		return $arrSer;
 	}
 
 	function raiseTotal($type = 0) {

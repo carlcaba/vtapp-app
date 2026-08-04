@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "29bc1ec6-736f-470f-9966-007a91957344",
+		"name": "WEBAPI UBIO",
+		"description": "API diseñada para consultar la información de los servicios o vueltas registradas con el objetivo de interactuar con los usuarios a través de Pantera Chat GPT.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10640889"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6Ijk3NDk0ZTlhLTcyZGYtMTFmMC05MGUzLTUyNTQwMDcxYzYzNCIsInVzZXJfaWQiOiIyMjAiLCJyb2xlIjoiQVBJLlNlcnZpY2UiLCJleHAiOjE3NTQ0OTY1MDh9.de6to1vSn9bj9S5iVvAhMLzDIuWtmDOEpkD_mH9y812vY2QGw-_13Kyc5Q5kXuKgYwU5Ys8tZjKC9STKg5FORg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "carlcaba",
+							"type": "text"
+						},
+						{
+							"key": "pass",
+							"value": "casoft17",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://ubioapp.logicaestudio.com/webapi/webapi.php/api/login",
+					"protocol": "https",
+					"host": [
+						"ubioapp",
+						"logicaestudio",
+						"com"
+					],
+					"path": [
+						"webapi",
+						"webapi.php",
+						"api",
+						"login"
+					]
+				},
+				"description": "Permite validar y autenticar los usuarios y la conexión a la API. No se posible usar los demás componentes de la API mientras que no se encuentre previamente autorizado."
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpZCI6IjA5NDEyNmUyLTc5NWItMTFmMC05MGUzLTUyNTQwMDcxYzYzNCIsInVzZXJfaWQiOiIyMjUiLCJyb2xlIjoiQVBJLlNlcnZpY2UiLCJleHAiOjE3NTUyMDkyMzV9.mFagwM-BxxlXXVZbX2G7jpAYN0jaQPEuV-cRvX4U1-3X0eNQ6rwsa92_euiWFccnZmJMibjQDflnJu6PpLkzTg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "carlcaba",
+							"type": "text"
+						},
+						{
+							"key": "pass",
+							"value": "casoft17",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://ubioapp.logicaestudio.com/webapi/webapi.php/api/?qry=3002764204",
+					"protocol": "https",
+					"host": [
+						"ubioapp",
+						"logicaestudio",
+						"com"
+					],
+					"path": [
+						"webapi",
+						"webapi.php",
+						"api",
+						""
+					],
+					"query": [
+						{
+							"key": "qry",
+							"value": "3002764204"
+						}
+					]
+				},
+				"description": "Permite consultar la información de un servicio o vuelta mediante un"
+			},
+			"response": []
+		}
+	]
+}

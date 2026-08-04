@@ -456,6 +456,7 @@
 
         //Funcion que adiciona un registro nuevo
         public function _add($verify = true, $getid = true) {
+/*
 			$checkId = true;
             //Si debe verificar la clave principal
             if($verify) {
@@ -501,6 +502,68 @@
             $this->executeQuery();
             //Arma la sentencia SQL de la insercion
             $this->sql = "INSERT INTO $this->table VALUES (" . $this->_columnDatas() . ")";
+            //Ejecuta la sentencia SQL
+            $this->executeQuery();
+            //Verifica si hay error
+            if($this->nerror == 0) {
+                //Si solicita el ultimo Id
+                if($getid && $checkId) {
+                    //Obtiene el ultimo id
+                    $this->_getLastId();
+                }
+            }
+*/
+			$checkId = !$verify ? true : $verify;
+            //Verifica el tipo de dato de la primera columna
+            //Pasa el puntero del arreglo a la primera posicion
+            reset($this->arrColDatas);
+            //Obtiene el nombre del primer campo
+            $key = key($this->arrColDatas);
+            //Si es un GUID
+            if($this->arrColTypes[$key] == "varchar" && strpos($this->arrColFlags[$key],"NO,PRI") !== false) {
+                //Verifica que el campo no tenga informacion
+                if($this->arrColDatas[$key] == "" || $this->arrColDatas[$key] == "UUID()") {
+                    //Arma la sentencia SQL
+                    $this->sql = "SELECT UUID()";
+                    //Extrae el resultado
+                    $row = $this->__getData();
+                    //Asigna la informacion
+                    $this->arrColDatas[$key] = $row[0];
+                }
+                //Asigna el valor
+                $checkId = false;
+            }
+            //Si es numérico auto incremental
+            else if(strpos($this->arrColFlags[$key],"auto_increment") !== false) {
+                $this->arrColDatas[$key] = 0;
+                $checkId = true;
+            }
+            //Para las demás opciones
+            else {
+                //Arma la sentencia SQL
+                $this->sql = "SELECT " . $key . " FROM " . $this->table . " LIMIT 1";
+                //Extrae el resultado
+                $row = $this->__getData();
+                if(is_numeric($row[0])) {
+                    //Busca el siguiente ID, segun corresponda
+                    $this->_getNextId();
+                }
+                //Verifica la duplicidad de la informacion
+                if($this->_checkData()) {
+                    //Actualiza el error
+                    $this->error = "El registro que intenta adicionar está duplicado!";
+                    $this->nerror = 10;
+                    //Regresa
+                    return;
+                }
+            }
+            //Ajusta los valores
+            $this->sql = "SET NAMES utf8";
+            //Ejecuta la sentencia SQL
+            $this->executeQuery();
+            //Arma la sentencia SQL de la insercion
+            $this->sql = "INSERT INTO $this->table VALUES (" . $this->_columnDatas() . ")";
+
             //Ejecuta la sentencia SQL
             $this->executeQuery();
             //Verifica si hay error

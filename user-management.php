@@ -13,9 +13,17 @@
 	if(!empty($_GET['src'])) {
 		$source = $_GET['src'];
 	}
+
+	$is_client_ally = false;
+	if (isset($_GET['type_client']) && $_GET['type_client'] === 'ally') {
+		$path = "user-management.php?action=new&src=cli&type_client=ally";
+		$is_client_ally = true;
+	}
 	
 	$filename = "users-manager.php" . ($source == "" ? "" : "?src=" . $source);
 
+	$filename = $is_client_ally ? $path : $filename;
+	
 	//Define el menu
 	$_SESSION["menu_id"] = $inter->getMenuId($filename);
 	
@@ -28,6 +36,35 @@
 	
 	require_once("core/classes/configuration.php");
 	$conf = new configuration("INIT_PASSWORD");
+
+	//TODO Nativapps
+
+	$conf = new configuration("USER_AFFILIATE_BASIC_RATE");
+	$user_affiliate_basic_rate =  $conf->verifyValue();
+
+	$conf = new configuration("USER_AFFILIATE_ALLIED_COMPANY");
+	$user_affiliate_allied_company =  $conf->verifyValue();
+
+	$conf = new configuration("USER_AFFILIATE_COMPANY_USERS");
+	$user_affiliate_company_users =  $conf->verifyValue();
+	
+	$conf = new configuration("USER_AFFILIATE_DELIVERY_ALLIED");
+	$user_affiliate_delivery_allied =  $conf->verifyValue();
+
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_BASIC_RATE");
+	$max_users_affiliation_basic_rate =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_ALLIED_COMPANY");
+	$max_users_affiliation_allied_company =  $conf->verifyValue();
+
+	$conf = new configuration("MAX_USERS_AFFILIATION_COMPANY");
+	$max_users_affiliation_company =  $conf->verifyValue();
+	
+	$conf = new configuration("MAX_USERS_AFFILIATION_DELIVERY_ALLIED");
+	$max_users_affiliation_delivery_allied =  $conf->verifyValue();
+
+	////////////////////////////
 
 	$action = "new";
 
@@ -47,9 +84,17 @@
 	
 	switch($action) {
 		case "new": {
-			$titlepage = $_SESSION["MENU_NEW"];
 			$text_title =  "Ingrese la información solicitada para crear un nuevo registro. <small>Los campos marcados con * son requeridos.</small>";
 			$user = new users();
+			//TODO Nativapps
+			$titlepage = $is_client_ally ? 'Nuevo Usuario Aliado' : $_SESSION["MENU_NEW"];
+			require_once("core/classes/affiliate_subscription.php");
+			require_once("core/classes/client.php");
+			$affiliate_subscription = new affiliate_subscription();
+			$as_dataForm = $affiliate_subscription->dataForm($action);
+			$client = new client();
+			$c_dataForm = $client->dataForm($action);
+			////////
 			break;
 		}
 		case "edit": {
@@ -88,6 +133,7 @@
 ?>
 	<!-- bootstrap toogle -->
 	<link rel="stylesheet" href="plugins/bootstrap-toggle/css/bootstrap-toggle.min.css"></link>	
+	<link rel="stylesheet" href="plugins/bs-stepper/css/bs-stepper.min.css"></link>	
 </head>
 <body class="hold-transition sidebar-mini <?= $skin[2] ?>">
 	<div class="wrapper">
@@ -116,7 +162,7 @@
 				<div class="container-fluid">
 					<div class="row mb-2">
 						<div class="col-sm-6">
-							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
+							<h1 class="m-0 text-dark"><i class="fa fa-user"></i> <?= $titlepage ?> <?= $is_client_ally ? '' : $_SESSION["USER"] ?> <small><?= explode(" ",$_SESSION["USER_" . strtoupper($source)])[1] ?></small></h1>
 						</div>
 						<!-- /.col -->
 <?
@@ -289,6 +335,11 @@
 	$userModal = true;
 	include("core/templates/__modals.tpl");
 	include("core/templates/__footer.tpl");
+	//TODO Nativapps
+	if ($action === 'new') {
+		include("core/templates/__modalAffiliate.tpl"); 
+	}
+	/////////////
 ?>
 
 	<!-- SlimScroll -->
@@ -299,9 +350,105 @@
 	<script src="plugins/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>	
 	<!-- Resources -->
 	<script src="js/resources.js"></script>	
+	<!-- TODO Nativapps -->
+	<!-- bs-stepper -->
+	<script src="plugins/bs-stepper/js/bs-stepper.min.js"></script>	
+	<!-- Credit card number validator -->
+	<script src="plugins/jquery.cc.validator/jquery.creditCardValidator.js"></script>
+	<!-- Cleave -->
+	<script src="plugins/cleave/cleave.min.js"></script>
+	<!-- ------------------- -->
 	
     <script>
 	$(document).ready(function() {
+		//TODO Nuevo desarrollo Nativapps
+		var action = "<?= $action ?>";
+		var src = "<?= $source ?>";
+		// Inicializar el stepper
+		if (action === 'new') {
+			var stepperCompanyUserAffiliation = $("#stepperCompanyUserAffiliation");
+			var stepper = new Stepper(stepperCompanyUserAffiliation[0]);
+			var nextBtn = $('#nextBtn');
+			var previousBtn = $('#previousBtn');
+			var btnCancelActivate = $('#btnCancelActivate');
+			var acceptTermsConditionsId = $('#acceptTermsConditionsId');
+			var numberUsersAffiliation = $( ".number-users-affiliation" );
+			var numberUsersTotalBasic = $('.number-users-total-rate-basic');
+			var numberUsersTotalRate1 = $('.number-users-total-rate-1');
+			var numberUsersTotalRate2 = $('.number-users-total-rate-2');
+			var numberUsersTotalRate3 = $('.number-users-total-rate-3');
+			var totalMembershipValue = $('.total-membership-value');
+			var frmAffiliateRates = $("#frmAffiliateRates input");
+			var idFrmBillingData = "#frmBillingData";
+			var idFrmCardDetails = "#frmCardDetails";
+			var frmBillingData = $(idFrmBillingData + " input");
+			var frmCardDetails = $(idFrmCardDetails + " input");
+			var formsValidationRequired = "<?= $_SESSION["FORMS_VALIDATION_REQUIRED"] ?>";
+			var dataPersonalizePlan = [];
+			var dataBillingData = {};
+			var dataCardDetails = {};
+			var subscriptionFormValidation = true;
+
+			var number_users_rate_basic = $("input[name='number_users_rate_basic']");
+			var number_users_rate_1 = $("input[name='number_users_rate_1']");
+
+			var rateNameBasic = $(".rate-name-basic");
+	
+			new Cleave('#txtCREDIT_CARD_NUMBER', {
+				creditCard: true
+			});
+	
+			new Cleave('#txtDATE_EXPIRATION', {
+				date: true,
+				datePattern: ['m', 'y']
+			});
+		
+			var lastStep = 2;
+			previousBtn.hide();
+			nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>');
+			previousBtn.html('<?= $_SESSION["AFFILIATION_RATE_PREVIOUS_BUTTON"] ?>');
+			var unitPrice = parseFloat("<?= $user_affiliate_basic_rate ?>");
+	
+			stepperCompanyUserAffiliation[0].addEventListener('show.bs-stepper', function (event) {
+				var indexStep = event.detail.indexStep;
+				if (indexStep === 0) {previousBtn.hide(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_BTN_START_HERE"] ?>')};
+				if (indexStep === 1) {previousBtn.show(); nextBtn.html('<?= $_SESSION["AFFILIATION_RATE_NEXT_BUTTON"] ?>')}
+				if (indexStep === lastStep)  {nextBtn.show(); nextBtn.html("<?= $btnText ?>")} else {nextBtn.show()}
+				if (indexStep === 3) {nextBtn.hide()} 
+	
+				//TODO prueba para obtener los datos de un formulario en jquery
+				if (indexStep === 3) {
+					var datos = getDataSubscription();
+					if (datos) {
+						console.log(datos)
+						$("#btnActivate").click();
+					} else { 
+						setTimeout(() => {
+							stepper.to(indexStep)
+						}, 50);
+					 }
+				}
+				
+			})
+	
+			stepperCompanyUserAffiliation[0].addEventListener('shown.bs-stepper', function(event){
+				
+			});
+	
+			nextBtn.click(function(event) {
+				stepper.next();
+			});
+	
+			previousBtn.click(function() {
+				stepper.previous();
+			});
+	
+			$('#divActivateModalAffiliateUsers').on('hidden.bs.modal', function (event) {
+				stepper.reset();
+			})
+		}
+		//////////////////////////////////////////////////////////////////////////////
+
 		$('[data-toggle="tooltip"]').tooltip();
 		$('#txtEMAIL').on('input',function(e){
 			var nameParts = $(this).val().split("@");
@@ -336,7 +483,23 @@
 				});
 			}
 		});		
-		$("#btnSave").on("click", function(e) {
+		$("#btnSave").on("click", function(e) {		
+			//$("#divActivateModalAffiliateUsers").modal("toggle"); //TODO Quitar al pasar a produccion	
+			//TODO Nativapps
+			if (action === 'new') {
+				
+				acceptTermsConditionsId.bootstrapToggle('off');
+				nextBtn.prop("disabled", true);
+				numberUsersAffiliation.each(function() {
+					var min = parseInt($(this).attr('min'));
+					$(this).val(min)
+					calculateUnitTotal($(this))
+				})
+				$(idFrmBillingData)[0].reset()
+				$(idFrmCardDetails)[0].reset()
+			}
+			/////////////////////
+
 			var form = document.getElementById('frmUser');
 			var noty;
 			if (form.checkValidity() === false) {
@@ -362,17 +525,27 @@
 			datasObj["cbChangePassword"] = $("#cbChangePassword").is(':checked');
 			datasObj["cbTBL_SYSTEM_USER_IDENTIFICATION"] = $("#hfDocType_" + $("#cbTBL_SYSTEM_USER_IDENTIFICATION").val()).val();
 			datasObj["src"] = "<?= $source ?>";
+			datasObj["is_client_ally"] = "<?= $is_client_ally ?>"; //TODO Nativapps
 			var datas = JSON.stringify(datasObj);
 			$("#spanTitle").html(title);
 			$("#spanTitleName").html("");
 			$("#modalBody").html("<?= $_SESSION["MSG_CONFIRM"] ?>");
 			$("#btnActivate").unbind("click");
+
 			$("#btnActivate").bind("click", function() {
+				// TODO Nativapps
+				var data = { strModel: datas };
+				var dataSubscription = false;
+				if (action === "new" && src === "cli") {
+					dataSubscription = getDataSubscription();
+				}
+				data = { strModel: datas, dataSubscription: JSON.stringify(dataSubscription) }
+				////////////////////
 				var noty;
 				$.ajax({
 					url: url,
 					method: "POST",
-					data: { strModel: datas },
+					data: data, //TODO Nativapps
 					dataType: "json",
 					beforeSend: function (xhrObj) {
 						var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
@@ -386,15 +559,224 @@
 					}
 				});
 			});
-			$("#divActivateModal").modal("toggle");			
+			//TODO Aca se va a realizar la lógica para afilia tu empresa
+			if (action === "new") {				
+				checkClientIsAffiliationType(datas).then(function(resp) {
+					if (resp.is_affiliated_client) {
+						$('#acceptTermsConditions').prop('checked', false);
+						$("#divActivateModalAffiliateUsers").modal("toggle");
+						var data = resp.data;
+
+						$("#business_name").val(data.CLIENT_NAME);
+						$("#client_id").val(data.ID);
+						$("#nit").val(data.IDENTIFICATION);
+						$("#main_phone").val(data.CELLPHONE);
+						$("#main_address").val(data.ADDRESS);
+						$("#legal_representative").val(data.LEGAL_REPRESENTATIVE);
+
+					} else {
+						$("#divActivateModal").modal("toggle");
+					}
+				}).catch(function(error) {
+
+				});
+			} else {
+				$("#divActivateModal").modal("toggle");
+			}
+			////////////////////
 		});
+
+		//TODO Nativapps
+
+		$("#txtCREDIT_CARD_NUMBER").on("change", function(e) {
+			$('#txtCREDIT_CARD_NUMBER').validateCreditCard(function(result) {
+				
+				var type = result.card_type.name;
+				type = (type == "diners") ? "diners-club" : type;
+				var icon = "fa fa-cc-" + type;
+				$("#icontxtCREDIT_CARD_NUMBER").removeClass().addClass(icon);
+				$("#hfValidCard").val(result.valid);
+			});
+		});
+
+		if (action === 'new') {
+			acceptTermsConditionsId.change(function(){
+				if ($(this).is(':checked')) {
+					nextBtn.prop('disabled', false);
+				} else {
+					nextBtn.prop('disabled', true);
+				}
+			});
+			numberUsersAffiliation.change(function() {
+				var max = parseInt($(this).attr('max'));
+				var min = parseInt($(this).attr('min'));
+				if ($(this).val() > max)
+				{
+					$(this).val(max);
+				}
+				else if ($(this).val() < min)
+				{
+					$(this).val(min);
+				}
+				calculateUnitTotal($(this))
+			});
+			numberUsersAffiliation.on('input', function() {
+				calculateUnitTotal($(this))
+			});
+		}
+
+
+		function calculateUnitTotal(field) {
+			var amount = parseInt(field.val());
+			var price = parseInt(field.data('rateValue'))
+			var total = amount * price;
+
+			var nameField = field.attr('name')
+
+			switch (nameField) {
+				case 'number_users_rate_basic':
+					numberUsersTotalBasic.text(total);
+					break;
+				case 'number_users_rate_1':
+					numberUsersTotalRate1.text(total);
+					break;
+				case 'number_users_rate_2':
+					numberUsersTotalRate2.text(total);
+					break;
+				case 'number_users_rate_3':
+					numberUsersTotalRate3.text(total);
+					break;
+			
+				default:
+					break;
+			}
+
+			calculateTotalPrice();
+		}
+
+		function calculateTotalPrice() {
+			var quantities = 0;
+			var totalValue = 0;
+			numberUsersAffiliation.each(function() {
+				var price = parseInt($(this).data('rateValue'))
+				quantities = parseInt($(this).val()) * price;
+				totalValue = totalValue + quantities;
+			})
+			
+			totalMembershipValue.text(totalValue)
+
+			return totalValue;
+		}
+
+		function getDataSubscription () {
+			dataPersonalizePlan = []
+			dataBillingData = {}
+			dataCardDetails = {}
+			subscriptionFormValidation = true;
+			frmAffiliateRates.each(function() {
+				var name = $(this).attr('name');
+				var quantities = $(this).val();
+				var unitValue = $(this).data('rateValue');
+				var resourceName = $(this).data('resourceName');
+				var data = {};
+				data['field'] = name;
+				data['quantities'] = quantities;
+				data['unit_value'] = unitValue;
+				data['resource_name'] = resourceName;
+				dataPersonalizePlan.push(data)
+			})
+
+			frmBillingData.each(function() {
+				var name = $(this).attr('name');
+				var is_required = $(this).prop('required');
+				var value = $(this).val();
+				var placeholder = $(this).attr('placeholder')
+				//formsValidationRequired
+				if (is_required && value === '') {
+					subscriptionFormValidation = false;
+					notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+				}
+				dataBillingData[name] = value;
+			})
+			
+			frmCardDetails.each(function() {
+				var name = $(this).attr('name');
+				var is_required = $(this).prop('required');
+				var value = $(this).val();
+				var placeholder = $(this).attr('placeholder')
+				//formsValidationRequired
+				if (is_required && value === '') {
+					subscriptionFormValidation = false;
+					notify("", "danger", "", formsValidationRequired.replace(":attribute", placeholder), "");
+				}
+				dataCardDetails[name] = value;
+			})
+
+			var totalSubscription = calculateTotalPrice();
+
+			if (subscriptionFormValidation) {
+				return { dataPersonalizePlan, dataBillingData, dataCardDetails, totalSubscription }
+			}
+			return subscriptionFormValidation;
+
+		}
+		
+		///////////////////
+
 		$("#cbAccess").trigger("change");
+
+		//TODO Nativapps
+		function checkClientIsAffiliationType(data) {
+			return new Promise(function(resolve, reject) {
+				var noty;
+				$.ajax({
+					url: 'core/actions/_load/__checkClientIsAffiliationType.php',
+					method: "POST",
+					data: data,
+					contentType: 'application/json',
+					beforeSend: function (xhrObj) {
+						
+						// var message = "<i class=\"fa fa-refresh fa-spin\"></i> <?= $_SESSION["MSG_PROCESSING"] ?>";
+						// noty = notify("", "dark", "", message, "", false);												
+					},
+					success:function(response){
+						console.log(response.client_type, <?= $max_users_affiliation_basic_rate ?>)
+						client_type = response.client_type;
+						if (client_type === 'client') {
+							number_users_rate_basic.prop('readonly', true);							
+							number_users_rate_1.prop('readonly', false);
+
+							number_users_rate_basic.prop('max', <?= $max_users_affiliation_basic_rate ?>);
+							number_users_rate_1.prop('max', <?= $max_users_affiliation_allied_company ?>);
+
+							rateNameBasic.text('<?= $_SESSION["AFFILIATION_RATE_NAME_BASIC"] ?>');
+							number_users_rate_basic.attr('data-resource-name', 'AFFILIATION_RATE_NAME_BASIC');
+						} else {
+							number_users_rate_basic.prop('readonly', false);							
+							number_users_rate_1.prop('readonly', true);
+							
+							number_users_rate_basic.prop('max', <?= $max_users_affiliation_allied_company ?>);
+							number_users_rate_1.prop('max', <?= $max_users_affiliation_basic_rate ?>);
+
+							rateNameBasic.text('<?= $_SESSION["AFFILIATION_RATE_NAME_BASIC_2"] ?>');
+							number_users_rate_basic.attr('data-resource-name', 'AFFILIATION_RATE_NAME_BASIC_2');
+						}
+						resolve(response)
+					},error: function(xhr, status, error) {
+						reject(error)
+					}
+				});
+			})
+		}
+		///////////////
 	});
-	
+
     </script>
 <?
 	include("core/templates/__mapModal.tpl");
 	include("core/templates/__messages.tpl");
+	
+	// error_log(date('d.m.Y h:i:s') . " - " . json_encode($_SESSION) . PHP_EOL, 3, 'my-errors.log');	
 ?>
 </body>
 </html>

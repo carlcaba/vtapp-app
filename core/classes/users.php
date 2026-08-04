@@ -1377,7 +1377,8 @@ class users extends table {
     //Funcion que activa o inactiva usuario en linea
     function setOnline($value) {
 		//Arma la sentencia SQL
-		$this->sql = "UPDATE " . $this->table . " SET ON_LINE = " . ($value ? "TRUE" : "FALSE")  . " WHERE ID = " . $this->_checkDataType("ID");
+		$this->sql = "UPDATE " . $this->table . " SET ON_LINE = " . ($value ? "TRUE" : "FALSE")  . ", LOGGED = " . ($value ? "TRUE" : "FALSE") . 
+						" WHERE ID = " . $this->_checkDataType("ID");
 		//Verifica que no se presenten errores
 		$this->executeQuery();
     }

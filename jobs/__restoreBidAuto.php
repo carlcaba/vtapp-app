@@ -5,11 +5,6 @@
 
     date_default_timezone_set('America/Bogota');
 
-	$log_file = "./my-errors.log"; 
-	ini_set('display_errors', '0');
-	ini_set("log_errors", TRUE);  
-	ini_set('_error_log', $log_file); 
-
 	$_SESSION["vtappcorp_userid"] = "jbRestoreAutoBid";
 	
     //Inicializa la cabecera
@@ -20,11 +15,21 @@
     //Variable del codigo
     $result = array('success' => false,
         'message' => "");
+		
+	$location = explode(DIRECTORY_SEPARATOR,__DIR__);
+	$removed = array_pop($location);
+	array_push($location,"core","classes");
+	$classDir = implode(DIRECTORY_SEPARATOR,$location);		
 	
 	//Realiza la operacion
-	require_once("../core/classes/user_notification.php");
-	require_once("../core/classes/logs.php");
-	require_once("../core/classes/configuration.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "user_notification.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "logs.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "configuration.php");
+
+	$log_file = __DIR__ . DIRECTORY_SEPARATOR . "my-errors.log"; 
+	ini_set('display_errors', '0');
+	ini_set("log_errors", TRUE);  
+	ini_set('error_log', $log_file); 
 
 	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 

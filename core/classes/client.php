@@ -1,5 +1,6 @@
 <?
-// LOGICA ESTUDIO 2023
+
+// LOGICA ESTUDIO 2019
 
 //Incluye las clases dependientes
 require_once("table.php");
@@ -214,7 +215,7 @@ class client extends table {
 			$stabs .= "\t";
 		//Arma la sentencia SQL
 		$this->sql = "SELECT DISTINCT C.CLIENT_ID, C.CLIENT_NAME, C.COUNTRY, C.CLIENT_PAYMENT_TYPE_ID, C.CLIENT_PAYMENT_TYPE, C.PAYMENT_TYPE_ID, C.PAYMENT_TYPE_NAME, C.CLIENT_TYPE_ID, " .
-					"C.CLIENT_TYPE_NAME, C.PARTNER_ID, NOT R.CLIENT_CARD_ID IS NULL CARD, C.CONTRACT " .
+					"C.CLIENT_TYPE_NAME, C.PARTNER_ID, NOT R.CLIENT_CARD_ID IS NULL CARD, C.CONTRACT, C.PARTNER_NAME, C.IDENTIFICATION, C.CELLPHONE, C.CONTACT_NAME, C.ADDRESS " .
 					"FROM $this->view C LEFT JOIN $this->card R ON (C.CLIENT_ID = R.CLIENT_ID AND R.EXPIRES_ON > DATE(NOW()) AND R.IS_BLOCKED = FALSE) " .
 					"WHERE C.IS_BLOCKED = FALSE";
 		//Verifica el acceso del usuario
@@ -235,14 +236,14 @@ class client extends table {
                 $row[1] = mb_convert_encoding($row[1],"UTF-8");
             }
 			$pay = intval($row[3]) == 1 ? "off" : (intval($row[7]) == 2 ? "on" : "off");
-			$opt = $payment ? $row[6] : $row[2];
+			$opt = $payment ? $row[6] : $row[12];
 			$pid = $row[9];
 			$bid = intval($row[3]) == 2 ? "true" : (($pid == null || $pid == "") ? "true" : "false");
 			$ccard = $payment ? ($row[10] == 1 ? "true" : "false") : "true";
 			$requirecard = $payment ? ($row[7] == 4 ? "true" : "false") : "true";
 			$contract = ($row[11] == 1 ? "true" : "false");
-			$cltype = ($row[7] == 1 ? "true" : "false");
-			$datas = "data-optionpy='" . $pay . "' data-bid='" . $bid . "' data-partner='" . $pid . "' data-cc='" . $ccard . "' data-crequired='" . $requirecard . "' data-ctrct='$contract' data-pymttype='$row[5]' data-cltype='$cltype' ";
+			$datas = "data-optionpy='" . $pay . "' data-bid='" . $bid . "' data-partner='" . $pid . "' data-cc='" . $ccard . "' data-crequired='" . $requirecard . "' data-ctrct='$contract' data-pymttype='$row[5]'";
+			$datas .= " data-nit=\"" . $row[13] . "\" data-mainphone=\"" . $row[14] . "\" data-contactname=\"" . $row[15] . "\" data-address=\"" . $row[16] . "\"";
 			//Si la opcion se encuentra seleccionada
 			if($row[0] == $selected)
 				//Ajusta al diseño segun GUI
@@ -287,7 +288,6 @@ class client extends table {
 
 	//Funcion para contar los clientes
 	function getTotalCount() {
-		_error_log("Clients getTotalCount loading start at " . date("Y-m-d h:i:s"));		
 		//Arma la sentencia SQL
 		$this->sql = "SELECT COUNT(ID) FROM $this->table WHERE IS_BLOCKED = FALSE";
         //Obtiene los resultados
@@ -297,7 +297,7 @@ class client extends table {
         //Registro existe
         if($row)
 			$return = $row[0];
-		_error_log("Clients getTotalCount finish at " . date("Y-m-d h:i:s"));		
+			
 		return $return;	
 	}
 	
@@ -566,7 +566,7 @@ class client extends table {
     function showListJSON($ref) {
 		$return = array();		
 		//Arma la sentencia SQL
-        $this->sql = "SELECT DISTINCT CLIENT_ID, CLIENT_NAME, PAYMENT_TYPE_NAME, CLIENT_TYPE_NAME FROM " . $this->view . " WHERE IS_BLOCKED = FALSE ";
+        $this->sql = "SELECT ID, CLIENT_NAME FROM " . $this->table . " WHERE IS_BLOCKED = FALSE ";
 		//Agrega la referencia si hay
 		if ($ref != "") {
 			$this->sql .= "AND ID = '$ref' ";
@@ -581,13 +581,26 @@ class client extends table {
 		$this->sql .= "ORDER BY CLIENT_NAME";
 		//Recorre los valores
 		foreach($this->__getAllData() as $row) {
-			$data = array("text" => $row[1] . " (" . $row[2] . "-" . $row[3] . ")",
+			$data = array("text" => $row[1],
 							"value" => $row[0],
 							"selected" => ($ref == $row[0]));
 			array_push($return,$data);
 		}
 		//Retorna
 		return $return;
-    }	
+    }
+
+	//TODO Nativapps
+	//Retorna el tipo de cliente 
+	function getDataByID($idClient)
+	{
+		$this->sql = "SELECT * FROM " . $this->table . " WHERE ID = '".$idClient."' AND IS_BLOCKED = FALSE ";
+		//Obtiene los resultados
+		$row = $this->__getDataByMode();
+		// $row = $row ? $row[0] : null;
+		return $row;
+	}	
+	
 }
+
 ?>

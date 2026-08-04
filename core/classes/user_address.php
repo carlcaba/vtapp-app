@@ -17,12 +17,12 @@ class user_address extends table {
 	var $view;
 
 	//Constructor de la clase
-	function __constructor() {
-		$this->user_address();
+	function __constructor($addr = 53) {
+		$this->user_address($addr);
 	}
 	
 	//Constructor anterior
-	function user_address() {
+	function user_address($addr = 53) {
 		//Llamado al constructor padre
 		parent::table("TBL_USER_ADDRESSES");
 		//Valores por defecto
@@ -33,7 +33,7 @@ class user_address extends table {
 		//Clases relacionadas
 		$this->zone = new zone();
 		$this->city = new city();
-		$this->city->setCountry(53);
+		$this->city->setCountry($addr);
 		$this->usua = new users();
 		$this->type = new address_type();
 		//Vista relacionada

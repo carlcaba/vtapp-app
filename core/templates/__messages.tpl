@@ -44,6 +44,8 @@
 ?>
 		<!--  notification JS
 			============================================ -->
+		<!-- Resources -->
+		<script src="js/resources.js"></script>	
 		<script src="js/plugins/notify/bootstrap-notify.min.js"></script>
 		<script type="text/javascript">
 			var draw = "<?= $parentFileName ?>";

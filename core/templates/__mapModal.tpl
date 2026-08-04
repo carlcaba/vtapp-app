@@ -248,21 +248,25 @@
 			// Create the autocomplete object, restricting the search predictions to
 			// geographical location types.
 			var element = "txtADDRESS";
-			if($("#" + address).is(":visible"))
-				element = address;
-			else if($("#" + alt_address).is(":visible"))
-				element = alt_address;
+			if(typeof(address) !== "undefined" && address) {
+				if($("#" + address).is(":visible"))
+					element = address;
+			}
+			if(typeof(alt_address) !== "undefined" && alt_address) {
+				if ($("#" + alt_address).is(":visible"))
+					element = alt_address;
+			}
 
 			autocomplete = new google.maps.places.Autocomplete(
 				document.getElementById(element), {
-					strictBounds: false,
-					types: ['geocode', 'establishment']
+					strictBounds: false
+					//,types: ['geocode', 'establishment']
 				}
 			);
 			
 			// Avoid paying for data that you don't need by restricting the set of
 			// place fields that are returned to just the address components.
-			autocomplete.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
+			//autocomplete.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
 
 			// When the user selects an address from the drop-down, populate the
 			// address fields in the form.
@@ -271,14 +275,14 @@
 			if(typeof(alt_address) !== "undefined" && alt_address) {
 				autocomplete2 = new google.maps.places.Autocomplete(
 					document.getElementById(alt_address), {
-						strictBounds: false,
-						types: ['geocode', 'establishment']
+						strictBounds: false
+						//,types: ['geocode', 'establishment']
 					}
 				);
 				
 				// Avoid paying for data that you don't need by restricting the set of
 				// place fields that are returned to just the address components.
-				autocomplete2.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
+				//autocomplete2.setFields(['address_component', 'geometry', 'formatted_address', 'name']);
 
 				// When the user selects an address from the drop-down, populate the
 				// address fields in the form.
@@ -291,12 +295,20 @@
 			// Get the place details from the autocomplete object.
 			var place;
 			var element = "txtADDRESS";
-			if($("#" + address).is(":visible"))
-				place = autocomplete.getPlace();
-			else if($("#" + alt_address).is(":visible"))
-				place = autocomplete2.getPlace();
-			else 
-				place = autocomplete.getPlace();
+			if(typeof(address) !== "undefined" && address) {
+				if ($("#" + address).is(":visible"))
+					place = autocomplete.getPlace();
+				else {
+					if(typeof(alt_address) !== "undefined" && alt_address) {
+						if($("#" + alt_address).is(":visible"))
+							place = autocomplete2.getPlace();
+						else 
+							place = autocomplete.getPlace();
+					}
+					else 
+						place = autocomplete.getPlace();
+				}
+			}
 			
 			for (var component in componentForm) {
 				document.getElementById(component).value = '';
@@ -310,10 +322,14 @@
 					console.log("No details available for input: '" + place.name + "'");
 				}
 				else {
-					if($("#" + address).is(":visible"))
-						element = address;
-					else if($("#" + alt_address).is(":visible"))
-						element = alt_address;			
+					if(typeof(address) !== "undefined" && address) {
+						if($("#" + address).is(":visible"))
+							element = address;
+					}
+					if(typeof(alt_address) !== "undefined" && alt_address) {
+						if ($("#" + alt_address).is(":visible"))
+							element = alt_address;
+					}
 					$("#" + element.replace("txt", "hfLATITUDE_")).val(place.geometry.location.lat());
 					$("#" + element.replace("txt", "hfLONGITUDE_")).val(place.geometry.location.lng());
 				}
@@ -325,17 +341,18 @@
 					typ = typ.replace("_ADDRESS","");
 					typ = typ.charAt(0).toUpperCase() + typ.substr(1).toLowerCase();
 					for (var i = 0; i < place.address_components.length; i++) {
-						var addressType = place.address_components[i].types[0];
-						if (componentForm[addressType]) {
-							var val = place.address_components[i][componentForm[addressType]];
-							document.getElementById(addressType).value = val;
-						}
-						else if(addressType == "neighborhood") {
-							neigh = removeAccents(place.address_components[i].long_name.toUpperCase());
-						}
-						else if(addressType == "sublocality_level_1") {
-							sele = removeAccents(place.address_components[i].long_name.toUpperCase());
-						}
+						place.address_components[i].types.forEach((addressType) => {
+							if (componentForm[addressType]) {
+								var val = place.address_components[i][componentForm[addressType]];
+								document.getElementById(addressType).value = val;
+							}
+							else if(addressType == "neighborhood") {
+								neigh = removeAccents(place.address_components[i].long_name.toUpperCase());
+							}
+							else if(addressType == "sublocality_level_1") {
+								sele = removeAccents(place.address_components[i].long_name.toUpperCase());
+							}
+						});
 					}
 					if(sele != "" && neigh != "") {
 						$("#cbZone" + typ + ' option').map(function() {

@@ -194,7 +194,7 @@ class external_session extends table {
         $this->executeQuery();
 		if($this->nerror == 0) {
 			//Arma la sentencia SQL
-			$this->sql = "UPDATE $table SET LOGGED = FALSE WHERE ID = " . $this->_checkDataType("USER_ID");
+			$this->sql = "UPDATE $table SET LOGGED = FALSE, ON_LINE = FALSE WHERE ID = " . $this->_checkDataType("USER_ID");
 			//Verifica que no se presenten errores
 			$this->executeQuery();
 		}

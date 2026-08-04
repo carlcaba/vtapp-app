@@ -9,12 +9,12 @@ class address_type extends table {
 	var $view;
 	
 	//Constructor de la clase
-	function __constructor() {
-		$this->address_type();
+	function __constructor($type = "") {
+		$this->address_type($type);
 	}
 	
 	//Constructor anterior
-	function address_type() {
+	function address_type($type = "") {
 		//Llamado al constructor padre
 		parent::table("TBL_SYSTEM_ADDRESS_TYPE");
 		$this->REGISTERED_ON = "NOW()";

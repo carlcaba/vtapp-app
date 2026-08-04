@@ -5,11 +5,6 @@
 
     date_default_timezone_set('America/Bogota');
 
-	$log_file = "./my-errors.log"; 
-	ini_set('display_errors', '0');
-	ini_set("log_errors", TRUE);  
-	ini_set('_error_log', $log_file); 
-
 	$_SESSION["vtappcorp_userid"] = "admin";
 	
     //Inicializa la cabecera
@@ -21,8 +16,26 @@
     $result = array('success' => false,
         'message' => "");
 
+	$location = explode(DIRECTORY_SEPARATOR,__DIR__);
+	$removed = array_pop($location);
+	array_push($location,"core","actions","_save");
+	$saveDir = implode(DIRECTORY_SEPARATOR,$location);
+	$removed = array_pop($location);
+	$removed = array_pop($location);
+	array_push($location,"classes");
+	$classDir = implode(DIRECTORY_SEPARATOR,$location);		
+
 	//Realiza la operacion
-	require_once("../core/classes/quota.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "quota.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "ws_query.php");
+	require_once($saveDir . DIRECTORY_SEPARATOR . "__wompiGatewayFunctions.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "payment.php");
+	require_once($classDir . DIRECTORY_SEPARATOR . "configuration.php");
+	
+	$log_file = __DIR__ . DIRECTORY_SEPARATOR . "my-errors.log"; 
+	ini_set('display_errors', '0');
+	ini_set("log_errors", TRUE);  
+	ini_set('error_log', $log_file); 
 
 	_error_log("$uid - " . "Starting job " . basename(__FILE__) . " at " . date("Ymd H:i:s"));
 
@@ -45,7 +58,6 @@
 
 	_error_log("$uid - " . "Getting configuration " . date("Ymd H:i:s"));
 
-	require_once("../core/classes/configuration.php");
 	$conf = new configuration("PAYMENT_GATEWAY");
 	$gate = $conf->verifyValue();
 
@@ -57,11 +69,6 @@
 	$urlTranx = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_CHECK_TRANSACTION");
 	$urlCheck = $conf->verifyValue("PAYMENT_WOMPI_URL") . $conf->verifyValue("PAYMENT_WOMPI_CHECK_TRANSACTION");
 	$urlRet = $conf->verifyValue("WEB_SITE") . $conf->verifyValue("SITE_ROOT");
-	
-	//Libreria requerida
-	require_once("../core/classes/ws_query.php");
-	require_once("../core/actions/_save/__wompiGatewayFunctions.php");
-	require_once("../core/classes/payment.php");
 	
 	$count = 0;
 	$err = 0;	
